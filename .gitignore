@@ -83,3 +83,10 @@ DerivedDataCache/*
 
 #Rider
 .idea/
+
+#Let's allow the engine to fucking work
+!Binaries/Win64
+Binaries/Win64/*
+!Binaries/Win64/RobotBattleEditor.target
+!Binaries/Win64/UnrealEditor.modules
+!Binaries/Win64/UnrealEditor-RobotBattle.dll
