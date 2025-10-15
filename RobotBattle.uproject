@@ -8,6 +8,10 @@
 			"Name": "RobotBattle",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "LocalMultiplayer",
+			"Type": "Runtime"
 		}
 	],
 	"Plugins": [
