@@ -18,7 +18,10 @@ class LOCALMULTIPLAYER_API ULocalMultiplayerSubsystem : public UGameInstanceSubs
 public:
 	UFUNCTION(BlueprintCallable)
 	void CreatePlayers(ELocalMultiplayerInputMappingType MappingType);
+	void DisconnectPlayer(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceIde);
 	int GetAssignedPlayerIndexFromGamepadDeviceID(int DeviceID);
+	int GetLostPlayerIndexFromGamepadDeviceID(int DeviceID);
+	bool CanAssignNewPlayer();
 	int AssignNewPlayerToGamepadDeviceID(int DeviceID);
 	void AssignGamepadInputMapping(int PlayerIndex, ELocalMultiplayerInputMappingType MappingType) const;
 
@@ -28,4 +31,7 @@ protected:
 
 	UPROPERTY()
 	TMap<int, int> PlayerIndexFromGamepadProfileIndex;
+
+	UPROPERTY()
+	TMap<int, int> PlayerIndexFromGamepadProfileLostIndex;
 };

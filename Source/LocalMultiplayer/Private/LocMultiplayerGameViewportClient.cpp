@@ -16,13 +16,15 @@ bool ULocMultiplayerGameViewportClient::InputKey(const FInputKeyEventArgs& Event
 		if (EventArgs.IsGamepad())
 		{
 			int PlayerIndex = Subsystem->GetAssignedPlayerIndexFromGamepadDeviceID(EventArgs.InputDevice.GetId());
-			if (PlayerIndex == -1) {
+			if (PlayerIndex == -1 && Subsystem->CanAssignNewPlayer()) {
 				PlayerIndex = Subsystem->AssignNewPlayerToGamepadDeviceID(EventArgs.InputDevice.GetId());
 				Subsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::Menu);
 			}
-			APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
-			if (Controller != nullptr) return Controller->InputKey(params);
-			else return Super::InputKey(EventArgs);
+			if (PlayerIndex != -1) {
+				APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
+				if (Controller != nullptr) return Controller->InputKey(params);
+				else return Super::InputKey(EventArgs);
+			}
 		}
 	}
 	return Super::InputKey(EventArgs);
@@ -38,11 +40,15 @@ bool ULocMultiplayerGameViewportClient::InputAxis(FViewport* InViewport, FInputD
 			int PlayerIndex = Subsystem->GetAssignedPlayerIndexFromGamepadDeviceID(InputDevice.GetId());
 			if (PlayerIndex == -1) {
 				PlayerIndex = Subsystem->AssignNewPlayerToGamepadDeviceID(InputDevice.GetId());
-				Subsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::Menu);
+				if (PlayerIndex != -1) {
+					Subsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::Menu);
+				}
 			}
-			APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
-			if (Controller != nullptr) return Controller->InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
-			else return Super::InputAxis(InViewport, InputDevice, Key, Delta, DeltaTime, NumSamples, bGamepad);
+			if (PlayerIndex != -1) {
+				APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
+				if (Controller != nullptr) return Controller->InputAxis(Key, Delta, DeltaTime, NumSamples, bGamepad);
+				else return Super::InputAxis(InViewport, InputDevice, Key, Delta, DeltaTime, NumSamples, bGamepad);
+			}
 		}
 	}
 	return Super::InputAxis(InViewport, InputDevice, Key, Delta, DeltaTime, NumSamples, bGamepad);

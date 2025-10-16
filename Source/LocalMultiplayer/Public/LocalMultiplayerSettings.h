@@ -48,4 +48,5 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "LocalMultiplayer")
 	FLocalMultiplayerProfileData GamepadProfileData;
+
 };
