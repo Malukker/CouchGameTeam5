@@ -4,21 +4,18 @@
 #include "LocMultiplayerGameViewportClient.h"
 #include "Kismet/GameplayStatics.h"	
 #include "LocalMultiplayerSubsystem.h"
-#include "LocalMultiplayerSettings.h"
 #include "EnhancedInputSubsystems.h" 
 
 bool ULocMultiplayerGameViewportClient::InputKey(const FInputKeyEventArgs& EventArgs)
 {
 	FInputKeyParams params = FInputKeyParams(EventArgs.Key, EventArgs.Event, EventArgs.AmountDepressed);
-	const ULocalMultiplayerSettings* settings = GetDefault<ULocalMultiplayerSettings>();
 	if (GameInstance != nullptr) {
 		ULocalMultiplayerSubsystem* Subsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
 		if (EventArgs.IsGamepad())
 		{
 			int PlayerIndex = Subsystem->GetAssignedPlayerIndexFromGamepadDeviceID(EventArgs.InputDevice.GetId());
-			if (PlayerIndex == -1 && Subsystem->CanAssignNewPlayer()) {
+			if (PlayerIndex == -1) {
 				PlayerIndex = Subsystem->AssignNewPlayerToGamepadDeviceID(EventArgs.InputDevice.GetId());
-				Subsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::Menu);
 			}
 			if (PlayerIndex != -1) {
 				APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);
@@ -32,7 +29,6 @@ bool ULocMultiplayerGameViewportClient::InputKey(const FInputKeyEventArgs& Event
 
 bool ULocMultiplayerGameViewportClient::InputAxis(FViewport* InViewport, FInputDeviceId InputDevice, FKey Key, float Delta, float DeltaTime, int32 NumSamples, bool bGamepad)
 {
-	const ULocalMultiplayerSettings* settings = GetDefault<ULocalMultiplayerSettings>();
 	if (GameInstance != nullptr){
 		ULocalMultiplayerSubsystem* Subsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
 		if (bGamepad)
@@ -40,9 +36,6 @@ bool ULocMultiplayerGameViewportClient::InputAxis(FViewport* InViewport, FInputD
 			int PlayerIndex = Subsystem->GetAssignedPlayerIndexFromGamepadDeviceID(InputDevice.GetId());
 			if (PlayerIndex == -1) {
 				PlayerIndex = Subsystem->AssignNewPlayerToGamepadDeviceID(InputDevice.GetId());
-				if (PlayerIndex != -1) {
-					Subsystem->AssignGamepadInputMapping(PlayerIndex, ELocalMultiplayerInputMappingType::Menu);
-				}
 			}
 			if (PlayerIndex != -1) {
 				APlayerController* Controller = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), PlayerIndex);

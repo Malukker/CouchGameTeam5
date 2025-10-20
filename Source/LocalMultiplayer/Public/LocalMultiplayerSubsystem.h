@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "LocalMultiplayerSettings.h"
 #include "LocalMultiplayerSubsystem.generated.h"
 
 /**
@@ -17,13 +16,13 @@ class LOCALMULTIPLAYER_API ULocalMultiplayerSubsystem : public UGameInstanceSubs
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void CreatePlayers(ELocalMultiplayerInputMappingType MappingType);
-	void DisconnectPlayer(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceIde);
+	void CreatePlayers();
+	UFUNCTION(BlueprintCallable)
+	//void DisconnectPlayer(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceIde);
 	int GetAssignedPlayerIndexFromGamepadDeviceID(int DeviceID);
-	int GetLostPlayerIndexFromGamepadDeviceID(int DeviceID);
-	bool CanAssignNewPlayer();
+	//int GetLostPlayerIndexFromGamepadDeviceID(int DeviceID);
+	//bool CanAssignNewPlayer();
 	int AssignNewPlayerToGamepadDeviceID(int DeviceID);
-	void AssignGamepadInputMapping(int PlayerIndex, ELocalMultiplayerInputMappingType MappingType) const;
 
 protected:
 	UPROPERTY()

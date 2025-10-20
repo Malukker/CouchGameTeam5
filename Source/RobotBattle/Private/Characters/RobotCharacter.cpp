@@ -1,0 +1,151 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterStateMachine.h"
+#include <EnhancedInputSubsystems.h>
+#include "Characters/RobotCharacterInputData.h"
+#include "EnhancedInputComponent.h"
+
+// Sets default values
+ARobotCharacter::ARobotCharacter()
+{
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void ARobotCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	CreateStateMachine();
+
+	InitStateMachine();
+}
+
+// Called every frame
+void ARobotCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	TickStateMachine(DeltaTime);
+	RotateMeshUsingOrientX();
+}
+
+// Called to bind functionality to input
+void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	SetupMappingContextIntoController();
+
+	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (EnhancedInputComponent == nullptr) return;
+
+	BindInputMoveXAxisAndActions(EnhancedInputComponent);
+}
+
+float ARobotCharacter::GetOrientX() const
+{
+	return OrientX;
+}
+
+void ARobotCharacter::SetOrientX(float NewOrientX) 
+{
+	OrientX = NewOrientX;
+}
+
+void ARobotCharacter::RotateMeshUsingOrientX() const
+{
+	FRotator Rotation = GetMesh()->GetRelativeRotation();
+	Rotation.Yaw = -90.f * OrientX;
+	GetMesh()->SetRelativeRotation(Rotation);
+}
+
+void ARobotCharacter::CreateStateMachine() {
+	StateMachine = NewObject<URobotCharacterStateMachine>(this);
+}
+
+void ARobotCharacter::InitStateMachine() {
+	if (StateMachine == nullptr) return;
+	StateMachine->Init(this);
+}
+
+void ARobotCharacter::TickStateMachine(float DeltaTime) const {
+	if (StateMachine == nullptr) return;
+	StateMachine->Tick(DeltaTime);
+}
+
+void ARobotCharacter::SetupMappingContextIntoController() const {
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController == nullptr) return;
+
+	ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+	if (LocalPlayer == nullptr)return;
+
+	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	if (InputSystem == nullptr)return;
+
+	InputSystem->AddMappingContext(InputMappingContext, 0);
+}
+
+float ARobotCharacter::GetInputMoveX() const {
+	return InputMoveX;
+}
+
+void ARobotCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
+	if (InputData == nullptr) return;
+
+	if (InputData->InputActionMoveX) {
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Started,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Completed,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Triggered,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+	}
+
+
+	if (InputData->InputActionMoveXFast) {
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveXFast,
+			ETriggerEvent::Triggered,
+			this,
+			&ARobotCharacter::OnInputMoveXFast
+		);
+	}
+
+	if (InputData->InputActionJump) {
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionJump,
+			ETriggerEvent::Started,
+			this,
+			&ARobotCharacter::OnInputJump
+		);
+	}
+}
+
+void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue) {
+	InputMoveX = InputActionValue.Get<float>();
+}
+
+void ARobotCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue) {
+	InputMoveX = InputActionValue.Get<float>();
+	InputMoveXFastEvent.Broadcast(InputMoveX);
+}
+
+void ARobotCharacter::OnInputJump(const FInputActionValue& InputActionValue) {
+	InputJumpEvent.Broadcast();
+}
