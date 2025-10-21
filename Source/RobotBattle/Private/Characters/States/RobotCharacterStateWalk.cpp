@@ -18,7 +18,7 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState) 
 	CharacterMovement->MaxWalkSpeed = WalkSpeedMax;
 	Character->PlayAnimMontage(WalkAnim);
 
-	Character->InputMoveXFastEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputMoveXFast);
+
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 
 	/*GEngine->AddOnScreenDebugMessage(
@@ -32,7 +32,7 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState) 
 void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 
-	Character->InputMoveXFastEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputMoveXFast);
+
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 
 	/*GEngine->AddOnScreenDebugMessage(
@@ -62,9 +62,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime) {
 	}
 }
 
-void URobotCharacterStateWalk::OnInputMoveXFast(float InputMoveX) {
-	StateMachine->ChangeState(ERobotCharacterStateID::Run);
-}
+
 
 void URobotCharacterStateWalk::OnInputJump() {
 	StateMachine->ChangeState(ERobotCharacterStateID::Jump);

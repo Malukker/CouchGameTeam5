@@ -23,9 +23,10 @@ public:
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
 
-	UFUNCTION()
-	void OnInputMoveXFast(float InputMoveX);
 
 	UFUNCTION()
 	void OnInputJump();
+
+	UFUNCTION()
+	void OnInputAttack(uint8 TypeAttack);
 };

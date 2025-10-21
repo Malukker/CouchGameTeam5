@@ -11,6 +11,7 @@
 #include <Characters/RobotCharacterSettings.h>
 #include <Characters/RobotCharacterInputData.h>
 
+
 void AMatchGameMode::BeginPlay() {
 	Super::BeginPlay();
 	CreateAndInitPlayers();
@@ -49,7 +50,8 @@ void
 AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*> SpawnPoints)
 {
 	URobotCharacterInputData* InputData = LoadInputDataFromConfig();
-	UInputMappingContext* InputMappingContext = LoadInputMappingContextFromConfig();
+	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
+	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
 
 	for (AArenaPlayerStart* SpawnPoint : SpawnPoints)
 	{
@@ -65,12 +67,20 @@ AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*> SpawnPoints)
 
 		if (NewCharacter == nullptr)continue;
 		NewCharacter->InputData = InputData;
-		NewCharacter->InputMappingContext = InputMappingContext;
+		switch (NewCharacter->GetPositionEnum())
+		{
+		case ERobotCharacterPositionEnum::Down:
+			NewCharacter->InputMappingContext = InputMappingContextDown;
+			break;
+		case ERobotCharacterPositionEnum::Up:
+			NewCharacter->InputMappingContext = InputMappingContextUp;
+			break;
+		default:
+			continue;
+		}
 		NewCharacter->AutoPossessPlayer = SpawnPoint->AutoReceiveInput;
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
-
-		CharactersInsideArena.Add(NewCharacter);
 	}
 }
 TSubclassOf<ARobotCharacter> AMatchGameMode::GetRobotCharacterClassFromInputType(
@@ -101,10 +111,21 @@ URobotCharacterInputData* AMatchGameMode::LoadInputDataFromConfig() {
 	return CharacterSettings->InputData.LoadSynchronous();
 }
 
-UInputMappingContext* AMatchGameMode::LoadInputMappingContextFromConfig() {
+UInputMappingContext* AMatchGameMode::LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position) {
 	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
 	if (CharacterSettings == nullptr) return nullptr;
-	return CharacterSettings->InputMappingContext.LoadSynchronous();
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		return CharacterSettings->InputMappingContextDown.LoadSynchronous();
+
+	case ERobotCharacterPositionEnum::Up:
+		return CharacterSettings->InputMappingContextUp.LoadSynchronous();
+
+	case ERobotCharacterPositionEnum::None:
+		return nullptr;
+	}
+	return nullptr;
 }
 
 void AMatchGameMode::CreateAndInitPlayers() const{
