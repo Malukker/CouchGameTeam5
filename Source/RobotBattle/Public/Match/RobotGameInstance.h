@@ -22,8 +22,8 @@ public:
 
 	void BeginPlay();
 
-	uint8 GetRobotID(int Number);
-	void SetRobotID(int Number, uint8 ID);
+	ERobotID GetRobotID(int Number);
+	void SetRobotID(int Number, ERobotID ID);
 	uint8 GetPlayerPos(int Number);
 	void SetPlayerPos(int Number, uint8 Pos);
 };
