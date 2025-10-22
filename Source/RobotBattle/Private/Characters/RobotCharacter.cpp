@@ -104,6 +104,11 @@ float ARobotCharacter::GetStunTimer() const
 	return StunTimer;
 }
 
+void ARobotCharacter::SetStunTimer(float NewStunTimer)
+{
+	StunTimer = NewStunTimer;
+}
+
 ERobotID ARobotCharacter::GetRobotBodyID() const
 {
 	return RobotID;
