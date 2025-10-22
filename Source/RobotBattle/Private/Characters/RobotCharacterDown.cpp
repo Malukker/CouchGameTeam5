@@ -4,7 +4,10 @@
 #include "Characters/RobotCharacterDown.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
+#include "RobotCharacterState.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterStateID.h"
+#include "Characters/RobotCharacterStateMachine.h"
 
 
 // Sets default values
@@ -27,6 +30,12 @@ void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 
 void ARobotCharacterDown::OnInputDash(const FInputActionValue& InputActionValue)
 {
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Dash)
+	{
+		return;
+	}
+
+	DashDirectionX = FMath::Sign(InputActionValue.Get<float>());
 	InputDashEvent.Broadcast();
 }
 
