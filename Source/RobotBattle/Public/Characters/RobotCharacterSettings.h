@@ -22,7 +22,10 @@ public:
 	TSoftObjectPtr<URobotCharacterInputData> InputData;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
-	TSoftObjectPtr<UInputMappingContext> InputMappingContext;
+	TSoftObjectPtr<UInputMappingContext> InputMappingContextUp;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
+	TSoftObjectPtr<UInputMappingContext> InputMappingContextDown;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	float InputMoveXThreshold = 0.1f;

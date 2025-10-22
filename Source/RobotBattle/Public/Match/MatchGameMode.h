@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Characters/RobotCharacterPositionEnum.h"
 #include "MatchGameMode.generated.h"
 
 class ARobotCharacter;
@@ -22,14 +23,10 @@ class ROBOTBATTLE_API AMatchGameMode : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 
-protected:
-	UPROPERTY()
-	TArray<ARobotCharacter*> CharactersInsideArena;
-
 private:
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
-	UInputMappingContext* LoadInputMappingContextFromConfig();
+	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
 
 	void FindPlayerStartActorsInArena(TArray<AArenaPlayerStart*>& ResultsActors);
 

@@ -11,5 +11,8 @@ enum class ERobotCharacterStateID : uint8 {
 	Walk,
 	Jump,
 	Fall,
-	Run
+	Attack,
+	Dash,
+	Stun,
+	Block
 };

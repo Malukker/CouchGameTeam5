@@ -5,6 +5,7 @@
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/RobotCharacterSettings.h"
+#include "Characters/States/RobotCharacterStateAttack.h"
 
 ERobotCharacterStateID URobotCharacterStateIdle::GetStateID() {
 	return ERobotCharacterStateID::Idle;
@@ -15,8 +16,8 @@ void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	Character->PlayAnimMontage(IdleAnim);
 
-	Character->InputMoveXFastEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputMoveXFast);
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputJump);
+	Character->InputAttackEvent.AddDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
@@ -29,9 +30,9 @@ void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) 
 void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 
-	Character->InputMoveXFastEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnInputMoveXFast);
+	
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnInputJump);
-
+	Character->InputAttackEvent.RemoveDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -55,10 +56,13 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	}
 }
 
-void URobotCharacterStateIdle::OnInputMoveXFast(float InputMoveX) {
-	StateMachine->ChangeState(ERobotCharacterStateID::Run);
-}
+
 
 void URobotCharacterStateIdle::OnInputJump() {
 	StateMachine->ChangeState(ERobotCharacterStateID::Jump);
+}
+
+void URobotCharacterStateIdle::OnInputAttack(uint8 TypeAttack)
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Attack);
 }
