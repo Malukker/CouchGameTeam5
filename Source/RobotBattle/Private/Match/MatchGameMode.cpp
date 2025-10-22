@@ -73,6 +73,7 @@ AMatchGameMode::SpawnCharacters(const TArray<AArenaPlayerStart*> SpawnPoints)
 		CharactersInsideArena.Add(NewCharacter);
 	}
 }
+
 TSubclassOf<ARobotCharacter> AMatchGameMode::GetRobotCharacterClassFromInputType(
 	EAutoReceiveInput::Type InputType) const 
 {
