@@ -27,19 +27,21 @@ public:
 	FStunEvent StunEvent;
 	FLockEvent LockEvent;
 
+	UPROPERTY(EditAnywhere)
 	uint8 Team = 0;
 	
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
-	uint8 TeamLife;
+	uint8 TeamLife = 0;
+	
+	uint8 TeamGuardMax = 0;
+	uint8 TeamGuard = 0;
+	bool IsGuarding = false;
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
@@ -48,7 +50,7 @@ public:
 	FVector GetOpponentLocation();
 	FVector GetTeamLocation();
 
-	void TeamTakeDamage(float Damage, bool CanBreakGuard);
+	void TeamTakeDamage(float Damage, float StunTime);
 	
 	void TeamPartLock(ERobotCharacterPositionEnum Position);
 	void TeamPartUnlock(ERobotCharacterPositionEnum Position);

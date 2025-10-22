@@ -11,6 +11,7 @@
 #include <Characters/RobotCharacterInputData.h>
 
 #include "LocalMultiplayerSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 
 
@@ -45,7 +46,7 @@ void ATeamManager::SpawnCharacters()
 	);
 	
 	if (NewCharacter == nullptr) return;
-	NewCharacter->
+	UGameplayStatics::GetPlayerControllerFromID(GetWorld(), GameInstance->PlayersPos[Team * 2])->Possess(NewCharacter);
 	RobotParts.Add(ERobotCharacterPositionEnum::Down, NewCharacter);
 	
 	TSubclassOf<ARobotCharacter> RobotCharacterUPClass = GetRobotCharacterClassFromID(
@@ -59,6 +60,7 @@ void ATeamManager::SpawnCharacters()
 	);
 	
 	if (NewCharacter == nullptr) return;
+	UGameplayStatics::GetPlayerControllerFromID(GetWorld(), GameInstance->PlayersPos[Team * 2 + 1])->Possess(NewCharacter);
 	RobotParts.Add(ERobotCharacterPositionEnum::Up, NewCharacter);
 
 	InitCharacters();
@@ -69,6 +71,9 @@ void ATeamManager::InitCharacters()
 	URobotCharacterInputData* InputData = LoadInputDataFromConfig();
 	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
 	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
+
+	TeamGuardMax = 0;
+	TeamGuard = 0;
 	
 	for (TPair<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> Pair : RobotParts)
 	{
@@ -88,7 +93,12 @@ void ATeamManager::InitCharacters()
 		Character->AutoPossessPlayer = SpawnPoint->AutoReceiveInput;
 		Character->SetOrientX(SpawnPoint->GetStartOrientX());
 		Character->FinishSpawning(SpawnPoint->GetTransform());
+
+		//TeamLife += Character->Life;
+		//TeamGuardMax += Character->Guard;
 	}
+	
+	TeamGuard = TeamGuardMax;
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -100,6 +110,7 @@ TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID
 			return ArenaSettings->RobotCharacterDownClass[ID];
 		case ERobotCharacterPositionEnum::Up:
 			return ArenaSettings->RobotCharacterUpClass[ID];
+		default: ;
 	}
 	return nullptr;
 }
@@ -111,19 +122,43 @@ FVector ATeamManager::GetOpponentLocation()
 
 FVector ATeamManager::GetTeamLocation()
 {
-	return RobotParts[0]->GetActorLocation();
+	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
 }
 
-void ATeamManager::TeamTakeDamage(float Damage, bool CanBreakGuard)
+void ATeamManager::TeamTakeDamage(float Damage, float StunTime)
 {
+	if (IsGuarding && TeamGuard > 0) return;
+	//RobotParts[ERobotCharacterPositionEnum::Up]->
+	//RobotParts[ERobotCharacterPositionEnum::Down]->
+	TeamGuard = TeamGuardMax;
 }
 
 void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
 {
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		//RobotParts[ERobotCharacterPositionEnum::Up]
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		//RobotParts[ERobotCharacterPositionEnum::Down]
+		break;
+	default: ;
+	}
 }
 
 void ATeamManager::TeamPartUnlock(ERobotCharacterPositionEnum Position)
 {
+	switch (Position)
+	{
+		case ERobotCharacterPositionEnum::Down:
+			//RobotParts[ERobotCharacterPositionEnum::Up]
+			break;
+		case ERobotCharacterPositionEnum::Up:
+			//RobotParts[ERobotCharacterPositionEnum::Down]
+			break;
+		default: ;
+	}
 }
 
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {
