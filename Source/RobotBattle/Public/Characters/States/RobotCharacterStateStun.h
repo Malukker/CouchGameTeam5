@@ -4,34 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Characters/RobotCharacterState.h"
-#include "Characters/Attacks/AttackStruct.h"
-#include "RobotCharacterStateAttack.generated.h"
+#include "RobotCharacterStateStun.generated.h"
 
 
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
-class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
+class ROBOTBATTLE_API URobotCharacterStateStun : public URobotCharacterState
 {
 	GENERATED_BODY()
 
-public:
-	UPROPERTY()
-	FAttackStruct CurrentAttackStruct;
-
-	UPROPERTY()
-	UAnimMontage* AttackAnim;
-
-
-	
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
-
-	
-private:
-#pragma region Notify Animation
-	void InitAnimationNotify();
-	void StartDetectionNotifyAttack();
-	void EndDetectionNotifyAttack();
-#pragma endregion
+	void DisableInput();
 };
