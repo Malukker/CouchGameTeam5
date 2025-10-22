@@ -11,6 +11,7 @@
 #include <Characters/RobotCharacterInputData.h>
 
 #include "LocalMultiplayerSubsystem.h"
+#include "Match/RobotGameInstance.h"
 
 
 // Sets default values
@@ -28,7 +29,14 @@ void ATeamManager::Tick(float DeltaTime)
 
 void ATeamManager::SpawnCharacters()
 {
-	TSubclassOf<ARobotCharacter> RobotCharacterDOWNClass = GetRobotCharacterClassFromID(Team * 2, ERobotCharacterPositionEnum::Down);
+	URobotGameInstance* GameInstance = GetWorld()->GetGameInstance<URobotGameInstance>();
+	if (GameInstance == nullptr) return;
+
+	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
+	if (LocalMultiplayerSubsystem == nullptr) return;
+	
+	TSubclassOf<ARobotCharacter> RobotCharacterDOWNClass = GetRobotCharacterClassFromID(
+		GameInstance->RobotID[Team * 2], ERobotCharacterPositionEnum::Down);
 	if (RobotCharacterDOWNClass == nullptr) return;
 
 	ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
@@ -37,9 +45,11 @@ void ATeamManager::SpawnCharacters()
 	);
 	
 	if (NewCharacter == nullptr) return;
-	RobotParts.Add(NewCharacter);
+	NewCharacter->
+	RobotParts.Add(ERobotCharacterPositionEnum::Down, NewCharacter);
 	
-	TSubclassOf<ARobotCharacter> RobotCharacterUPClass = GetRobotCharacterClassFromID(Team * 2, ERobotCharacterPositionEnum::Down);
+	TSubclassOf<ARobotCharacter> RobotCharacterUPClass = GetRobotCharacterClassFromID(
+		GameInstance->RobotID[Team * 2 + 1], ERobotCharacterPositionEnum::Up);
 	if (RobotCharacterUPClass == nullptr) return;
 	//TO DO
 	//SPAWN UP CHARACTER ON SOCKET FROM DOWN CHARACTER
@@ -49,7 +59,7 @@ void ATeamManager::SpawnCharacters()
 	);
 	
 	if (NewCharacter == nullptr) return;
-	RobotParts.Add(NewCharacter);
+	RobotParts.Add(ERobotCharacterPositionEnum::Up, NewCharacter);
 
 	InitCharacters();
 }
@@ -60,8 +70,9 @@ void ATeamManager::InitCharacters()
 	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
 	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
 	
-	for (TObjectPtr<ARobotCharacter> Character : RobotParts)
+	for (TPair<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> Pair : RobotParts)
 	{
+		TObjectPtr<ARobotCharacter> Character = Pair.Value;
 		Character->InputData = InputData;
 		switch (Character->GetPositionEnum())
 		{
@@ -78,15 +89,9 @@ void ATeamManager::InitCharacters()
 		Character->SetOrientX(SpawnPoint->GetStartOrientX());
 		Character->FinishSpawning(SpawnPoint->GetTransform());
 	}
-	
-	UGameInstance* GameInstance = GetWorld()->GetGameInstance();
-	if (GameInstance == nullptr) return;
-
-	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
-	if (LocalMultiplayerSubsystem == nullptr) return;
 }
 
-TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(uint8 ID, ERobotCharacterPositionEnum Pos) const 
+TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
 {
 	const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
 	switch (Pos)
@@ -97,6 +102,28 @@ TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(uint8 ID
 			return ArenaSettings->RobotCharacterUpClass[ID];
 	}
 	return nullptr;
+}
+
+FVector ATeamManager::GetOpponentLocation()
+{
+	return Opponent->GetActorLocation();
+}
+
+FVector ATeamManager::GetTeamLocation()
+{
+	return RobotParts[0]->GetActorLocation();
+}
+
+void ATeamManager::TeamTakeDamage(float Damage, bool CanBreakGuard)
+{
+}
+
+void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
+{
+}
+
+void ATeamManager::TeamPartUnlock(ERobotCharacterPositionEnum Position)
+{
 }
 
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {

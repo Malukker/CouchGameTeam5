@@ -30,7 +30,7 @@ public:
 	uint8 Team = 0;
 	
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
-	TArray<TObjectPtr<ARobotCharacter>> RobotParts;
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	TObjectPtr<ATeamManager> Opponent;
 
 	uint8 TeamLife;
@@ -45,7 +45,8 @@ public:
 	
 	void SpawnCharacters();
 
-	FVector3f GetOpponentLocation();
+	FVector GetOpponentLocation();
+	FVector GetTeamLocation();
 
 	void TeamTakeDamage(float Damage, bool CanBreakGuard);
 	
@@ -59,6 +60,6 @@ private:
 
 	void InitCharacters();
 
-	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromID(uint8 ID, ERobotCharacterPositionEnum Pos) const;
+	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const;
 	
 };

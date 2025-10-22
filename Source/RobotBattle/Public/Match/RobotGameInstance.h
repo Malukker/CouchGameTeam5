@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Characters/RobotCharacter.h"
 #include "Engine/GameInstance.h"
 #include "RobotGameInstance.generated.h"
 
@@ -16,7 +17,7 @@ class ROBOTBATTLE_API URobotGameInstance : public UGameInstance
 
 public:
 	UPROPERTY()
-	TArray<uint8> RobotID;
+	TArray<ERobotID> RobotID;
 	TArray<uint8> PlayersPos;
 
 	void BeginPlay();

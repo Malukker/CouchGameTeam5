@@ -17,8 +17,8 @@ class ROBOTBATTLE_API UArenaSettings : public UDeveloperSettings
 
 public:
 	UPROPERTY(Config, EditAnywhere, Category="Characters")
-	TArray<TSubclassOf<ARobotCharacter>> RobotCharacterUpClass;
+	TMap<ERobotID ,TSubclassOf<ARobotCharacter>> RobotCharacterUpClass;
 	
 	UPROPERTY(Config, EditAnywhere, Category="Characters")
-	TArray<TSubclassOf<ARobotCharacter>> RobotCharacterDownClass;
+	TMap<ERobotID ,TSubclassOf<ARobotCharacter>> RobotCharacterDownClass;
 };

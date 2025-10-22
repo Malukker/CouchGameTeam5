@@ -110,26 +110,25 @@ public:
 protected:
 	UPROPERTY()
 	float InputMoveX = 0.f;
-
-	UPROPERTY(EditAnywhere)
-	EAttackID CurrentTypeAttack = EAttackID::None;
-
 	UPROPERTY()
 	float StunTimer = 0;
 
 	UPROPERTY(EditAnywhere)
-	ERobotID RobotID = ERobotID::None;
+	EAttackID CurrentTypeAttack = EAttackID::None;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
 
 #pragma endregion
 
-#pragma region Position
+#pragma region Info
 public:
 	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
+
+	UPROPERTY(EditAnywhere)
+	ERobotID RobotID = ERobotID::None;
 	
 #pragma endregion
 
