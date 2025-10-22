@@ -8,7 +8,20 @@ public class RobotBattle : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "DeveloperSettings", "LocalMultiplayer" });
+		PublicDependencyModuleNames.AddRange(
+			new string[]
+			{
+				"Core", 
+				"CoreUObject", 
+				"Engine", 
+				"InputCore", 
+				"EnhancedInput", 
+				"DeveloperSettings", 
+				"LocalMultiplayer",
+				"UMG",
+				"UnrealEd",
+				"Blutility"
+			});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
