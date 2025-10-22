@@ -13,9 +13,11 @@ ERobotCharacterStateID URobotCharacterStateAttack::GetStateID() {
 
 void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
-
-	Character->PlayAnimMontage(GetAnimMontageFromCharacterTypeAttack());
-
+	AttackAnim = CurrentAttackStruct.AnimMontage;
+	if (AttackAnim!=nullptr)
+	{Character->PlayAnimMontage(AttackAnim);}
+	
+	
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -49,21 +51,5 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime) {
 	
 }
 
-UAnimMontage* URobotCharacterStateAttack::GetAnimMontageFromCharacterTypeAttack()
-{
-	switch (Character->GetCurrentTypeAttack())
-	{
-	case 0 :
-		return Attack1Anim;
-	case 1 :
-		return Attack2Anim;
-	case 2 :
-		return Attack3Anim;
-	case 3 :
-		return AttackDuoAnim;
 
-		default:
-		return nullptr;
-	}
-}
 

@@ -94,7 +94,7 @@ float ARobotCharacter::GetInputMoveX() const {
 	return InputMoveX;
 }
 
-uint8 ARobotCharacter::GetCurrentTypeAttack() const
+EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
 }
@@ -102,6 +102,11 @@ uint8 ARobotCharacter::GetCurrentTypeAttack() const
 float ARobotCharacter::GetStunTimer() const
 {
 	return StunTimer;
+}
+
+ERobotID ARobotCharacter::GetBodyID() const
+{
+	return BodyID;
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Attacks/AttackStruct.h"
 #include "GameFramework/Character.h"
 #include "RobotCharacter.generated.h"
 
 enum class ERobotCharacterPositionEnum : uint8;
+enum class  ERobotID : uint8;
+enum class EAttackID: uint8;
 class URobotCharacterStateMachine;
 class URobotCharacterInputData;
 class UInputMappingContext;
@@ -84,15 +87,17 @@ protected:
 #pragma region Input
 
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, uint8, AttackType);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
 
 public:
 	float GetInputMoveX() const;
-	uint8 GetCurrentTypeAttack() const;
+	EAttackID GetCurrentTypeAttack() const;
 	float GetStunTimer() const;
+	ERobotID GetBodyID() const;
 
+	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
 
@@ -106,11 +111,14 @@ protected:
 	UPROPERTY()
 	float InputMoveX = 0.f;
 
-	UPROPERTY()
-	uint8 CurrentTypeAttack = -1;
+	UPROPERTY(EditAnywhere)
+	EAttackID CurrentTypeAttack = EAttackID::None;
 
 	UPROPERTY()
 	float StunTimer = 0;
+
+	UPROPERTY(EditAnywhere)
+	ERobotID RobotID = ERobotID::None;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/RobotCharacterState.h"
+#include "Characters/Attacks/AttackStruct.h"
 #include "RobotCharacterStateAttack.generated.h"
 
 
@@ -13,26 +14,20 @@ class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* Attack1Anim;
+	UPROPERTY()
+	FAttackStruct CurrentAttackStruct;
 
-	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* Attack2Anim;
+	UPROPERTY()
+	UAnimMontage* AttackAnim;
 
-	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* Attack3Anim;
 
-	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* AttackDuoAnim;
-
+	
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
 
-
-	UFUNCTION()
-	UAnimMontage* GetAnimMontageFromCharacterTypeAttack();
+	
 
 	
 };

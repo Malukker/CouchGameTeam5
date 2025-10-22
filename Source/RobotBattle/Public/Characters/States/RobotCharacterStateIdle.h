@@ -6,6 +6,7 @@
 #include "Characters/RobotCharacterState.h"
 #include "RobotCharacterStateIdle.generated.h"
 
+enum class EAttackID : uint8;
 /**
  * 
  */
@@ -28,5 +29,5 @@ public:
 	void OnInputJump();
 
 	UFUNCTION()
-	void OnInputAttack(uint8 TypeAttack);
+	void OnInputAttack(EAttackID TypeAttack);
 };

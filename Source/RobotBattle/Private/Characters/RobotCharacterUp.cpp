@@ -47,25 +47,25 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
-	CurrentTypeAttack = 0;
+	CurrentTypeAttack = EAttackID::Type1 ;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
 }
 
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
-	CurrentTypeAttack = 1;
+	CurrentTypeAttack = EAttackID::Type2;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
 }
 
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
-	CurrentTypeAttack = 2;
+	CurrentTypeAttack = EAttackID::Type3;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
 }
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
-	CurrentTypeAttack = 3;
+	CurrentTypeAttack = EAttackID::Ultimate;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
 }
 #pragma endregion
