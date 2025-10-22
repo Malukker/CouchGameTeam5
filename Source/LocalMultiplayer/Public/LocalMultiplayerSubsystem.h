@@ -15,6 +15,8 @@ class LOCALMULTIPLAYER_API ULocalMultiplayerSubsystem : public UGameInstanceSubs
 	GENERATED_BODY()
 	
 public:
+	TArray<TObjectPtr<APlayerController>> Controllers;
+	
 	UFUNCTION(BlueprintCallable)
 	void CreatePlayers();
 	UFUNCTION(BlueprintCallable)

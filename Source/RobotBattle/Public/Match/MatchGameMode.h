@@ -4,13 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Characters/RobotCharacterPositionEnum.h"
 #include "MatchGameMode.generated.h"
 
-class ARobotCharacter;
-class AArenaPlayerStart;
-class URobotCharacterInputData;
-class UInputMappingContext;
 
 /**
  * 
@@ -24,15 +19,5 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-	URobotCharacterInputData* LoadInputDataFromConfig();
-
-	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
-
-	void FindPlayerStartActorsInArena(TArray<AArenaPlayerStart*>& ResultsActors);
-
-	void SpawnCharacters(const TArray<AArenaPlayerStart*> Spawnpoints);
-
-	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromInputType(EAutoReceiveInput::Type InputType) const;
-
 	void CreateAndInitPlayers() const;
 };
