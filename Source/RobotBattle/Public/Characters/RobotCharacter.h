@@ -85,8 +85,7 @@ protected:
 #pragma endregion
 
 #pragma region Input
-
-
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
@@ -95,8 +94,8 @@ public:
 	float GetInputMoveX() const;
 	EAttackID GetCurrentTypeAttack() const;
 	float GetStunTimer() const;
-	ERobotID GetBodyID() const;
-
+	ERobotID GetRobotBodyID() const;
+	uint8 GetDashDirectionX() const;
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -107,11 +106,21 @@ public:
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
 
+	UPROPERTY(EditAnywhere)
+	uint8 Life = 0;
+
+	UPROPERTY(EditAnywhere)
+	uint8 Guard = 0;
+
 protected:
 	UPROPERTY()
 	float InputMoveX = 0.f;
 	UPROPERTY()
 	float StunTimer = 0;
+	UPROPERTY()
+	uint8 DashDirectionX = 0;
+	UPROPERTY()
+	ERobotID RobotID = ERobotID::None;
 
 	UPROPERTY(EditAnywhere)
 	EAttackID CurrentTypeAttack = EAttackID::None;
@@ -126,9 +135,6 @@ public:
 	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
-
-	UPROPERTY(EditAnywhere)
-	ERobotID RobotID = ERobotID::None;
 	
 #pragma endregion
 

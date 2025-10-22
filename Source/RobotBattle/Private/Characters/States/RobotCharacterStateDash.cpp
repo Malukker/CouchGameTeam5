@@ -5,6 +5,7 @@
 
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterStateMachine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ERobotCharacterStateID URobotCharacterStateDash::GetStateID()
 {
@@ -17,11 +18,23 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 
 	Character->PlayAnimMontage(DashAnim);
 	CurrentDashTime = 0;
+	DashDirectionX = Character->GetDashDirectionX();
+
+	OriginalSpeed = CharacterMovement->MaxWalkSpeed;
+	OriginalFriction = CharacterMovement->GroundFriction;
+	OriginalGravityScale = CharacterMovement->GravityScale;
+
+	CharacterMovement->MaxWalkSpeed = DashSpeed;
+	CharacterMovement->GroundFriction = 0.0f;
+	CharacterMovement->GravityScale = 0.0f;
 }
 
 void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
+
+	CharacterMovement->GroundFriction = OriginalFriction;
+	CharacterMovement->GravityScale = OriginalGravityScale;
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)
@@ -35,5 +48,5 @@ void URobotCharacterStateDash::StateTick(float DeltaTime)
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
 
-	Character->AddMovementInput()
+	Character->AddMovementInput(FVector::ForwardVector, DashDirectionX);
 }
