@@ -11,10 +11,17 @@ UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateStun : public URobotCharacterState
 {
 	GENERATED_BODY()
-
+	
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
-	void DisableInput();
+
+private:
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* StunMontage;
+	
+	bool TimeOn = false;
+	float Timer;
 };

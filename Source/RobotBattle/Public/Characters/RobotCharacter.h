@@ -129,7 +129,7 @@ protected:
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	EAttackID CurrentTypeAttack = EAttackID::None;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
