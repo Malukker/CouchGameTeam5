@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "RobotCharacter.generated.h"
 
+enum class ERobotCharacterPositionEnum : uint8;
 class URobotCharacterStateMachine;
 class URobotCharacterInputData;
 class UInputMappingContext;
@@ -80,31 +81,48 @@ protected:
 
 #pragma endregion
 
-#pragma region Input Move X
+#pragma region Input
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputMoveXEvent, float, InputMoveX);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, uint8, AttackType);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
 
 public:
 	float GetInputMoveX() const;
-
-	UPROPERTY()
-	FInputMoveXEvent InputMoveXFastEvent;
+	uint8 GetCurrentTypeAttack() const;
+	float GetStunTimer() const;
 
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
+
+	UPROPERTY()
+	FInputAttackEvent InputAttackEvent;
+
+	UPROPERTY()
+	FInputDashEvent InputDashEvent;
 
 protected:
 	UPROPERTY()
 	float InputMoveX = 0.f;
 
-private:
-	void BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent);
+	UPROPERTY()
+	uint8 CurrentTypeAttack = -1;
 
-	void OnInputMoveX(const FInputActionValue& InputActionValue);
-	void OnInputMoveXFast(const FInputActionValue& InputActionValue);
-	void OnInputJump(const FInputActionValue& InputActionValue);
+	UPROPERTY()
+	float StunTimer = 0;
 
+	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
+
+
+#pragma endregion
+
+#pragma region Position
+public:
+	
+	UFUNCTION()
+	virtual	ERobotCharacterPositionEnum GetPositionEnum();
+	
 #pragma endregion
 
 };
