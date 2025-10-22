@@ -6,6 +6,7 @@
 void URobotGameInstance::BeginPlay()
 {
 	RobotID.Init(0,4);
+	PlayersPos.Init(0,4);
 }
 
 uint8 URobotGameInstance::GetRobotID(int Number)
@@ -16,4 +17,14 @@ uint8 URobotGameInstance::GetRobotID(int Number)
 void URobotGameInstance::SetRobotID(int Number, uint8 ID)
 {
 	RobotID[Number] = ID;
+}
+
+uint8 URobotGameInstance::GetPlayerPos(int Number)
+{
+	return PlayersPos[Number];
+}
+
+void URobotGameInstance::SetPlayerPos(int Number, uint8 Pos)
+{
+	PlayersPos[Number] = Pos;
 }

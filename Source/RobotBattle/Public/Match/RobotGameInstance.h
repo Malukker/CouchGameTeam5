@@ -17,9 +17,12 @@ class ROBOTBATTLE_API URobotGameInstance : public UGameInstance
 public:
 	UPROPERTY()
 	TArray<uint8> RobotID;
+	TArray<uint8> PlayersPos;
 
 	void BeginPlay();
 
 	uint8 GetRobotID(int Number);
 	void SetRobotID(int Number, uint8 ID);
+	uint8 GetPlayerPos(int Number);
+	void SetPlayerPos(int Number, uint8 Pos);
 };

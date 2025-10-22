@@ -4,7 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include <Characters/RobotCharacterPositionEnum.h>
 #include "TeamManager.generated.h"
+
+class URobotCharacterInputData;
+class ARobotCharacter;
+class AArenaPlayerStart;
+class UInputMappingContext;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStunEvent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
@@ -21,6 +27,14 @@ public:
 	FStunEvent StunEvent;
 	FLockEvent LockEvent;
 
+	uint8 Team = 0;
+	
+	TObjectPtr<AArenaPlayerStart> SpawnPoint;
+	TArray<TObjectPtr<ARobotCharacter>> RobotParts;
+	TObjectPtr<ATeamManager> Opponent;
+
+	uint8 TeamLife;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,5 +42,23 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	void SpawnCharacters();
+
+	FVector3f GetOpponentLocation();
+
+	void TeamTakeDamage(float Damage, bool CanBreakGuard);
+	
+	void TeamPartLock(ERobotCharacterPositionEnum Position);
+	void TeamPartUnlock(ERobotCharacterPositionEnum Position);
+	
+private:
+	URobotCharacterInputData* LoadInputDataFromConfig();
+
+	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
+
+	void InitCharacters();
+
+	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromID(uint8 ID, ERobotCharacterPositionEnum Pos) const;
 	
 };

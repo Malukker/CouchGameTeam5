@@ -8,9 +8,10 @@
 void ULocalMultiplayerSubsystem::CreatePlayers() {
 	for (int i = 0; i < 4; i++)
 	{
-		UGameplayStatics::CreatePlayer(GetWorld(), i);
+		Controllers.Add(UGameplayStatics::CreatePlayer(GetWorld(), i));
 	}
 }
+
 int ULocalMultiplayerSubsystem::GetAssignedPlayerIndexFromGamepadDeviceID(int DeviceID) {
 	if (PlayerIndexFromGamepadProfileIndex.Contains(DeviceID)) {
 		return *PlayerIndexFromGamepadProfileIndex.Find(DeviceID);
