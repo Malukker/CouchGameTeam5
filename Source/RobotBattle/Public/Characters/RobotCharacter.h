@@ -113,6 +113,9 @@ public:
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
 
+	UPROPERTY()
+	FInputLockEvent InputLockEvent;
+
 	UPROPERTY(EditAnywhere)
 	uint8 Life = 0;
 
