@@ -62,7 +62,7 @@ void URobotCharacterStateIdle::OnInputJump() {
 	StateMachine->ChangeState(ERobotCharacterStateID::Jump);
 }
 
-void URobotCharacterStateIdle::OnInputAttack(uint8 TypeAttack)
+void URobotCharacterStateIdle::OnInputAttack(EAttackID TypeAttack)
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Attack);
 }
