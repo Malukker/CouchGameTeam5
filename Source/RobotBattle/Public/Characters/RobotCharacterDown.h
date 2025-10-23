@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ARobotCharacterDown();
 
+	UPROPERTY(EditAnywhere)
+	FName UpperBodySocketName;
+
 protected:
 
 	void OnInputMoveX(const FInputActionValue& InputActionValue);
