@@ -16,8 +16,9 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	Character->PlayAnimMontage(FallAnim);
 
-	CharacterMovement->MaxWalkSpeed = FallHorizontalMoveSpeed * FallAirControl;
+	CharacterMovement->AirControl = FallAirControl;
 	CharacterMovement->GravityScale = FallGravityScale;
+	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetOrientX();
 
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
@@ -29,7 +30,7 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
-
+	CharacterMovement->GravityScale = 1;
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -50,6 +51,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 
 	if (CharacterMovement->IsMovingOnGround()) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+		
 	}
 	else {
 		Character->SetOrientX(Character->GetInputMoveX());

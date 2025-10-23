@@ -21,8 +21,7 @@ public:
 	float FallAirControl = 1.0f;
 	UPROPERTY(EditDefaultsOnly)
 	float FallGravityScale = 3.0f;
-	UPROPERTY(EditDefaultsOnly)
-	float FallFastGravityScale = 10.0f;
+	
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FallAnim;
