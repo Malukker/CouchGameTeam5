@@ -38,4 +38,7 @@ public:
 private:
 	UFUNCTION()
 	void InitJumpAccordingToParameters();
+
+	UFUNCTION()
+	void OnDashEvent();
 };

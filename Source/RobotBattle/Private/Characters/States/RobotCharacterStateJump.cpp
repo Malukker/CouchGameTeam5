@@ -44,7 +44,7 @@ void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) 
 void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 
-	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnInputDash);
+	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {
@@ -58,5 +58,11 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
 	}
 }
+
+void URobotCharacterStateJump::OnDashEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
+}
+
 
 
