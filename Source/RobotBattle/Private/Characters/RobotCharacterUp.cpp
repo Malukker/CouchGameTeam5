@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Characters/RobotCharacterUp.h"
 
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-
 
 // Sets default values
 ARobotCharacterUp::ARobotCharacterUp()
@@ -15,30 +13,48 @@ ARobotCharacterUp::ARobotCharacterUp()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void ARobotCharacterUp::AttachToLowerBody(USkeletalMeshComponent* InComponentToBind, FName InSocketName)
+{
+	const FAttachmentTransformRules AttachmentRules =
+		FAttachmentTransformRules
+		(
+			EAttachmentRule::KeepRelative,
+			EAttachmentRule::KeepRelative,
+			EAttachmentRule::KeepRelative,
+			true
+		);
+
+	AttachToComponent(InComponentToBind, AttachmentRules, InSocketName);
+}
+
 // Called when the game starts or when spawn
 
 void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
-	#pragma region AttackBindings
+#pragma region AttackBindings
 	if (InputData->InputActionAttack1)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack1,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputAttack1);
+		EnhancedInputComponent->BindAction(InputData->InputActionAttack1, ETriggerEvent::Started, this,
+		                                   &ARobotCharacterUp::OnInputAttack1);
 	}
-	
+
 	if (InputData->InputActionAttack2)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack2,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputAttack2);
+		EnhancedInputComponent->BindAction(InputData->InputActionAttack2, ETriggerEvent::Started, this,
+		                                   &ARobotCharacterUp::OnInputAttack2);
 	}
-	
+
 	if (InputData->InputActionAttack3)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack3,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputAttack3);
+		EnhancedInputComponent->BindAction(InputData->InputActionAttack3, ETriggerEvent::Started, this,
+		                                   &ARobotCharacterUp::OnInputAttack3);
 	}
-	
+
 	if (InputData->InputActionAttackDuo)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputAttackDuo);
+		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this,
+		                                   &ARobotCharacterUp::OnInputAttackDuo);
 	}
 
 #pragma endregion
@@ -47,7 +63,7 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
-	CurrentTypeAttack = EAttackID::Type1 ;
+	CurrentTypeAttack = EAttackID::Type1;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
 }
 
@@ -74,4 +90,3 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 {
 	return ERobotCharacterPositionEnum::Up;
 }
-

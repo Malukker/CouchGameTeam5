@@ -113,6 +113,9 @@ public:
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
 
+	UPROPERTY()
+	FInputLockEvent InputLockEvent;
+
 	UPROPERTY(EditAnywhere)
 	uint8 Life = 0;
 
@@ -129,7 +132,7 @@ protected:
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	EAttackID CurrentTypeAttack = EAttackID::None;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);

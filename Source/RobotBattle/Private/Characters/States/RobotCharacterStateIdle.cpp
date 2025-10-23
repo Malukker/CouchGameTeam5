@@ -18,45 +18,24 @@ void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputJump);
 	Character->InputAttackEvent.AddDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
-
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Cyan,
-		TEXT("Enter State Idle")
-	);*/
+	Character->InputDashEvent.AddDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
 }
 
 void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
-
 	
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnInputJump);
 	Character->InputAttackEvent.RemoveDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Red,
-		TEXT("Exit State Idle")
-	);*/
+	Character->InputDashEvent.RemoveDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
 }
 
 void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
 
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		0.1f,
-		FColor::Green,
-		TEXT("Tick State Idle")
-	);*/
-
 	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Walk);
 	}
 }
-
-
 
 void URobotCharacterStateIdle::OnInputJump() {
 	StateMachine->ChangeState(ERobotCharacterStateID::Jump);
@@ -65,4 +44,9 @@ void URobotCharacterStateIdle::OnInputJump() {
 void URobotCharacterStateIdle::OnInputAttack(EAttackID TypeAttack)
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Attack);
+}
+
+void URobotCharacterStateIdle::OnInputDash()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
 }
