@@ -46,3 +46,8 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 	}
 }
 
+void URobotCharacterStateFall::OnDashEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
+}
+
