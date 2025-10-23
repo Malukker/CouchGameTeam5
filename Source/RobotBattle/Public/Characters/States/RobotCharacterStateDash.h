@@ -7,7 +7,7 @@
 #include "RobotCharacterStateDash.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateDash : public URobotCharacterState
 {
 	GENERATED_BODY()

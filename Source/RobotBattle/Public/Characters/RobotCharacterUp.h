@@ -14,6 +14,8 @@ class ROBOTBATTLE_API ARobotCharacterUp : public ARobotCharacter
 public:
 	// Sets default values for this character's properties
 	ARobotCharacterUp();
+	
+	void AttachToLowerBody(USkeletalMeshComponent* InComponentToBind, FName InSocketName);
 
 protected:
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
