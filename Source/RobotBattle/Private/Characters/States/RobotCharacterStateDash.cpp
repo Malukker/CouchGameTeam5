@@ -33,6 +33,7 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
 
+	CharacterMovement->MaxWalkSpeed = OriginalSpeed;
 	CharacterMovement->GroundFriction = OriginalFriction;
 	CharacterMovement->GravityScale = OriginalGravityScale;
 }
