@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <Characters/RobotCharacterPositionEnum.h>
+#include <Characters/Attacks/AttackStruct.h>
 #include "TeamManager.generated.h"
 
 class URobotCharacterInputData;
@@ -59,8 +60,6 @@ private:
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
-
-	void InitCharacters();
 
 	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const;
 	

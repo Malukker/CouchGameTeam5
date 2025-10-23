@@ -16,11 +16,10 @@ class ROBOTBATTLE_API URobotGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TArray<ERobotID> RobotID;
+	UPROPERTY(EditDefaultsOnly)
 	TArray<uint8> PlayersPos;
-
-	void BeginPlay();
 
 	ERobotID GetRobotID(int Number);
 	void SetRobotID(int Number, ERobotID ID);

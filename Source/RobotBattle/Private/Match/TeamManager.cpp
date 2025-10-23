@@ -9,7 +9,6 @@
 #include "InputMappingContext.h"
 #include <Characters/RobotCharacterSettings.h>
 #include <Characters/RobotCharacterInputData.h>
-
 #include "LocalMultiplayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
@@ -26,79 +25,65 @@ ATeamManager::ATeamManager()
 void ATeamManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if ((GetOpponentLocation() - GetOpponentLocation()).X > 0) RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
+	else RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
 }
 
 void ATeamManager::SpawnCharacters()
 {
 	URobotGameInstance* GameInstance = GetWorld()->GetGameInstance<URobotGameInstance>();
 	if (GameInstance == nullptr) return;
-
+	
 	ULocalMultiplayerSubsystem* LocalMultiplayerSubsystem = GameInstance->GetSubsystem<ULocalMultiplayerSubsystem>();
 	if (LocalMultiplayerSubsystem == nullptr) return;
-	
-	TSubclassOf<ARobotCharacter> RobotCharacterDOWNClass = GetRobotCharacterClassFromID(
-		GameInstance->RobotID[Team * 2], ERobotCharacterPositionEnum::Down);
-	if (RobotCharacterDOWNClass == nullptr) return;
 
-	ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
-		RobotCharacterDOWNClass,
-		SpawnPoint->GetTransform()
-	);
-	
-	if (NewCharacter == nullptr) return;
-	UGameplayStatics::GetPlayerControllerFromID(GetWorld(), GameInstance->PlayersPos[Team * 2])->Possess(NewCharacter);
-	RobotParts.Add(ERobotCharacterPositionEnum::Down, NewCharacter);
-	
-	TSubclassOf<ARobotCharacter> RobotCharacterUPClass = GetRobotCharacterClassFromID(
-		GameInstance->RobotID[Team * 2 + 1], ERobotCharacterPositionEnum::Up);
-	if (RobotCharacterUPClass == nullptr) return;
-	//TO DO
-	//SPAWN UP CHARACTER ON SOCKET FROM DOWN CHARACTER
-	NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
-		RobotCharacterDOWNClass,
-		SpawnPoint->GetTransform()
-	);
-	
-	if (NewCharacter == nullptr) return;
-	UGameplayStatics::GetPlayerControllerFromID(GetWorld(), GameInstance->PlayersPos[Team * 2 + 1])->Possess(NewCharacter);
-	RobotParts.Add(ERobotCharacterPositionEnum::Up, NewCharacter);
-
-	InitCharacters();
-}
-
-void ATeamManager::InitCharacters()
-{
 	URobotCharacterInputData* InputData = LoadInputDataFromConfig();
 	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
 	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
 
 	TeamGuardMax = 0;
 	TeamGuard = 0;
-	
-	for (TPair<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> Pair : RobotParts)
+
+	// 0 for Down and 1 for Up
+	for (int PartNb = 0; PartNb < 2; PartNb++)
 	{
-		TObjectPtr<ARobotCharacter> Character = Pair.Value;
-		Character->InputData = InputData;
-		switch (Character->GetPositionEnum())
+		ERobotCharacterPositionEnum Pos = ERobotCharacterPositionEnum::None;
+		if (PartNb == 0) Pos = ERobotCharacterPositionEnum::Down;
+		else Pos = ERobotCharacterPositionEnum::Up;
+		
+		TSubclassOf<ARobotCharacter> RobotCharacterClass = GetRobotCharacterClassFromID(
+			GameInstance->RobotID[Team * 2 + PartNb], Pos);
+		if (RobotCharacterClass == nullptr) return;
+
+		ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
+			RobotCharacterClass,
+			SpawnPoint->GetTransform()
+		);
+	
+		if (NewCharacter == nullptr) return;
+		RobotParts.Add(Pos, NewCharacter);
+
+		NewCharacter->InputData = InputData;
+		switch (Pos)
 		{
 		case ERobotCharacterPositionEnum::Down:
-			Character->InputMappingContext = InputMappingContextDown;
+			NewCharacter->InputMappingContext = InputMappingContextDown;
 			break;
 		case ERobotCharacterPositionEnum::Up:
-			Character->InputMappingContext = InputMappingContextUp;
+			NewCharacter->InputMappingContext = InputMappingContextUp;
 			break;
 		default:
 			return;
 		}
-		Character->AutoPossessPlayer = SpawnPoint->AutoReceiveInput;
-		Character->SetOrientX(SpawnPoint->GetStartOrientX());
-		Character->FinishSpawning(SpawnPoint->GetTransform());
+		NewCharacter->AutoPossessPlayer = SpawnPoint->AutoReceiveInput;
+		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
+		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
 		//TeamLife += Character->Life;
 		//TeamGuardMax += Character->Guard;
 	}
-	
-	TeamGuard = TeamGuardMax;
+	TeamGuard = TeamGuardMax;	
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 

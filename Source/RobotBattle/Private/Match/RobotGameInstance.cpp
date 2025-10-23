@@ -3,12 +3,6 @@
 
 #include "Match/RobotGameInstance.h"
 
-void URobotGameInstance::BeginPlay()
-{
-	RobotID.Init(ERobotID::None,4);
-	PlayersPos.Init(0,4);
-}
-
 ERobotID URobotGameInstance::GetRobotID(int Number)
 {
 	return RobotID[Number];
