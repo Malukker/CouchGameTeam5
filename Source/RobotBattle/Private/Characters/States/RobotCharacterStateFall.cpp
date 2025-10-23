@@ -15,16 +15,22 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	Character->PlayAnimMontage(FallAnim);
 
-	CharacterMovement->MaxWalkSpeed = FallHorizontalMoveSpeed * FallAirControl;
+	CharacterMovement->AirControl = FallAirControl;
 	CharacterMovement->GravityScale = FallGravityScale;
+	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetOrientX();
 
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 }
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
-
-	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnDashEvent);
+	CharacterMovement->GravityScale = 1;
+	/*GEngine->AddOnScreenDebugMessage(
+		-1,
+		3.f,
+		FColor::Red,
+		TEXT("Exit State Idle")
+	);*/
 }
 
 void URobotCharacterStateFall::StateTick(float DeltaTime) {
@@ -32,6 +38,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 
 	if (CharacterMovement->IsMovingOnGround()) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+		
 	}
 	else {
 		Character->SetOrientX(Character->GetInputMoveX());

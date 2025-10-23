@@ -11,17 +11,34 @@ ERobotCharacterStateID URobotCharacterStateJump::GetStateID() {
 	return ERobotCharacterStateID::Jump;
 }
 
+void URobotCharacterStateJump::InitJumpAccordingToParameters()
+{
+	if (!CharacterMovement)
+	{
+		GEngine->AddOnScreenDebugMessage(-1,3.f,FColor::Red,TEXT("CHARACTER COMPONENT NULL"));
+		return;
+	}
+	Character->PlayAnimMontage(JumpAnim);
+	CharacterMovement->AirControl = JumpAirControl;
+	float Gravity = -CharacterMovement->GetGravityZ();
+	float GravityJump = (8*JumpMaxHeight)/(JumpDuration*JumpDuration);
+	float VelocityJump = (GravityJump*JumpDuration)/2;
+	CharacterMovement->JumpZVelocity = VelocityJump;
+	CharacterMovement->GravityScale = GravityJump/Gravity;
+	CharacterMovement->Velocity = FVector(JumpWalkSpeed * Character->GetOrientX(),CharacterMovement->Velocity.Y,CharacterMovement->Velocity.Z);
+	Character->Jump();
+}
+
 void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
+	InitJumpAccordingToParameters();
 
-	Character->PlayAnimMontage(JumpAnim);
-
-	CharacterMovement->MaxWalkSpeed = JumpWalkSpeed * JumpAirControl;
-	CharacterMovement->JumpZVelocity = (2 * JumpMaxHeigh) / JumpDuration;
-	CharacterMovement->GravityScale = 1;
-	Character->Jump();
-
-	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnInputDash);
+	/*GEngine->AddOnScreenDebugMessage(
+		-1,
+		3.f,
+		FColor::Cyan,
+		TEXT("Enter State Idle")
+	);*/
 }
 
 void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
@@ -42,7 +59,4 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 	}
 }
 
-void URobotCharacterStateJump::OnInputDash()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
-}
+
