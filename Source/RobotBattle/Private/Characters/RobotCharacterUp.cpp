@@ -18,9 +18,9 @@ void ARobotCharacterUp::AttachToLowerBody(USkeletalMeshComponent* InComponentToB
 	const FAttachmentTransformRules AttachmentRules =
 		FAttachmentTransformRules
 		(
-			EAttachmentRule::KeepRelative,
-			EAttachmentRule::KeepRelative,
-			EAttachmentRule::KeepRelative,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
 			true
 		);
 
