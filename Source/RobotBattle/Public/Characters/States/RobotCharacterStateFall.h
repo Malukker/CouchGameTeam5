@@ -30,4 +30,8 @@ public:
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
+
+private:
+	UFUNCTION()
+	void OnDashEvent();
 };

@@ -8,62 +8,51 @@
 #include "Characters/RobotCharacterSettings.h"
 
 
-ERobotCharacterStateID URobotCharacterStateWalk::GetStateID() {
+ERobotCharacterStateID URobotCharacterStateWalk::GetStateID()
+{
 	return ERobotCharacterStateID::Walk;
 }
 
-void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState) {
+void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
+{
 	Super::StateEnter(PreviousState);
 
 	CharacterMovement->MaxWalkSpeed = WalkSpeedMax;
 	Character->PlayAnimMontage(WalkAnim);
-
-
+	
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
-
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Cyan,
-		TEXT("Enter State Walk")
-	);*/
+	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputDash);
 }
 
-void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState) {
+void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
+{
 	Super::StateExit(NextState);
-
-
+	
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputJump);
-
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Red,
-		TEXT("Exit State Walk")
-	);*/
+	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputDash);
 }
 
-void URobotCharacterStateWalk::StateTick(float DeltaTime) {
+void URobotCharacterStateWalk::StateTick(float DeltaTime)
+{
 	Super::StateTick(DeltaTime);
 
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		0.1f,
-		FColor::Green,
-		TEXT("Tick State Walk")
-	);*/
-
-	if (FMath::Abs(Character->GetInputMoveX()) < CharacterSettings->InputMoveXThreshold) {
+	if (FMath::Abs(Character->GetInputMoveX()) < CharacterSettings->InputMoveXThreshold)
+	{
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	}
-	else {
+	else
+	{
 		Character->SetOrientX(Character->GetInputMoveX());
 		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
 	}
 }
 
-
-
-void URobotCharacterStateWalk::OnInputJump() {
+void URobotCharacterStateWalk::OnInputJump()
+{
 	StateMachine->ChangeState(ERobotCharacterStateID::Jump);
+}
+
+void URobotCharacterStateWalk::OnInputDash()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
 }

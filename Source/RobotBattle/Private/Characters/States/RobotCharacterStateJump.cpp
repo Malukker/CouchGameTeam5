@@ -44,23 +44,11 @@ void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) 
 void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Red,
-		TEXT("Exit State Idle")
-	);*/
+	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnInputDash);
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
-
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		0.1f,
-		FColor::Green,
-		TEXT("Tick State Idle")
-	);*/
 
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);

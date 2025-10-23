@@ -4,7 +4,6 @@
 #include "Characters/RobotCharacterDown.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
-#include "RobotCharacterState.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
 #include "Characters/RobotCharacterStateMachine.h"
@@ -16,7 +15,6 @@ ARobotCharacterDown::ARobotCharacterDown()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
-
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
@@ -43,7 +41,6 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
 	
-
 	if (InputData->InputActionMoveX) {
 		EnhancedInputComponent->BindAction(
 			InputData->InputActionMoveX,
@@ -74,7 +71,6 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputDash);
 	}
-	
 }
 
 ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()
