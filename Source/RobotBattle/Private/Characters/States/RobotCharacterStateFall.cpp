@@ -24,6 +24,7 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
+	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 	CharacterMovement->GravityScale = 1;
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
