@@ -4,13 +4,15 @@
 #include "Match/TeamManager.h"
 
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterUp.h"
+#include "Characters/RobotCharacterDown.h"
+
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
-#include "InputMappingContext.h"
 #include <Characters/RobotCharacterSettings.h>
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
-#include "Kismet/GameplayStatics.h"
+#include "InputMappingContext.h"
 #include "Match/RobotGameInstance.h"
 
 
@@ -26,8 +28,16 @@ void ATeamManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if ((GetOpponentLocation() - GetOpponentLocation()).X > 0) RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
-	else RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
+	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+	{
+		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(1);
+	}
+	else 
+	{
+		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(-1);
+	}
 }
 
 void ATeamManager::SpawnCharacters()
@@ -83,7 +93,11 @@ void ATeamManager::SpawnCharacters()
 		//TeamLife += Character->Life;
 		//TeamGuardMax += Character->Guard;
 	}
-	TeamGuard = TeamGuardMax;	
+	TeamGuard = TeamGuardMax;
+
+	Cast<ARobotCharacterUp>(RobotParts[ERobotCharacterPositionEnum::Up])->AttachToLowerBody(
+		RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
+		Cast<ARobotCharacterDown>(RobotParts[ERobotCharacterPositionEnum::Down])->UpperBodySocketName);
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -102,7 +116,7 @@ TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID
 
 FVector ATeamManager::GetOpponentLocation()
 {
-	return Opponent->GetActorLocation();
+	return Opponent->GetTeamLocation();
 }
 
 FVector ATeamManager::GetTeamLocation()

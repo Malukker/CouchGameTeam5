@@ -17,7 +17,7 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	CharacterMovement->AirControl = FallAirControl;
 	CharacterMovement->GravityScale = FallGravityScale;
-	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetOrientX();
+	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetInputMoveX();
 
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 }
@@ -42,8 +42,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 		
 	}
 	else {
-		Character->SetOrientX(Character->GetInputMoveX());
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
+		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
 	}
 }
 

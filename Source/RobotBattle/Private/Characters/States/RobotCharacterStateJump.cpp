@@ -25,7 +25,7 @@ void URobotCharacterStateJump::InitJumpAccordingToParameters()
 	float VelocityJump = (GravityJump*JumpDuration)/2;
 	CharacterMovement->JumpZVelocity = VelocityJump;
 	CharacterMovement->GravityScale = GravityJump/Gravity;
-	CharacterMovement->Velocity = FVector(JumpWalkSpeed * Character->GetOrientX(),CharacterMovement->Velocity.Y,CharacterMovement->Velocity.Z);
+	CharacterMovement->Velocity = FVector(JumpWalkSpeed * Character->GetInputMoveX(),CharacterMovement->Velocity.Y,CharacterMovement->Velocity.Z);
 	Character->Jump();
 }
 
@@ -54,8 +54,7 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
 	else {
-		Character->SetOrientX(Character->GetInputMoveX());
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
+		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
 	}
 }
 

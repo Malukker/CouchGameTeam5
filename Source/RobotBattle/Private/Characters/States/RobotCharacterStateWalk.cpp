@@ -42,8 +42,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 	}
 	else
 	{
-		Character->SetOrientX(Character->GetInputMoveX());
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetOrientX());
+		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
 	}
 }
 
