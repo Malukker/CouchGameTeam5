@@ -32,7 +32,7 @@ void URobotCharacterStateJump::InitJumpAccordingToParameters()
 void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
 	InitJumpAccordingToParameters();
-
+	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
