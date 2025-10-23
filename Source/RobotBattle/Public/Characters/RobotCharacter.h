@@ -89,11 +89,15 @@ protected:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputStunEvent,float,StunTimer);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputLockEvent,bool,IsLocked);
+	
 
 public:
 	float GetInputMoveX() const;
 	EAttackID GetCurrentTypeAttack() const;
 	float GetStunTimer() const;
+	void SetStunTimer(float NewStunTimer);
 	ERobotID GetRobotBodyID() const;
 	uint8 GetDashDirectionX() const;
 	
@@ -104,7 +108,13 @@ public:
 	FInputAttackEvent InputAttackEvent;
 
 	UPROPERTY()
+	FInputDashEvent InputStunEvent;
+
+	UPROPERTY()
 	FInputDashEvent InputDashEvent;
+
+	UPROPERTY()
+	FInputLockEvent InputLockEvent;
 
 	UPROPERTY(EditAnywhere)
 	uint8 Life = 0;
@@ -122,7 +132,7 @@ protected:
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	EAttackID CurrentTypeAttack = EAttackID::None;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
