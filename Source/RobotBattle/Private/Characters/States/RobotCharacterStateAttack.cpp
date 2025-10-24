@@ -7,56 +7,50 @@
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
 #include "Characters/Animations/AnimNotify/StartAttackDetectionAnimNotify.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/KismetSystemLibrary.h"
 
-
-
-
-ERobotCharacterStateID URobotCharacterStateAttack::GetStateID() {
+ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
+{
 	return ERobotCharacterStateID::Attack;
 }
 
-void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState) {
+void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState)
+{
 	Super::StateEnter(PreviousState);
 	AttackAnim = CurrentAttackStruct.AnimMontage;
 	if (AttackAnim)
 	{
 		InitAnimationNotify();
-		Character->PlayAnimMontage(AttackAnim);
+		float AnimDuration = Character->PlayAnimMontage(AttackAnim);
+		KeyframeDeltaTime = AnimDuration / AttackAnim->GetNumberOfSampledKeys();
+		CurrentTime = 0.0f;
+		StartSocketName = CurrentAttackStruct.ConcernedBones[0];
+		EndSocketName = CurrentAttackStruct.ConcernedBones[1];
 	}
-	
-	
-	
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Cyan,
-		TEXT("Enter State Idle")
-	);*/
 }
 
-void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState) {
+void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
+{
 	Super::StateExit(NextState);
-
-	
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Red,
-		TEXT("Exit State Idle")
-	);*/
 }
 
-void URobotCharacterStateAttack::StateTick(float DeltaTime) {
+void URobotCharacterStateAttack::StateTick(float DeltaTime)
+{
 	Super::StateTick(DeltaTime);
 
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		0.1f,
-		FColor::Green,
-		TEXT("Tick State Idle")
-	);*/
+	CurrentTime += DeltaTime;
 
+	if (bIsAttackTraceEnabled)
+	{
+		if (CurrentTime / KeyframeDeltaTime < 1.f / 60.f)
+		{
+			FVector StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation();
+			FVector EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation();
 	
+			UKismetSystemLibrary::SphereTraceSingle(GetWorld(), )
+		}
+	}
 }
 
 void URobotCharacterStateAttack::InitAnimationNotify()
@@ -66,12 +60,13 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack.AddUObject(this,&URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartNotify->OnNotifiedStartAttack.
+			             AddUObject(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.AddUObject(this,&URobotCharacterStateAttack::EndDetectionNotifyAttack);
+			EndNotify->OnNotifiedEndAttack.AddUObject(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 }
@@ -81,27 +76,27 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 	//TODO
 	//Lance les traces
 	//La taille
+
+	bIsAttackTraceEnabled = true;
+
 	GEngine->AddOnScreenDebugMessage(
 		-1,
 		0.1f,
 		FColor::Red,
 		TEXT("Start Detection Notify")
 	);
-	
 }
 
 void URobotCharacterStateAttack::EndDetectionNotifyAttack()
 {
 	//TODO
-	
+
+	bIsAttackTraceEnabled = false;
+
 	GEngine->AddOnScreenDebugMessage(
 		-1,
 		0.1f,
 		FColor::Green,
 		TEXT("End Detection Notify")
 	);
-
 }
-
-
-

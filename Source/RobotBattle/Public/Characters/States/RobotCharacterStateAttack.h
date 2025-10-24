@@ -20,18 +20,32 @@ public:
 	UPROPERTY()
 	UAnimMontage* AttackAnim;
 
-
-	
 	virtual ERobotCharacterStateID GetStateID() override;
+	
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
+	
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
+	
 	virtual void StateTick(float DeltaTime) override;
 
+#pragma region Animation
 	
 private:
-#pragma region Notify Animation
+	float KeyframeDeltaTime;
+
+	float CurrentTime;
+
+	bool bIsAttackTraceEnabled;
+
+	FName StartSocketName;
+
+	FName EndSocketName;
+
 	void InitAnimationNotify();
+	
 	void StartDetectionNotifyAttack();
+	
 	void EndDetectionNotifyAttack();
+	
 #pragma endregion
 };
