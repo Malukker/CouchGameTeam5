@@ -104,9 +104,19 @@ float ARobotCharacter::GetStunTimer() const
 	return StunTimer;
 }
 
-ERobotID ARobotCharacter::GetBodyID() const
+void ARobotCharacter::SetStunTimer(float NewStunTimer)
 {
-	return BodyID;
+	StunTimer = NewStunTimer;
+}
+
+ERobotID ARobotCharacter::GetRobotBodyID() const
+{
+	return RobotID;
+}
+
+uint8 ARobotCharacter::GetDashDirectionX() const
+{
+	return DashDirectionX;
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

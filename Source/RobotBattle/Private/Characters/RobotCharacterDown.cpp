@@ -5,6 +5,8 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterStateID.h"
+#include "Characters/RobotCharacterStateMachine.h"
 
 
 // Sets default values
@@ -13,7 +15,6 @@ ARobotCharacterDown::ARobotCharacterDown()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
-
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
@@ -27,6 +28,12 @@ void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 
 void ARobotCharacterDown::OnInputDash(const FInputActionValue& InputActionValue)
 {
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Dash)
+	{
+		return;
+	}
+
+	DashDirectionX = FMath::Sign(InputActionValue.Get<float>());
 	InputDashEvent.Broadcast();
 }
 
@@ -34,7 +41,6 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
 	
-
 	if (InputData->InputActionMoveX) {
 		EnhancedInputComponent->BindAction(
 			InputData->InputActionMoveX,
@@ -65,7 +71,6 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputDash);
 	}
-	
 }
 
 ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()

@@ -18,7 +18,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float JumpWalkSpeed = 400.0f;
 	UPROPERTY(EditDefaultsOnly)
-	float JumpMaxHeigh = 280.0f;
+	float JumpMaxHeight = 280.0f;
 	UPROPERTY(EditDefaultsOnly)
 	float JumpDuration = 1.0f;
 	UPROPERTY(EditDefaultsOnly)
@@ -27,8 +27,18 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* JumpAnim;
 
+	
+
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
+
+
+private:
+	UFUNCTION()
+	void InitJumpAccordingToParameters();
+
+	UFUNCTION()
+	void OnDashEvent();
 };

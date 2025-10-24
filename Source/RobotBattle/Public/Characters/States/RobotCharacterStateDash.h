@@ -7,7 +7,7 @@
 #include "RobotCharacterStateDash.generated.h"
 
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateDash : public URobotCharacterState
 {
 	GENERATED_BODY()
@@ -32,5 +32,13 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	uint8 DashDirectionX;
+	
 	float CurrentDashTime;
+
+	float OriginalSpeed;
+	
+	float OriginalFriction;
+
+	float OriginalGravityScale;
 };

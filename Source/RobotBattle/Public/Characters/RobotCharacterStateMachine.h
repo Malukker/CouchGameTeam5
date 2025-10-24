@@ -31,6 +31,8 @@ public:
 
 	URobotCharacterState* GetState(ERobotCharacterStateID StateID);
 
+	ERobotCharacterStateID GetCurrentStateID() const;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<ARobotCharacter> Character;

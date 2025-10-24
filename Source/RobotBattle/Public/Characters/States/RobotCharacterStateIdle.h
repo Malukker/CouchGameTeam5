@@ -24,10 +24,13 @@ public:
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
 
-
+private:
 	UFUNCTION()
 	void OnInputJump();
 
 	UFUNCTION()
 	void OnInputAttack(EAttackID TypeAttack);
+
+	UFUNCTION()
+	void OnInputDash();
 };

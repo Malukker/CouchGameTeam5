@@ -45,6 +45,11 @@ URobotCharacterState* URobotCharacterStateMachine::GetState(ERobotCharacterState
 	return nullptr;
 }
 
+ERobotCharacterStateID URobotCharacterStateMachine::GetCurrentStateID() const
+{
+	return CurrentStateID;
+}
+
 void URobotCharacterStateMachine::ChangeState(ERobotCharacterStateID NextStateID) {
 	URobotCharacterState* NextState = GetState(NextStateID);
 	//Do Nothing if NextState not found

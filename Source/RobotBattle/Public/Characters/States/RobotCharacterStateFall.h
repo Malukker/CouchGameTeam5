@@ -21,8 +21,7 @@ public:
 	float FallAirControl = 1.0f;
 	UPROPERTY(EditDefaultsOnly)
 	float FallGravityScale = 3.0f;
-	UPROPERTY(EditDefaultsOnly)
-	float FallFastGravityScale = 10.0f;
+	
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FallAnim;
@@ -31,4 +30,8 @@ public:
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
+
+private:
+	UFUNCTION()
+	void OnDashEvent();
 };
