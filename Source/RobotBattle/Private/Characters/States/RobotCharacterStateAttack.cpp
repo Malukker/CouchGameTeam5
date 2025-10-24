@@ -44,7 +44,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 
 	if (bIsAttackTraceEnabled)
 	{
-		if (CurrentTime / KeyframeDeltaTime < 1.f / 60.f)
+		if (CurrentTime >= KeyframeDeltaTime)
 		{
 			const FVector StartPos =
 				Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
@@ -70,6 +70,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					}
 				}
 			}
+			CurrentTime -= KeyframeDeltaTime;
 		}
 	}
 }
@@ -113,6 +114,8 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack()
 	//TODO
 
 	bIsAttackTraceEnabled = false;
+	CurrentTime = 0;
+	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 
 	GEngine->AddOnScreenDebugMessage(
 		-1,
