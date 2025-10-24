@@ -18,8 +18,27 @@ class ROBOTBATTLE_API URobotCharacterInputData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionMoveX;
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveXFast;
+	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionJump;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionRightDash;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionLeftDash;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionAttack1;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionAttack2;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionAttack3;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionAttackDuo;
+
+
 };

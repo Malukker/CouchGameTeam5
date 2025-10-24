@@ -6,6 +6,7 @@
 #include <EnhancedInputSubsystems.h>
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
+#include "Characters/RobotCharacterPositionEnum.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -42,7 +43,7 @@ void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent == nullptr) return;
 
-	BindInputMoveXAxisAndActions(EnhancedInputComponent);
+	BindInputAndActions(EnhancedInputComponent);
 }
 
 float ARobotCharacter::GetOrientX() const
@@ -93,59 +94,52 @@ float ARobotCharacter::GetInputMoveX() const {
 	return InputMoveX;
 }
 
-void ARobotCharacter::BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
+EAttackID ARobotCharacter::GetCurrentTypeAttack() const
+{
+	return CurrentTypeAttack;
+}
+
+float ARobotCharacter::GetStunTimer() const
+{
+	return StunTimer;
+}
+
+void ARobotCharacter::SetStunTimer(float NewStunTimer)
+{
+	StunTimer = NewStunTimer;
+}
+
+void ARobotCharacter::UseDash()
+{
+	CanDash = false;
+}
+
+void ARobotCharacter::ResetDash()
+{
+	CanDash = true;
+}
+
+void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
+{
+	RobotID = Robot;
+}
+
+ERobotID ARobotCharacter::GetRobotBodyID() const
+{
+	return RobotID;
+}
+
+int ARobotCharacter::GetDashDirectionX() const
+{
+	return DashDirectionX;
+}
+
+void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
 	if (InputData == nullptr) return;
-
-	if (InputData->InputActionMoveX) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Started,
-			this,
-			&ARobotCharacter::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Completed,
-			this,
-			&ARobotCharacter::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Triggered,
-			this,
-			&ARobotCharacter::OnInputMoveX
-		);
-	}
-
-
-	if (InputData->InputActionMoveXFast) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveXFast,
-			ETriggerEvent::Triggered,
-			this,
-			&ARobotCharacter::OnInputMoveXFast
-		);
-	}
-
-	if (InputData->InputActionJump) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionJump,
-			ETriggerEvent::Started,
-			this,
-			&ARobotCharacter::OnInputJump
-		);
-	}
+	
 }
 
-void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue) {
-	InputMoveX = InputActionValue.Get<float>();
-}
-
-void ARobotCharacter::OnInputMoveXFast(const FInputActionValue& InputActionValue) {
-	InputMoveX = InputActionValue.Get<float>();
-	InputMoveXFastEvent.Broadcast(InputMoveX);
-}
-
-void ARobotCharacter::OnInputJump(const FInputActionValue& InputActionValue) {
-	InputJumpEvent.Broadcast();
+ERobotCharacterPositionEnum ARobotCharacter::GetPositionEnum()
+{
+	return ERobotCharacterPositionEnum::None;
 }

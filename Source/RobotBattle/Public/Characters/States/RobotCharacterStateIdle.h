@@ -6,6 +6,7 @@
 #include "Characters/RobotCharacterState.h"
 #include "RobotCharacterStateIdle.generated.h"
 
+enum class EAttackID : uint8;
 /**
  * 
  */
@@ -23,9 +24,13 @@ public:
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
 
-	UFUNCTION()
-	void OnInputMoveXFast(float InputMoveX);
-
+private:
 	UFUNCTION()
 	void OnInputJump();
+
+	UFUNCTION()
+	void OnInputAttack(EAttackID TypeAttack);
+
+	UFUNCTION()
+	void OnInputDash();
 };

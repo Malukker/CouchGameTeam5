@@ -6,10 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "MatchGameMode.generated.h"
 
-class ARobotCharacter;
-class AArenaPlayerStart;
-class URobotCharacterInputData;
-class UInputMappingContext;
 
 /**
  * 
@@ -22,20 +18,6 @@ class ROBOTBATTLE_API AMatchGameMode : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 
-protected:
-	UPROPERTY()
-	TArray<ARobotCharacter*> CharactersInsideArena;
-
 private:
-	URobotCharacterInputData* LoadInputDataFromConfig();
-
-	UInputMappingContext* LoadInputMappingContextFromConfig();
-
-	void FindPlayerStartActorsInArena(TArray<AArenaPlayerStart*>& ResultsActors);
-
-	void SpawnCharacters(const TArray<AArenaPlayerStart*> Spawnpoints);
-
-	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromInputType(EAutoReceiveInput::Type InputType) const;
-
 	void CreateAndInitPlayers() const;
 };

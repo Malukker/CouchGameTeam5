@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Attacks/AttackStruct.h"
 #include "GameFramework/Character.h"
 #include "RobotCharacter.generated.h"
 
+enum class ERobotCharacterPositionEnum : uint8;
+enum class  ERobotID : uint8;
+enum class EAttackID: uint8;
 class URobotCharacterStateMachine;
 class URobotCharacterInputData;
 class UInputMappingContext;
@@ -80,31 +84,73 @@ protected:
 
 #pragma endregion
 
-#pragma region Input Move X
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputMoveXEvent, float, InputMoveX);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
+#pragma region Input
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputStunEvent,float,StunTimer);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputLockEvent,bool,IsLocked);
+	
 
 public:
 	float GetInputMoveX() const;
-
-	UPROPERTY()
-	FInputMoveXEvent InputMoveXFastEvent;
-
+	EAttackID GetCurrentTypeAttack() const;
+	float GetStunTimer() const;
+	void SetStunTimer(float NewStunTimer);
+	void UseDash();
+	void ResetDash();
+	void SetRobotBodyID(ERobotID Robot);
+	ERobotID GetRobotBodyID() const;
+	int GetDashDirectionX() const;
+	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
+
+	UPROPERTY()
+	FInputAttackEvent InputAttackEvent;
+
+	UPROPERTY()
+	FInputDashEvent InputStunEvent;
+
+	UPROPERTY()
+	FInputDashEvent InputDashEvent;
+
+	UPROPERTY()
+	FInputLockEvent InputLockEvent;
+
+	UPROPERTY(EditAnywhere)
+	int Life = 0;
+
+	UPROPERTY(EditAnywhere)
+	int Guard = 0;
 
 protected:
 	UPROPERTY()
 	float InputMoveX = 0.f;
+	UPROPERTY()
+	float StunTimer = 0;
+	UPROPERTY()
+	int DashDirectionX = 0;
+	UPROPERTY()
+	bool CanDash = true;
+	UPROPERTY()
+	ERobotID RobotID = ERobotID::None;
 
-private:
-	void BindInputMoveXAxisAndActions(UEnhancedInputComponent* EnhancedInputComponent);
+	UPROPERTY()
+	EAttackID CurrentTypeAttack = EAttackID::None;
 
-	void OnInputMoveX(const FInputActionValue& InputActionValue);
-	void OnInputMoveXFast(const FInputActionValue& InputActionValue);
-	void OnInputJump(const FInputActionValue& InputActionValue);
+	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
+
+#pragma endregion
+
+#pragma region Info
+public:
+	
+	UFUNCTION()
+	virtual	ERobotCharacterPositionEnum GetPositionEnum();
+	
 #pragma endregion
 
 };
