@@ -59,6 +59,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
 	float HealthPlayer2;
+
+	UPROPERTY(EditAnywhere, Blueprintable, Category= "Round")
+	int RoundwinPlayer1;
+
+	UPROPERTY(EditAnywhere, Blueprintable, Category= "Round")
+	int RoundwinPlayer2;
 	
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Timer")
 	float elapsedTime = 0.0f;

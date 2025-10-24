@@ -3,6 +3,7 @@
 
 #include "UI/RobotBattleHUD.h"
 
+#include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "UI/RobotBattleMainMenu.h"
@@ -59,16 +60,42 @@ void URobotBattleHUD::StopTimer()
 	if (HealthBarPlayer1->GetPercent() > HealthBarPlayer2->GetPercent())
 	{
 		GEngine->AddOnScreenDebugMessage(1,3,FColor::Green,"Player1 win");
+		
+		if (CheckBoxRound1->GetCheckedState() == ECheckBoxState::Checked)
+		{
+			RoundwinPlayer1 = 1;
+			GEngine->AddOnScreenDebugMessage(1,3,FColor::Green,"Player1 round win");
+		}
+
+		if (CheckBoxRound2->GetCheckedState() == ECheckBoxState::Checked)
+		{
+			RoundwinPlayer1 = 2;
+		}
+
+		if (RoundwinPlayer1 == 1 && CheckBoxRound1->GetCheckedState() == ECheckBoxState::Checked)
+		{
+			CheckBoxRound2->SetCheckedState(ECheckBoxState::Checked);
+		}
+
+		if (CheckBoxRound1->GetCheckedState() == ECheckBoxState::Checked && CheckBoxRound2->GetCheckedState() == ECheckBoxState::Checked)
+		{
+			GEngine->AddOnScreenDebugMessage(1,3,FColor::Green,"Player1 win the game");
+		}
 	}
 
 	if (HealthBarPlayer1->GetPercent() < HealthBarPlayer2->GetPercent())
 	{
 		GEngine->AddOnScreenDebugMessage(1, 3,FColor::Cyan,"Player2 Win");
+		CheckBoxRound4->SetCheckedState(ECheckBoxState::Checked);
 	}
 
 	if (HealthBarPlayer1->GetPercent() == HealthBarPlayer2->GetPercent())
 	{
 		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Red, "Draw");
+		CheckBoxRound1->SetCheckedState(ECheckBoxState::Unchecked);
+		CheckBoxRound2->SetCheckedState(ECheckBoxState::Unchecked);
+		CheckBoxRound3->SetCheckedState(ECheckBoxState::Unchecked);
+		CheckBoxRound4->SetCheckedState(ECheckBoxState::Unchecked);
 	}
 }
 
