@@ -34,9 +34,7 @@ private:
 	float KeyframeDeltaTime;
 
 	float CurrentTime;
-
-	bool bIsAttackTraceEnabled;
-
+	
 	FName StartSocketName;
 
 	FName EndSocketName;
@@ -46,6 +44,12 @@ private:
 	void StartDetectionNotifyAttack();
 	
 	void EndDetectionNotifyAttack();
+	
+#pragma endregion
+
+#pragma region Attack
+	
+	bool bIsAttackTraceEnabled;
 	
 #pragma endregion
 };

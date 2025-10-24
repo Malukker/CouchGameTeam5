@@ -7,6 +7,7 @@
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
 #include "Characters/Animations/AnimNotify/StartAttackDetectionAnimNotify.h"
+#include "Characters/Interface/Robot.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -45,10 +46,30 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 	{
 		if (CurrentTime / KeyframeDeltaTime < 1.f / 60.f)
 		{
-			FVector StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation();
-			FVector EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation();
-	
-			UKismetSystemLibrary::SphereTraceSingle(GetWorld(), )
+			const FVector StartPos =
+				Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
+			const FVector EndPos =
+				Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation(Character->GetMesh());
+			const TArray<AActor*> ActorsToIgnore;
+			FHitResult OutHit;
+
+			if (UKismetSystemLibrary::SphereTraceSingle
+				(
+					GetWorld(),
+					StartPos, EndPos, CurrentAttackStruct.TraceRadius,
+					TraceTypeQuery1, false, ActorsToIgnore,
+					EDrawDebugTrace::ForDuration,
+					OutHit, true
+				))
+			{
+				if (OutHit.GetActor())
+				{
+					if (OutHit.GetActor()->Implements<URobot>())
+					{
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage);
+					}
+				}
+			}
 		}
 	}
 }
