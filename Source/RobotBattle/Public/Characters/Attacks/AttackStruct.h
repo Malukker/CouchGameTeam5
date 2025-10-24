@@ -38,4 +38,7 @@ struct FAttackStruct
 
 	UPROPERTY(EditAnywhere)
 	float TraceRadius = 0.f;
+
+	UPROPERTY(EditAnywhere)
+	int Damage = 0;
 };
