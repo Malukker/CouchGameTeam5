@@ -37,10 +37,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
-	uint8 TeamLife = 0;
+	int TeamLife = 0;
 	
-	uint8 TeamGuardMax = 0;
-	uint8 TeamGuard = 0;
+	int TeamGuardMax = 0;
+	int TeamGuard = 0;
 	bool IsGuarding = false;
 
 	// Called every frame

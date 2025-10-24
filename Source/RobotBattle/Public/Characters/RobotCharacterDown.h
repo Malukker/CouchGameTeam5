@@ -15,16 +15,15 @@ public:
 	// Sets default values for this character's properties
 	ARobotCharacterDown();
 
-	UPROPERTY(EditAnywhere)
-	FName UpperBodySocketName;
-
 protected:
 
 	void OnInputMoveX(const FInputActionValue& InputActionValue);
 	
 	void OnInputJump(const FInputActionValue& InputActionValue);
 
-	void OnInputDash(const FInputActionValue& InputActionValue);
+	void OnInputLeftDash(const FInputActionValue& InputActionValue);
+	
+	void OnInputRightDash(const FInputActionValue& InputActionValue);
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 

@@ -26,14 +26,17 @@ void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 	InputJumpEvent.Broadcast();
 }
 
-void ARobotCharacterDown::OnInputDash(const FInputActionValue& InputActionValue)
+void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
-	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Dash)
-	{
-		return;
-	}
+	if (!CanDash) return;
+	DashDirectionX = 1;
+	InputDashEvent.Broadcast();
+}
 
-	DashDirectionX = FMath::Sign(InputActionValue.Get<float>());
+void ARobotCharacterDown::OnInputLeftDash(const FInputActionValue& InputActionValue)
+{
+	if (!CanDash) return;
+	DashDirectionX = -1;
 	InputDashEvent.Broadcast();
 }
 
@@ -67,9 +70,14 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 		EnhancedInputComponent->BindAction(InputData->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
 	}
 
-	if (InputData->InputActionDash)
+	if (InputData->InputActionRightDash)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputDash);
+		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputRightDash);
+	}
+	
+	if (InputData->InputActionLeftDash)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputLeftDash);
 	}
 }
 
