@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class ERobotCharacterDownID : uint8 {
+enum class ERobotCharacterDownChargeID : uint8 {
 	None = 0,
 	Tank,
-	Attack,
-	Zoner
+	Dash
 };

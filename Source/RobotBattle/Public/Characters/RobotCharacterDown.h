@@ -25,6 +25,8 @@ protected:
 	
 	void OnInputRightDash(const FInputActionValue& InputActionValue);
 
+	void 
+
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
