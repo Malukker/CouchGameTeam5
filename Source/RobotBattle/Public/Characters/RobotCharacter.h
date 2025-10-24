@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Attacks/AttackStruct.h"
 #include "GameFramework/Character.h"
+#include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
 enum class ERobotCharacterPositionEnum : uint8;
@@ -17,7 +18,7 @@ class UEnhancedInputComponent;
 struct FInputActionValue;
 
 UCLASS()
-class ROBOTBATTLE_API ARobotCharacter : public ACharacter
+class ROBOTBATTLE_API ARobotCharacter : public ACharacter, public IRobot
 {
 	GENERATED_BODY()
 
@@ -89,20 +90,24 @@ protected:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputStunEvent,float,StunTimer);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputLockEvent,bool,IsLocked);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInputHurtManagerEvent, int, Damage, float, StunTimer);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputLockManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputHurtEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputLockEvent);
 	
 
 public:
 	float GetInputMoveX() const;
 	EAttackID GetCurrentTypeAttack() const;
+	void SetStunTimer(float StunTime) ;
 	float GetStunTimer() const;
-	void SetStunTimer(float NewStunTimer);
 	void UseDash();
 	void ResetDash();
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	int GetDashDirectionX() const;
+	
+	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -111,13 +116,17 @@ public:
 	FInputAttackEvent InputAttackEvent;
 
 	UPROPERTY()
-	FInputDashEvent InputStunEvent;
-
-	UPROPERTY()
 	FInputDashEvent InputDashEvent;
 
 	UPROPERTY()
 	FInputLockEvent InputLockEvent;
+	UPROPERTY()
+	FInputLockManagerEvent InputLockManagerEvent;
+	
+	UPROPERTY()
+	FInputHurtEvent InputHurtEvent;
+	UPROPERTY()
+	FInputHurtManagerEvent InputHurtManagerEvent;
 
 	UPROPERTY(EditAnywhere)
 	int Life = 0;

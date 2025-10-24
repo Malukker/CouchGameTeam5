@@ -21,5 +21,5 @@ class ROBOTBATTLE_API IRobot
 	GENERATED_BODY()
 
 public:
-	virtual void TakeDamageFromAttack(int Damage) = 0;
+	virtual void TakeDamageFromAttack(int Damage, float StunTime) = 0;
 };

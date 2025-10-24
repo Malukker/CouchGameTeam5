@@ -7,6 +7,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterStateID.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -14,6 +15,11 @@ ARobotCharacter::ARobotCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+}
+
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
+{
+	InputHurtManagerEvent.Broadcast(Damage, StunTime);
 }
 
 // Called when the game starts or when spawned
@@ -99,14 +105,15 @@ EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 	return CurrentTypeAttack;
 }
 
+
 float ARobotCharacter::GetStunTimer() const
 {
 	return StunTimer;
 }
 
-void ARobotCharacter::SetStunTimer(float NewStunTimer)
+void ARobotCharacter::SetStunTimer(float StunTime)
 {
-	StunTimer = NewStunTimer;
+	StunTimer = StunTime;
 }
 
 void ARobotCharacter::UseDash()

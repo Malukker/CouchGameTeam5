@@ -25,23 +25,13 @@ public:
 	// Sets default values for this actor's properties
 	ATeamManager();
 
-	FStunEvent StunEvent;
-	FLockEvent LockEvent;
-
 	UPROPERTY(EditAnywhere)
 	uint8 Team = 0;
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
-	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
-
-	int TeamLife = 0;
-	
-	int TeamGuardMax = 0;
-	int TeamGuard = 0;
-	bool IsGuarding = false;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -49,14 +39,24 @@ public:
 	void SpawnCharacters();
 
 	FVector GetOpponentLocation();
-	FVector GetTeamLocation();
-
-	void TeamTakeDamage(float Damage, float StunTime);
-	
-	void TeamPartLock(ERobotCharacterPositionEnum Position);
-	void TeamPartUnlock(ERobotCharacterPositionEnum Position);
 	
 private:
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+
+	int TeamLife = 0;
+	
+	int TeamGuardMax = 0;
+	int TeamGuard = 0;
+	bool CanTakeDamage = false;
+	
+	FVector GetTeamLocation();
+
+	UFUNCTION()
+	void TeamTakeDamage(int Damage, float StunTime);
+	
+	UFUNCTION()
+	void TeamPartLock(ERobotCharacterPositionEnum Position);
+	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

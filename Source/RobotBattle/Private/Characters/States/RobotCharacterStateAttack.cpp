@@ -66,7 +66,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
 					}
 				}
 			}

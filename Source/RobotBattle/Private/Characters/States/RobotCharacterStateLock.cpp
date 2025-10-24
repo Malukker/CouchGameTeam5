@@ -30,7 +30,7 @@ void URobotCharacterStateLock::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 }
 
-void URobotCharacterStateLock::OnEventLock(bool IsLocked)
+void URobotCharacterStateLock::OnEventLock()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	
