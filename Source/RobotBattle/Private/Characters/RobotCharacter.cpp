@@ -109,12 +109,27 @@ void ARobotCharacter::SetStunTimer(float NewStunTimer)
 	StunTimer = NewStunTimer;
 }
 
+void ARobotCharacter::UseDash()
+{
+	CanDash = false;
+}
+
+void ARobotCharacter::ResetDash()
+{
+	CanDash = true;
+}
+
+void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
+{
+	RobotID = Robot;
+}
+
 ERobotID ARobotCharacter::GetRobotBodyID() const
 {
 	return RobotID;
 }
 
-uint8 ARobotCharacter::GetDashDirectionX() const
+int ARobotCharacter::GetDashDirectionX() const
 {
 	return DashDirectionX;
 }

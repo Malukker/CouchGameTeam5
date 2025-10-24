@@ -98,8 +98,11 @@ public:
 	EAttackID GetCurrentTypeAttack() const;
 	float GetStunTimer() const;
 	void SetStunTimer(float NewStunTimer);
+	void UseDash();
+	void ResetDash();
+	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
-	uint8 GetDashDirectionX() const;
+	int GetDashDirectionX() const;
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -117,10 +120,10 @@ public:
 	FInputLockEvent InputLockEvent;
 
 	UPROPERTY(EditAnywhere)
-	uint8 Life = 0;
+	int Life = 0;
 
 	UPROPERTY(EditAnywhere)
-	uint8 Guard = 0;
+	int Guard = 0;
 
 protected:
 	UPROPERTY()
@@ -128,7 +131,9 @@ protected:
 	UPROPERTY()
 	float StunTimer = 0;
 	UPROPERTY()
-	uint8 DashDirectionX = 0;
+	int DashDirectionX = 0;
+	UPROPERTY()
+	bool CanDash = true;
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 

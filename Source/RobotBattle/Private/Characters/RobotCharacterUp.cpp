@@ -13,20 +13,6 @@ ARobotCharacterUp::ARobotCharacterUp()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARobotCharacterUp::AttachToLowerBody(USkeletalMeshComponent* InComponentToBind, FName InSocketName)
-{
-	const FAttachmentTransformRules AttachmentRules =
-		FAttachmentTransformRules
-		(
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			true
-		);
-
-	AttachToComponent(InComponentToBind, AttachmentRules, InSocketName);
-}
-
 // Called when the game starts or when spawn
 
 void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent)

@@ -23,7 +23,10 @@ public:
 	TObjectPtr<UInputAction> InputActionJump;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionDash;
+	TObjectPtr<UInputAction> InputActionRightDash;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionLeftDash;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionAttack1;
