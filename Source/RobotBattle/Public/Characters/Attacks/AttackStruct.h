@@ -41,4 +41,7 @@ struct FAttackStruct
 
 	UPROPERTY(EditAnywhere)
 	int Damage = 0;
+	
+	UPROPERTY(EditAnywhere)
+	int StunTime = 0;
 };
