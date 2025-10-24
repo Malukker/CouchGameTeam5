@@ -32,11 +32,7 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
-	uint8 DashDirectionX;
-	
 	float CurrentDashTime;
-
-	float OriginalSpeed;
 	
 	float OriginalFriction;
 

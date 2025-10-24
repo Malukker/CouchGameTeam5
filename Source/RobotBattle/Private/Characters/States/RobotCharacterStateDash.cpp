@@ -18,24 +18,26 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 
 	Character->PlayAnimMontage(DashAnim);
 	CurrentDashTime = 0;
-	DashDirectionX = Character->GetDashDirectionX();
 
-	OriginalSpeed = CharacterMovement->MaxWalkSpeed;
 	OriginalFriction = CharacterMovement->GroundFriction;
 	OriginalGravityScale = CharacterMovement->GravityScale;
 
-	CharacterMovement->MaxWalkSpeed = DashSpeed;
-	CharacterMovement->GroundFriction = 0.0f;
-	CharacterMovement->GravityScale = 0.0f;
+	CharacterMovement->GroundFriction = 0;
+	CharacterMovement->GravityScale = 0;
+	
+	const FVector Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
+	Character->LaunchCharacter(Dash, true, true);
+	Character->UseDash();
 }
 
 void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
-
-	CharacterMovement->MaxWalkSpeed = OriginalSpeed;
+	
 	CharacterMovement->GroundFriction = OriginalFriction;
 	CharacterMovement->GravityScale = OriginalGravityScale;
+
+	CharacterMovement->StopMovementImmediately();
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)
@@ -46,8 +48,20 @@ void URobotCharacterStateDash::StateTick(float DeltaTime)
 
 	if (CurrentDashTime >= DashDuration)
 	{
-		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
+		if (CharacterMovement->IsMovingOnGround()) {
+			Character->ResetDash();
+			if (Character->GetInputMoveX() > 0)
+			{
+				StateMachine->ChangeState(ERobotCharacterStateID::Walk);
+			}
+			else
+			{
+				StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+			}
+		}
+		else
+		{
+			StateMachine->ChangeState(ERobotCharacterStateID::Fall);
+		}
 	}
-
-	Character->AddMovementInput(FVector::ForwardVector, DashDirectionX);
 }

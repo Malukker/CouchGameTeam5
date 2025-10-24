@@ -74,6 +74,7 @@ void ATeamManager::SpawnCharacters()
 		if (NewCharacter == nullptr) return;
 		RobotParts.Add(Pos, NewCharacter);
 
+		NewCharacter->SetRobotBodyID(GameInstance->RobotID[Team * 2 + PartNb]);
 		NewCharacter->InputData = InputData;
 		switch (Pos)
 		{
@@ -94,10 +95,19 @@ void ATeamManager::SpawnCharacters()
 		//TeamGuardMax += Character->Guard;
 	}
 	TeamGuard = TeamGuardMax;
-
-	Cast<ARobotCharacterUp>(RobotParts[ERobotCharacterPositionEnum::Up])->AttachToLowerBody(
+	
+	const FAttachmentTransformRules AttachmentRules =
+		FAttachmentTransformRules
+		(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			true
+		);
+	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 		RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		Cast<ARobotCharacterDown>(RobotParts[ERobotCharacterPositionEnum::Down])->UpperBodySocketName);
+		AttachmentRules,
+		"Bones_Attach");
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
