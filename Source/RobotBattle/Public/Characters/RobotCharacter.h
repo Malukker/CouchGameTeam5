@@ -89,12 +89,7 @@ protected:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FInputHurtManagerEvent, int, Damage, float, StunTimer);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputLockManagerEvent,ERobotCharacterPositionEnum ,Position);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputHurtEvent);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputLockEvent);
-	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);	
 
 public:
 	float GetInputMoveX() const;
@@ -117,16 +112,6 @@ public:
 
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
-
-	UPROPERTY()
-	FInputLockEvent InputLockEvent;
-	UPROPERTY()
-	FInputLockManagerEvent InputLockManagerEvent;
-	
-	UPROPERTY()
-	FInputHurtEvent InputHurtEvent;
-	UPROPERTY()
-	FInputHurtManagerEvent InputHurtManagerEvent;
 
 	UPROPERTY(EditAnywhere)
 	int Life = 0;
@@ -162,4 +147,28 @@ public:
 	
 #pragma endregion
 
+#pragma region Damage/Stun
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent,ERobotCharacterPositionEnum ,Position);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
+
+	UPROPERTY()
+	FLockEvent InputLockEvent;
+	
+	UPROPERTY()
+	FLockManagerEvent InputLockManagerEvent;
+	
+	UPROPERTY()
+	FHurtEvent InputHurtEvent;
+	
+	UPROPERTY()
+	FHurtManagerEvent InputHurtManagerEvent;
+	
+#pragma endregion
+	
 };
