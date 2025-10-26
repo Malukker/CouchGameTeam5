@@ -150,3 +150,17 @@ ERobotCharacterPositionEnum ARobotCharacter::GetPositionEnum()
 {
 	return ERobotCharacterPositionEnum::None;
 }
+
+ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
+{
+	return RobotCharacterDownChargeID;
+}
+
+void ARobotCharacter::IncrementCurrentCharge()
+{
+	
+}
+
+void ARobotCharacter::ResetCurrentCharge()
+{
+}
