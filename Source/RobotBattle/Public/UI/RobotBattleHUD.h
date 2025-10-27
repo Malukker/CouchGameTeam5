@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UIGamePlayInterface.h"
 #include "Blueprint/UserWidget.h"
 #include "RobotBattleHUD.generated.h"
 
@@ -60,6 +61,12 @@ public:
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
 	float HealthPlayer2;
 
+	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
+	float MaxHealthPlayer1;
+
+	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
+	float MaxHealthPlayer2;
+
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Round")
 	int RoundwinPlayer1;
 
@@ -95,9 +102,10 @@ private:
 	void UpdateTimer();
 
 	UFUNCTION()
-	void UpdateHealthText();
+	void UpdateHealthText(int Team, float upperHealth, float downHealth, float MaxHealth);
 	
 	UFUNCTION()
 	void RoundIsCkecked();
+	
 	
 };
