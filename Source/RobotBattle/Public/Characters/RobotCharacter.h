@@ -182,10 +182,9 @@ public:
 
 
 public :
-	UFUNCTION()
-	virtual void IncrementCurrentCharge();
 
-	UFUNCTION()
+	virtual void IncrementCurrentCharge();
+	
 	virtual void ResetCurrentCharge();
 protected:
 	UPROPERTY(VisibleAnywhere)
