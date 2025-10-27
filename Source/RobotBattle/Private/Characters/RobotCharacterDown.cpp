@@ -86,3 +86,17 @@ ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()
 	return ERobotCharacterPositionEnum::Down;
 }
 
+void ARobotCharacterDown::IncrementCurrentCharge()
+{
+	CurrentCharge++;
+	UE_LOG(LogTemp, Display, TEXT("Current Charge: %hhu"), CurrentCharge);
+}
+
+void ARobotCharacterDown::ResetCurrentCharge()
+{
+	CurrentCharge=0;
+	UE_LOG(LogTemp, Display, TEXT("Current Charge: %hhu"), CurrentCharge);
+}
+
+
+

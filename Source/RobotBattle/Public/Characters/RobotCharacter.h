@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Attacks/AttackStruct.h"
+#include "Enums/RobotCharacterDownChargeID.h"
 #include "GameFramework/Character.h"
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
 enum class ERobotCharacterPositionEnum : uint8;
+enum class ERobotCharacterDownChargeID : uint8;
 enum class  ERobotID : uint8;
 enum class EAttackID: uint8;
 class URobotCharacterStateMachine;
@@ -144,11 +146,16 @@ public:
 	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
+
+	UFUNCTION()
+	ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
+
 	
+
 #pragma endregion
 
 #pragma region Damage/Stun
-
+public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent,ERobotCharacterPositionEnum ,Position);
@@ -169,6 +176,23 @@ public:
 	UPROPERTY()
 	FHurtManagerEvent InputHurtManagerEvent;
 	
+#pragma endregion
+
+#pragma region Charge
+
+
+public :
+	UFUNCTION()
+	virtual void IncrementCurrentCharge();
+
+	UFUNCTION()
+	virtual void ResetCurrentCharge();
+protected:
+	UPROPERTY(VisibleAnywhere)
+	uint8 CurrentCharge = 0;
+
+	UPROPERTY(EditAnywhere)
+	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
 #pragma endregion
 	
 };
