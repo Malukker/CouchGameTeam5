@@ -39,10 +39,12 @@ protected:
 	uint8 CurrentCharge = 0;
 
 	UFUNCTION()
-	virtual void IncrementCurrentCharge();
+	void IncrementCurrentCharge();
 	
 	UPROPERTY(EditAnywhere)
 	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
 
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID() override;
+
+	void InitEventChargeEvent();
 };
