@@ -17,14 +17,7 @@ ARobotCharacterDown::ARobotCharacterDown()
 void ARobotCharacterDown::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (GetRobotCharacterDownChargeID()==ERobotCharacterDownChargeID::Tank){
-		GuardEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
-	}
-	else
-	{
-		ChargeIncrementEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
-	}
+	InitEventOnChargeEnum();
 }
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
@@ -114,7 +107,25 @@ void ARobotCharacterDown::IncrementCurrentCharge()
 	}
 }
 
+void ARobotCharacterDown::InitEventOnChargeEnum()
+{
+	switch (GetRobotCharacterDownChargeID())
+	{
+		case ERobotCharacterDownChargeID::None:
+		break;
+
+		case ERobotCharacterDownChargeID::Dash:
+		ChargeIncrementEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
+		break;
+
+		case ERobotCharacterDownChargeID::Tank:
+		GuardEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
+		break;
+	}
+}
 ERobotCharacterDownChargeID ARobotCharacterDown::GetRobotCharacterDownChargeID()
 {
 	return RobotCharacterDownChargeID;
 }
+
+
