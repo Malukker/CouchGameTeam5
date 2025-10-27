@@ -3,6 +3,7 @@
 
 #include "UI/RobotBattleHUD.h"
 
+#include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "UI/RobotBattleMainMenu.h"
@@ -32,7 +33,10 @@ void URobotBattleHUD::NativeTick(const FGeometry & MyGeometry, float InDeltaTime
 		}
 	}
 	UpdateTimer();
-	UpdateHealthText();
+	UpdateHealthText(1,800.0f, 800.0, 0);
+	UpdateHealthText(2,700.0f, 3000.0, 0);
+
+	
 }
 
 void URobotBattleHUD::UpdateTimer()
@@ -72,31 +76,49 @@ void URobotBattleHUD::StopTimer()
 	}
 }
 
-void URobotBattleHUD::UpdateHealthText()
+void URobotBattleHUD::UpdateHealthText(int Team, float upperHealth, float downHealth, float MaxHealth)
 {
-	if (HealthBarPlayer1)
+	if (Team == 1)
 	{
-		float NormalizePlayerHealthBar1 = HealthBarPlayer1->GetPercent();
-		HealthPlayer1 = NormalizePlayerHealthBar1 * 100.0f;
-	}
+		float UpBodyPlayer1 = upperHealth;
+		float DownBodyPlayer1 = downHealth;
+
+		MaxHealth = UpBodyPlayer1 + DownBodyPlayer1;
+		
+		if (HealthBarPlayer1)
+		{
+			float NormalizePlayerHealthBar1 = HealthBarPlayer1->GetPercent();
+			HealthPlayer1 = NormalizePlayerHealthBar1 * MaxHealth;
+		}
 	
-	if (HealthTextPlayer1)
-	{
-		FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer1));
-		HealthTextPlayer1->SetText(FText::FromString(HealthString));
+		if (HealthTextPlayer1)
+		{
+			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer1));
+			HealthTextPlayer1->SetText(FText::FromString(HealthString));
+		}
 	}
 
-	if (HealthBarPlayer2)
+	if (Team == 2)
 	{
-		float NormalizePlayerHealthBar2 = HealthBarPlayer2->GetPercent();
-		HealthPlayer2 = NormalizePlayerHealthBar2 * 100.0f;
+		float UpBodyPlayer2 = upperHealth;
+		float DownBodyPlayer2 = downHealth;
+
+		MaxHealth = UpBodyPlayer2 + DownBodyPlayer2;
+		
+		if (HealthBarPlayer2)
+		{
+			float NormalizePlayerHealthBar2 = HealthBarPlayer2->GetPercent();
+			HealthPlayer2 = NormalizePlayerHealthBar2 * MaxHealth;
+		}
+
+		if (HealthTextPlayer2)
+		{
+			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer2));
+			HealthTextPlayer2->SetText(FText::FromString(HealthString));
+		} 
 	}
 
-	if (HealthTextPlayer2)
-	{
-		FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer2));
-		HealthTextPlayer2->SetText(FText::FromString(HealthString));
-	}
+
 }
 #pragma endregion
 
@@ -104,3 +126,4 @@ void URobotBattleHUD::RoundIsCkecked()
 {
 	
 }
+
