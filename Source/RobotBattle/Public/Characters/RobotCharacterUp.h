@@ -23,4 +23,7 @@ protected:
 	void OnInputAttack3(const FInputActionValue& InputActionValue);
 	void OnInputAttackDuo(const FInputActionValue& InputActionValue);
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
+
+	virtual void ManageChargeEvent() override;
+
 };

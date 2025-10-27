@@ -14,6 +14,10 @@ class ROBOTBATTLE_API ARobotCharacterDown : public ARobotCharacter
 public:
 	// Sets default values for this character's properties
 	ARobotCharacterDown();
+	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere)
+	uint8 MaxCharge = 0;
 
 protected:
 
@@ -29,9 +33,16 @@ protected:
 
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
 
-	UFUNCTION()
-	virtual void IncrementCurrentCharge() override;
+	virtual void ManageChargeEvent() override;
+	
+	UPROPERTY(VisibleAnywhere)
+	uint8 CurrentCharge = 0;
 
 	UFUNCTION()
-	virtual void ResetCurrentCharge() override;
+	virtual void IncrementCurrentCharge();
+	
+	UPROPERTY(EditAnywhere)
+	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
+
+	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID() override;
 };
