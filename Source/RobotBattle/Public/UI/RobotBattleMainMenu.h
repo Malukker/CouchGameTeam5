@@ -14,7 +14,10 @@ class ROBOTBATTLE_API URobotBattleMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 
-	public:
+public:
+	
+	virtual bool Initialize() override;
+	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* PlayBtn;
 
@@ -23,11 +26,15 @@ class ROBOTBATTLE_API URobotBattleMainMenu : public UUserWidget
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* QuitBtn;
+
+private:
 	
 	UFUNCTION(BlueprintCallable)
 	void StartGame();
 
 	UFUNCTION(BlueprintCallable)
 	void OptionGame();
-	
+
+	UFUNCTION(BlueprintCallable)
+	void QuitGame();
 };

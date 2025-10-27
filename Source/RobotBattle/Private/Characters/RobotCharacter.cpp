@@ -19,7 +19,7 @@ ARobotCharacter::ARobotCharacter()
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
-	InputHurtManagerEvent.Broadcast(Damage, StunTime);
+	HurtManagerEvent.Broadcast(Damage, StunTime);
 }
 
 // Called when the game starts or when spawned
@@ -153,14 +153,10 @@ ERobotCharacterPositionEnum ARobotCharacter::GetPositionEnum()
 
 ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
 {
-	return RobotCharacterDownChargeID;
+	return  ERobotCharacterDownChargeID::None;
 }
 
-void ARobotCharacter::IncrementCurrentCharge()
+void ARobotCharacter::ManageChargeEvent()
 {
-	
 }
 
-void ARobotCharacter::ResetCurrentCharge()
-{
-}

@@ -67,12 +67,20 @@ void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
+	if (CanAttackDuo == false) return;
 	CurrentTypeAttack = EAttackID::Ultimate;
 	InputAttackEvent.Broadcast(CurrentTypeAttack);
+	CanAttackDuo = false;
+	ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion
 
 ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 {
 	return ERobotCharacterPositionEnum::Up;
+}
+
+void ARobotCharacterUp::ManageChargeEvent()
+{
+	CanAttackDuo = true;
 }

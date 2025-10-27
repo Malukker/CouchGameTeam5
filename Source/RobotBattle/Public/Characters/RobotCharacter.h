@@ -115,11 +115,6 @@ public:
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
 
-	UPROPERTY(EditAnywhere)
-	int Life = 0;
-
-	UPROPERTY(EditAnywhere)
-	int Guard = 0;
 
 protected:
 	UPROPERTY()
@@ -148,8 +143,13 @@ public:
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
 
 	UFUNCTION()
-	ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
+	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 
+	UPROPERTY(EditAnywhere)
+	int Life = 0;
+
+	UPROPERTY(EditAnywhere)
+	int Guard = 0;
 	
 
 #pragma endregion
@@ -165,34 +165,37 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
 
 	UPROPERTY()
-	FLockEvent InputLockEvent;
+	FLockEvent LockEvent;
 	
 	UPROPERTY()
-	FLockManagerEvent InputLockManagerEvent;
+	FLockManagerEvent LockManagerEvent;
 	
 	UPROPERTY()
-	FHurtEvent InputHurtEvent;
+	FHurtEvent HurtEvent;
 	
 	UPROPERTY()
-	FHurtManagerEvent InputHurtManagerEvent;
+	FHurtEvent GuardEvent;
+	
+	UPROPERTY()
+	FHurtManagerEvent HurtManagerEvent;
 	
 #pragma endregion
 
 #pragma region Charge
 
-
 public :
-	UFUNCTION()
-	virtual void IncrementCurrentCharge();
-
-	UFUNCTION()
-	virtual void ResetCurrentCharge();
-protected:
-	UPROPERTY(VisibleAnywhere)
-	uint8 CurrentCharge = 0;
-
-	UPROPERTY(EditAnywhere)
-	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChargeEvent);
+	
+	virtual void ManageChargeEvent();
+	bool CanAttackDuo = false;
+	
+	UPROPERTY()
+	FChargeManagerEvent ChargeManagerEvent;
+	
+	UPROPERTY()
+	FChargeEvent ChargeIncrementEvent;
+	
 #pragma endregion
 	
 };

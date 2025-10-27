@@ -87,8 +87,8 @@ void ATeamManager::SpawnCharacters()
 		default:
 			return;
 		}
-		NewCharacter->InputHurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
-		NewCharacter->InputLockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
+		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
@@ -139,8 +139,8 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	if (CanTakeDamage && TeamGuard > 0) return;
 	RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
-	RobotParts[ERobotCharacterPositionEnum::Up]->InputHurtEvent.Broadcast();
-	RobotParts[ERobotCharacterPositionEnum::Down]->InputHurtEvent.Broadcast();
+	RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+	RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 	TeamLife -= Damage;
 	if (TeamLife < 0) TeamLife = 0;
 	TeamGuard = TeamGuardMax;
@@ -151,10 +151,10 @@ void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		RobotParts[ERobotCharacterPositionEnum::Up]->InputLockEvent.Broadcast();
+		RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		RobotParts[ERobotCharacterPositionEnum::Down]->InputLockEvent.Broadcast();
+		RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
 		break;
 	default: ;
 	}
