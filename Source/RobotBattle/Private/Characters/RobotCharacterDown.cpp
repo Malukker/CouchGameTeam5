@@ -5,8 +5,6 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterStateID.h"
-#include "Characters/RobotCharacterStateMachine.h"
 
 
 // Sets default values
@@ -14,6 +12,12 @@ ARobotCharacterDown::ARobotCharacterDown()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ARobotCharacterDown::BeginPlay()
+{
+	Super::BeginPlay();
+	InitEventOnChargeEnum();
 }
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
@@ -86,17 +90,42 @@ ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()
 	return ERobotCharacterPositionEnum::Down;
 }
 
-void ARobotCharacterDown::IncrementCurrentCharge()
-{
-	CurrentCharge++;
-	UE_LOG(LogTemp, Display, TEXT("Current Charge: %hhu"), CurrentCharge);
-}
-
-void ARobotCharacterDown::ResetCurrentCharge()
+void ARobotCharacterDown::ManageChargeEvent()
 {
 	CurrentCharge=0;
 	UE_LOG(LogTemp, Display, TEXT("Current Charge: %hhu"), CurrentCharge);
 }
 
+void ARobotCharacterDown::IncrementCurrentCharge()
+{
+	CurrentCharge++;
+	UE_LOG(LogTemp, Display, TEXT("Current Charge: %hhu"), CurrentCharge);
+	if (CurrentCharge > MaxCharge)
+	{
+		CurrentCharge = MaxCharge;
+		ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
+	}
+}
+
+void ARobotCharacterDown::InitEventOnChargeEnum()
+{
+	switch (GetRobotCharacterDownChargeID())
+	{
+		case ERobotCharacterDownChargeID::None:
+		break;
+
+		case ERobotCharacterDownChargeID::Dash:
+		ChargeIncrementEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
+		break;
+
+		case ERobotCharacterDownChargeID::Tank:
+		GuardEvent.AddDynamic(this, &ARobotCharacterDown::IncrementCurrentCharge);
+		break;
+	}
+}
+ERobotCharacterDownChargeID ARobotCharacterDown::GetRobotCharacterDownChargeID()
+{
+	return RobotCharacterDownChargeID;
+}
 
 
