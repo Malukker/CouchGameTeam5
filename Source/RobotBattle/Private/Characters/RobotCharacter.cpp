@@ -4,10 +4,8 @@
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include <EnhancedInputSubsystems.h>
-#include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterStateID.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -20,6 +18,7 @@ ARobotCharacter::ARobotCharacter()
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
 	HurtManagerEvent.Broadcast(Damage, StunTime);
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }
 
 // Called when the game starts or when spawned
