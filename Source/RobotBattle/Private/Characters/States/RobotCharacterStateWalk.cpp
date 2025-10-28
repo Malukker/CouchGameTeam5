@@ -22,6 +22,8 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 	
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputDash);
+	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateWalk::OnLockEvent);
 }
 
 void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
@@ -30,6 +32,8 @@ void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
 	
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputDash);
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
+	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnLockEvent);
 }
 
 void URobotCharacterStateWalk::StateTick(float DeltaTime)
@@ -55,3 +59,16 @@ void URobotCharacterStateWalk::OnInputDash()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
 }
+
+void URobotCharacterStateWalk::OnStunEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
+}
+
+
+void URobotCharacterStateWalk::OnLockEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
+}
+
+

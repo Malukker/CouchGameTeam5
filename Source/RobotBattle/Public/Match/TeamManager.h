@@ -32,6 +32,10 @@ public:
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
+	
+	UPROPERTY()
+	TObjectPtr<IUIGamePlayInterface> UIInterface;
+	
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -43,10 +47,11 @@ public:
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
-	int TeamLife = 0;
+	float TeamLifeMax = 0;
+	float TeamLife = 0;
 	
-	int TeamGuardMax = 0;
-	int TeamGuard = 0;
+	float TeamGuardMax = 0;
+	float TeamGuard = 0;
 	bool CanTakeDamage = false;
 	
 	FVector GetTeamLocation();
@@ -55,7 +60,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamPartLock(ERobotCharacterPositionEnum Position);
+	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
 	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 

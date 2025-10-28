@@ -158,7 +158,7 @@ public:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLockManagerEvent,ERobotCharacterPositionEnum ,Position, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
@@ -166,6 +166,9 @@ public:
 
 	UPROPERTY()
 	FLockEvent LockEvent;
+	
+	UPROPERTY()
+	FLockEvent UnlockEvent;
 	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;

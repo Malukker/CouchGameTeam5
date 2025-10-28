@@ -4,9 +4,6 @@
 #include "Match/TeamManager.h"
 
 #include "Characters/RobotCharacter.h"
-#include "Characters/RobotCharacterUp.h"
-#include "Characters/RobotCharacterDown.h"
-
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
 #include <Characters/RobotCharacterSettings.h>
@@ -14,6 +11,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/UIGamePlayInterface.h"
 
 
 // Sets default values
@@ -149,19 +147,34 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
 		if (TeamLife < 0) TeamLife = 0;
+		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 		TeamGuard = TeamGuardMax;
 	}
 }
 
-void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
+void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
 {
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->UnlockEvent.Broadcast();
+		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->UnlockEvent.Broadcast();
+		}
 		break;
 	default: ;
 	}
