@@ -87,6 +87,8 @@ void ATeamManager::SpawnCharacters()
 		default:
 			return;
 		}
+		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
+		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
@@ -96,17 +98,15 @@ void ATeamManager::SpawnCharacters()
 	}
 	TeamGuard = TeamGuardMax;
 	
-	const FAttachmentTransformRules AttachmentRules =
+	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
 		FAttachmentTransformRules
 		(
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			true
-		);
-	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
-		RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		AttachmentRules,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		true
+		),
 		"Bones_Attach");
 }
 
@@ -134,11 +134,15 @@ FVector ATeamManager::GetTeamLocation()
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
 }
 
-void ATeamManager::TeamTakeDamage(float Damage, float StunTime)
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	if (IsGuarding && TeamGuard > 0) return;
-	//RobotParts[ERobotCharacterPositionEnum::Up]->
-	//RobotParts[ERobotCharacterPositionEnum::Down]->
+	if (CanTakeDamage && TeamGuard > 0) return;
+	RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
+	RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+	RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+	TeamLife -= Damage;
+	if (TeamLife < 0) TeamLife = 0;
 	TeamGuard = TeamGuardMax;
 }
 
@@ -147,26 +151,12 @@ void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		//RobotParts[ERobotCharacterPositionEnum::Up]
+		RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		//RobotParts[ERobotCharacterPositionEnum::Down]
+		RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
 		break;
 	default: ;
-	}
-}
-
-void ATeamManager::TeamPartUnlock(ERobotCharacterPositionEnum Position)
-{
-	switch (Position)
-	{
-		case ERobotCharacterPositionEnum::Down:
-			//RobotParts[ERobotCharacterPositionEnum::Up]
-			break;
-		case ERobotCharacterPositionEnum::Up:
-			//RobotParts[ERobotCharacterPositionEnum::Down]
-			break;
-		default: ;
 	}
 }
 
@@ -192,3 +182,4 @@ UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotChar
 	}
 	return nullptr;
 }
+

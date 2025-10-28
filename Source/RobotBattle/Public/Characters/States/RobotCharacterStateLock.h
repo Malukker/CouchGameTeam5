@@ -18,5 +18,5 @@ class ROBOTBATTLE_API URobotCharacterStateLock : public URobotCharacterState
 	virtual void StateTick(float DeltaTime) override;
 
 	UFUNCTION()
-	void OnEventLock(bool IsLocked);
+	void OnEventLock();
 };

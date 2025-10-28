@@ -14,14 +14,14 @@ ERobotCharacterStateID URobotCharacterStateLock::GetStateID()
 
 void URobotCharacterStateLock::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
-	Character->InputLockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	Super::StateEnter(PreviousStateID);
 }
 
 void URobotCharacterStateLock::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
-	Character->InputLockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventLock);
+	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	
 }
 
@@ -30,7 +30,7 @@ void URobotCharacterStateLock::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 }
 
-void URobotCharacterStateLock::OnEventLock(bool IsLocked)
+void URobotCharacterStateLock::OnEventLock()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	
