@@ -33,8 +33,8 @@ void URobotBattleHUD::NativeTick(const FGeometry & MyGeometry, float InDeltaTime
 		}
 	}
 	UpdateTimer();
-	UpdateHealthText(1,800.0f, 800.0, 0);
-	UpdateHealthText(2,700.0f, 3000.0, 0);
+
+	UpdateHealthText(0, 100.0, 200.0);
 
 	
 }
@@ -76,15 +76,10 @@ void URobotBattleHUD::StopTimer()
 	}
 }
 
-void URobotBattleHUD::UpdateHealthText(int Team, float upperHealth, float downHealth, float MaxHealth)
+void URobotBattleHUD::UpdateHealthText(int Team, float Health, float MaxHealth)
 {
-	if (Team == 1)
+	if (Team == 0)
 	{
-		float UpBodyPlayer1 = upperHealth;
-		float DownBodyPlayer1 = downHealth;
-
-		MaxHealth = UpBodyPlayer1 + DownBodyPlayer1;
-		
 		if (HealthBarPlayer1)
 		{
 			float NormalizePlayerHealthBar1 = HealthBarPlayer1->GetPercent();
@@ -98,13 +93,8 @@ void URobotBattleHUD::UpdateHealthText(int Team, float upperHealth, float downHe
 		}
 	}
 
-	if (Team == 2)
+	if (Team == 1)
 	{
-		float UpBodyPlayer2 = upperHealth;
-		float DownBodyPlayer2 = downHealth;
-
-		MaxHealth = UpBodyPlayer2 + DownBodyPlayer2;
-		
 		if (HealthBarPlayer2)
 		{
 			float NormalizePlayerHealthBar2 = HealthBarPlayer2->GetPercent();

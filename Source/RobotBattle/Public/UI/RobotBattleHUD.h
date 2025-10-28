@@ -102,7 +102,7 @@ private:
 	void UpdateTimer();
 
 	UFUNCTION()
-	void UpdateHealthText(int Team, float upperHealth, float downHealth, float MaxHealth);
+	void UpdateHealthText(int Team, float Health, float MaxHealth);
 	
 	UFUNCTION()
 	void RoundIsCkecked();
