@@ -19,9 +19,6 @@ public:
 	void SetMasterVolume(float NewVolume);
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
-	void SetMouseSensitivity(float NewSensitivity);
-
-	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void ApplySettings();
 
 private:

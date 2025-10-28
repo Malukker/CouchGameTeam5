@@ -12,14 +12,9 @@ void URobotBattleSettingsMenu::NativeConstruct()
 
 void URobotBattleSettingsMenu::SetMasterVolume(float NewVolume)
 {
-	MasterVolume = FMath::Clamp(NewVolume, 0.0f, 1.0f);
-	UGameplayStatics::SetSoundMixClassOverride(GetWorld(),nullptr,nullptr, MasterVolume, 1.0f, 0.0f);
-}
-
-void URobotBattleSettingsMenu::SetMouseSensitivity(float NewSensitivity)
-{
-	MouseSensitivity = FMath::Clamp(NewSensitivity, 0.0f, 1.0f);
-	UE_LOG(LogTemp, Log, TEXT("Mouse sensitivity set to %f"), MouseSensitivity);
+	MasterVolume = FMath::Clamp(NewVolume, 0.0f, 100.0f);
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(),nullptr,nullptr, MasterVolume, 100.0f, 0.0f);
+	UE_LOG(LogTemp, Warning, TEXT("Master Volume changed to: %f"), MasterVolume);
 }
 
 void URobotBattleSettingsMenu::ApplySettings()
