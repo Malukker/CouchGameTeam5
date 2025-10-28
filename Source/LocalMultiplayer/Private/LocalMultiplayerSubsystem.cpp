@@ -8,7 +8,10 @@
 void ULocalMultiplayerSubsystem::CreatePlayers() {
 	for (int i = 0; i < 4; i++)
 	{
-		Controllers.Add(UGameplayStatics::CreatePlayer(GetWorld(), i));
+		if (Controllers.Num() <= i)
+		{
+			Controllers.Add(UGameplayStatics::CreatePlayer(GetWorld(), i));
+		}
 	}
 }
 
