@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class ROBOTBATTLE_API URobotBattleHUD : public UUserWidget
+class ROBOTBATTLE_API URobotBattleHUD : public UUserWidget, public IUIGamePlayInterface
 {
 	GENERATED_BODY()
 
@@ -54,25 +54,6 @@ public:
 #pragma endregion
 
 #pragma region VariableWidget
-	
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
-	float HealthPlayer1;
-
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
-	float HealthPlayer2;
-
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
-	float MaxHealthPlayer1;
-
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Player")
-	float MaxHealthPlayer2;
-
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Round")
-	int RoundwinPlayer1;
-
-	UPROPERTY(EditAnywhere, Blueprintable, Category= "Round")
-	int RoundwinPlayer2;
-	
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Timer")
 	float elapsedTime = 0.0f;
 
@@ -96,16 +77,13 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry & MyGeometry, float InDeltaTime) override;
 
+	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
+	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
+	virtual void SetRoundPlayer(int Team, int Win) override;
+
 private:
 	
 	UFUNCTION()
 	void UpdateTimer();
-
-	UFUNCTION()
-	void UpdateHealthText(int Team, float Health, float MaxHealth);
-	
-	UFUNCTION()
-	void RoundIsCkecked();
-	
 	
 };

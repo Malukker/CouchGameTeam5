@@ -22,8 +22,10 @@ class ROBOTBATTLE_API IUIGamePlayInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual int SetChargePlayer(int team) = 0;
+	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) = 0;
 
-	virtual int SetHealthPlayer(int team) = 0;
+	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) = 0;
+
+	virtual void SetRoundPlayer(int Team, int Win) = 0;
 	
 };

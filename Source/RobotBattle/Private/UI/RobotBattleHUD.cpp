@@ -33,12 +33,8 @@ void URobotBattleHUD::NativeTick(const FGeometry & MyGeometry, float InDeltaTime
 		}
 	}
 	UpdateTimer();
-
-	UpdateHealthText(0, 100.0, 200.0);
-
 	
 }
-
 void URobotBattleHUD::UpdateTimer()
 {
 	if (TimerText)
@@ -75,45 +71,76 @@ void URobotBattleHUD::StopTimer()
 		GEngine->AddOnScreenDebugMessage(1, 3, FColor::Red, "Draw");
 	}
 }
+#pragma endregion
 
-void URobotBattleHUD::UpdateHealthText(int Team, float Health, float MaxHealth)
+void URobotBattleHUD::SetHealthPlayer(int Team, float Health, float MaxHealth)
 {
 	if (Team == 0)
 	{
 		if (HealthBarPlayer1)
 		{
-			float NormalizePlayerHealthBar1 = HealthBarPlayer1->GetPercent();
-			HealthPlayer1 = NormalizePlayerHealthBar1 * MaxHealth;
+			HealthBarPlayer1->SetPercent(Health / MaxHealth);
 		}
-	
 		if (HealthTextPlayer1)
 		{
-			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer1));
+			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer1->SetText(FText::FromString(HealthString));
 		}
 	}
-
 	if (Team == 1)
 	{
 		if (HealthBarPlayer2)
 		{
-			float NormalizePlayerHealthBar2 = HealthBarPlayer2->GetPercent();
-			HealthPlayer2 = NormalizePlayerHealthBar2 * MaxHealth;
+			HealthBarPlayer2->SetPercent(Health / MaxHealth);
 		}
-
 		if (HealthTextPlayer2)
 		{
-			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(HealthPlayer2));
+			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer2->SetText(FText::FromString(HealthString));
 		} 
 	}
-
-
 }
-#pragma endregion
 
-void URobotBattleHUD::RoundIsCkecked()
+void URobotBattleHUD::SetChargePlayer(int Team, float Charge, float MaxCharge)
 {
-	
+	if (Team == 0)
+	{
+		if (ChargeBarPlayer1)
+		{
+			ChargeBarPlayer1->SetPercent(Charge / MaxCharge);
+		}
+	}
+	if (Team == 1)
+	{
+		if (ChargeBarPlayer2)
+		{
+			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
+		}
+	}
 }
 
+void URobotBattleHUD::SetRoundPlayer(int Team, int Win)
+{
+	if (Team == 0)
+	{
+		if (Win == 1)
+		{
+			CheckBoxRound1->SetIsChecked(true);
+		}
+		else if (Win == 2)
+		{
+			CheckBoxRound2->SetIsChecked(true);
+		}
+	}
+	else if (Team == 1)
+	{
+		if (Win == 1)
+		{
+			CheckBoxRound3->SetIsChecked(true);
+		}
+		else if (Win == 2)
+		{
+			CheckBoxRound4->SetIsChecked(true);
+		}
+	}
+}
