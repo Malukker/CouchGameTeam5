@@ -29,7 +29,7 @@ private:
 	void OnInputJump();
 
 	UFUNCTION()
-	void OnInputAttack(EAttackID TypeAttack);
+	void OnInputAttack();
 
 	UFUNCTION()
 	void OnInputDash();

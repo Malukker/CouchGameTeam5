@@ -50,29 +50,37 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
 	CurrentTypeAttack = EAttackID::Type1;
-	InputAttackEvent.Broadcast(CurrentTypeAttack);
+	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
 	CurrentTypeAttack = EAttackID::Type2;
-	InputAttackEvent.Broadcast(CurrentTypeAttack);
+	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
 	CurrentTypeAttack = EAttackID::Type3;
-	InputAttackEvent.Broadcast(CurrentTypeAttack);
+	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
+	if (CanAttackDuo == false) return;
 	CurrentTypeAttack = EAttackID::Ultimate;
-	InputAttackEvent.Broadcast(CurrentTypeAttack);
+	InputAttackEvent.Broadcast();
+	CanAttackDuo = false;
+	ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion
 
 ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 {
 	return ERobotCharacterPositionEnum::Up;
+}
+
+void ARobotCharacterUp::ManageChargeEvent()
+{
+	CanAttackDuo = true;
 }

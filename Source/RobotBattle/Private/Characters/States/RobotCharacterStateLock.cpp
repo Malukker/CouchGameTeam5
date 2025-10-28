@@ -14,14 +14,14 @@ ERobotCharacterStateID URobotCharacterStateLock::GetStateID()
 
 void URobotCharacterStateLock::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
-	Character->InputLockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	Super::StateEnter(PreviousStateID);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 }
 
 void URobotCharacterStateLock::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
-	Character->InputLockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventLock);
+	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	
 }
 

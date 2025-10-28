@@ -20,7 +20,7 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	CurrentDashTime = 0;
 	if (Character->GetRobotCharacterDownChargeID()==ERobotCharacterDownChargeID::Dash)
 	{
-		Character->IncrementCurrentCharge();
+		Character->ChargeIncrementEvent.Broadcast();
 	}
 	OriginalFriction = CharacterMovement->GroundFriction;
 	OriginalGravityScale = CharacterMovement->GravityScale;

@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS(Config=Game, DefaultConfig, meta = (DisplayName = "Smash Arena Settings"))
+UCLASS(Config=Game, DefaultConfig, meta = (DisplayName = "Robot Arena Settings"))
 class ROBOTBATTLE_API UArenaSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
