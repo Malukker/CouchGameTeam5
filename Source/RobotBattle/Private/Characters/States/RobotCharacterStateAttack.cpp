@@ -41,8 +41,6 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimTime = 0.0f;
 	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
 	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
-	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
@@ -101,7 +99,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			CurrentAnimDeltaTime -= KeyframeDeltaTime;
 		}
 	}
-	if (CurrentAnimDeltaTime >= AnimDuration)
+	if (CurrentAnimTime >= AnimDuration)
 	{
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	}
@@ -127,6 +125,8 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 {
 	bIsAttackTraceEnabled = true;
+	
+	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 
