@@ -4,9 +4,11 @@
 #include "Characters/States/RobotCharacterStateAttack.h"
 
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
 #include "Characters/Animations/AnimNotify/StartAttackDetectionAnimNotify.h"
+#include "Characters/Attacks/RobotCharacterAttacksData.h"
 #include "Characters/Interface/Robot.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -19,6 +21,9 @@ ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState)
 {
 	Super::StateEnter(PreviousState);
+
+	CurrentAttackStruct = GetDefault<URobotCharacterSettings>()->AttackData->ListAttacks[Character->GetRobotBodyID()].AttacksFromID[Character->GetCurrentTypeAttack()];
+	
 	AttackAnim = CurrentAttackStruct.AnimMontage;
 	if (AttackAnim)
 	{

@@ -136,14 +136,21 @@ FVector ATeamManager::GetTeamLocation()
 
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	if (CanTakeDamage && TeamGuard > 0) return;
-	RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
-	RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
-	RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
-	TeamLife -= Damage;
-	if (TeamLife < 0) TeamLife = 0;
-	TeamGuard = TeamGuardMax;
+	if (CanTakeDamage && TeamGuard > 0)
+	{
+		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast();
+		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast();
+	}
+	else if (CanTakeDamage)
+	{
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
+		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
+		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+		TeamLife -= Damage;
+		if (TeamLife < 0) TeamLife = 0;
+		TeamGuard = TeamGuardMax;
+	}
 }
 
 void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)

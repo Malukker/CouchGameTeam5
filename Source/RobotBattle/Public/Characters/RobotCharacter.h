@@ -89,7 +89,7 @@ protected:
 
 #pragma region Input
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputAttackEvent, EAttackID, AttackType);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputAttackEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);	
 
