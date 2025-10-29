@@ -30,6 +30,11 @@ public:
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	
 	virtual void StateTick(float DeltaTime) override;
+	
+	UFUNCTION()
+	void OnStunEvent();
+	UFUNCTION()
+	void OnLockEvent();
 
 private:
 	float CurrentDashTime;

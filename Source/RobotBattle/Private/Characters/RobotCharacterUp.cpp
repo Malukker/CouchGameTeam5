@@ -3,6 +3,7 @@
 #include "Characters/RobotCharacterUp.h"
 
 #include "EnhancedInputComponent.h"
+#include "MathUtil.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 
@@ -41,6 +42,16 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this,
 		                                   &ARobotCharacterUp::OnInputAttackDuo);
+	}
+
+	if (InputData->InputActionRightDash)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputRightDash);
+	}
+	
+	if (InputData->InputActionLeftDash)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputLeftDash);
 	}
 
 #pragma endregion
@@ -83,4 +94,22 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::ManageChargeEvent()
 {
 	CanAttackDuo = true;
+}
+
+void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
+{
+	DashDirectionX = 1;
+	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
+	{
+		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
+}
+
+void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
+{
+	DashDirectionX = -1;
+	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
+	{
+		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
 }
