@@ -25,7 +25,13 @@ ATeamManager::ATeamManager()
 void ATeamManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	if (DashBuffer > 0) DashBuffer -= DeltaTime;
+	if (DashBuffer < 0 && WantInvinsibility) WantInvinsibility = false;
+	
+	if (InvinsibilityFrames > 0) InvinsibilityFrames --;
+	if (InvinsibilityFrames == 0 && !CanTakeDamage) CanTakeDamage = true;
+		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
@@ -98,6 +104,7 @@ void ATeamManager::SpawnCharacters()
 		TeamLifeMax += NewCharacter->Life;
 		TeamGuardMax += NewCharacter->Guard;
 		TeamChargeMax += NewCharacter->Charge;
+		InvinsibilityFramesOrigin += NewCharacter->InvinsibilityFrames;
 	}
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
@@ -203,10 +210,29 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		//TO DO
+		if (IsDashing)
+		{
+			IsDashing = false;
+			InvinsibilityFrames = 0;
+		}
+		else
+		{
+			IsDashing = true;
+			CanTakeDamage = false;
+			InvinsibilityFrames = InvinsibilityFramesOrigin;
+			if (WantInvinsibility) InvinsibilityFrames += InvinsibilityFramesOrigin;
+		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		//TO DO
+		if (IsDashing)
+		{
+			InvinsibilityFrames += InvinsibilityFramesOrigin;
+		}
+		else
+		{
+			DashBuffer = 0.33f;
+			WantInvinsibility = true;
+		}
 		break;
 	default: ;
 	}

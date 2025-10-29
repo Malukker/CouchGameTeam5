@@ -150,10 +150,13 @@ public:
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 
 	UPROPERTY(EditAnywhere)
-	int Life = 0;
+	int Life = 500;
 
 	UPROPERTY(EditAnywhere)
-	int Guard = 0;
+	int Guard = 2;
+	
+	UPROPERTY(EditAnywhere)
+	int InvinsibilityFrames = 12;
 	
 
 #pragma endregion
