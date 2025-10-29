@@ -52,8 +52,14 @@ private:
 	
 	float TeamGuardMax = 0;
 	float TeamGuard = 0;
-	bool CanTakeDamage = true;
 	bool CanGuard = false;
+	
+	int InvinsibilityFramesOrigin = 0;
+	int InvinsibilityFrames = 0;
+	float DashBuffer = 0;
+	bool WantInvinsibility = false;
+	bool IsDashing = false;
+	bool CanTakeDamage = true;
 	
 	float TeamChargeMax = 0;
 	float TeamCharge = 0;
