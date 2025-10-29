@@ -201,8 +201,10 @@ public :
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
 	virtual void ManageChargeEvent();
-	UPROPERTY()
+	
+	UPROPERTY(EditAnywhere)
 	int Charge = 0;
+	
 	bool CanAttackDuo = false;
 	
 	UPROPERTY()

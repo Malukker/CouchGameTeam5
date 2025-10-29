@@ -101,8 +101,9 @@ void ATeamManager::SpawnCharacters()
 	}
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
-	TeamCharge = TeamChargeMax;
+	TeamCharge = 0;
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
@@ -216,20 +217,19 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 		case ERobotCharacterPositionEnum::Down:
+			TeamCharge++;
+			if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
 			if (TeamCharge == TeamChargeMax)
 			{
 				RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent();
 			}
-			else
-			{
-				TeamCharge++;
-			}
 			break;
 		case ERobotCharacterPositionEnum::Up:
-			TeamChargeMax = 0;
+			TeamCharge = 0;
 			break;
 	default: ;
 	}
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 }
 
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {

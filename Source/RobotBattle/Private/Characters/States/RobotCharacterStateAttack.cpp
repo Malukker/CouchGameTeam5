@@ -40,6 +40,11 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimTime = 0.0f;
 	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
 	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
+
+	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
+	{
+		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
