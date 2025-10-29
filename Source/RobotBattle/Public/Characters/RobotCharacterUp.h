@@ -22,8 +22,9 @@ protected:
 	void OnInputAttack2(const FInputActionValue& InputActionValue);
 	void OnInputAttack3(const FInputActionValue& InputActionValue);
 	void OnInputAttackDuo(const FInputActionValue& InputActionValue);
+	void OnInputRightDash(const FInputActionValue& InputActionValue);
+	void OnInputLeftDash(const FInputActionValue& InputActionValue);
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
 
 	virtual void ManageChargeEvent() override;
-
 };

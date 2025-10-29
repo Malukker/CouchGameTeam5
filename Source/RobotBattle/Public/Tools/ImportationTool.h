@@ -6,6 +6,8 @@
 #include "Editor/Blutility/Classes/EditorUtilityWidget.h"
 #include "ImportationTool.generated.h"
 
+struct FAssetData;
+
 /**
  * 
  */

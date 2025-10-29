@@ -33,4 +33,8 @@ private:
 
 	UFUNCTION()
 	void OnInputDash();
+	UFUNCTION()
+	void OnStunEvent();
+	UFUNCTION()
+	void OnLockEvent();
 };

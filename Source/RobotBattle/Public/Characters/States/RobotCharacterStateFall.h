@@ -34,4 +34,8 @@ public:
 private:
 	UFUNCTION()
 	void OnDashEvent();
+	UFUNCTION()
+	void OnStunEvent();
+	UFUNCTION()
+	void OnLockEvent();
 };

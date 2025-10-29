@@ -7,7 +7,7 @@
 #include "PlayerMenuActor.generated.h"
 
 class UInputAction;
-class FInputActionValue;
+struct FInputActionValue;
 class APlayerController;
 
 UENUM()
@@ -28,15 +28,15 @@ class ROBOTBATTLE_API APlayerMenuActor : public APawn
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerMenuMoveInput,
 		EPlayerMenuInputDirection, Direction,
-		APlayerController*, Controller)
+		APlayerController*, Controller);
 	UPROPERTY()
 	FOnPlayerMenuMoveInput InputMoveEvent;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuValidateInput, APlayerController*, Controller)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuValidateInput, APlayerController*, Controller);
 	UPROPERTY()
 	FOnPlayerMenuValidateInput InputValidateEvent;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuCancelInput, APlayerController*, Controller)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuCancelInput, APlayerController*, Controller);
 	UPROPERTY()
 	FOnPlayerMenuCancelInput InputCancelEvent;
 	

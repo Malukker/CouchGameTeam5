@@ -6,6 +6,7 @@
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/RobotCharacterSettings.h"
 #include "Characters/States/RobotCharacterStateAttack.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ERobotCharacterStateID URobotCharacterStateIdle::GetStateID() {
 	return ERobotCharacterStateID::Idle;
@@ -19,6 +20,8 @@ void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) 
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputJump);
 	Character->InputAttackEvent.AddDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 	Character->InputDashEvent.AddDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
+	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateIdle::OnStunEvent);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateIdle::OnLockEvent);
 }
 
 void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
@@ -27,6 +30,8 @@ void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnInputJump);
 	Character->InputAttackEvent.RemoveDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 	Character->InputDashEvent.RemoveDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnStunEvent);
+	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnLockEvent);
 }
 
 void URobotCharacterStateIdle::StateTick(float DeltaTime) {
@@ -34,6 +39,9 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 
 	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Walk);
+	}
+	if (CharacterMovement->Velocity.Z < 0.f) {
+		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
 }
 
@@ -50,3 +58,16 @@ void URobotCharacterStateIdle::OnInputDash()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
 }
+
+void URobotCharacterStateIdle::OnStunEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
+}
+
+
+void URobotCharacterStateIdle::OnLockEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
+}
+
+

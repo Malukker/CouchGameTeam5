@@ -91,6 +91,7 @@ protected:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputAttackEvent);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputJumpEvent);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInputDashManagerEvent,ERobotCharacterPositionEnum ,Position);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FInputDashEvent);	
 
 public:
@@ -114,6 +115,9 @@ public:
 
 	UPROPERTY()
 	FInputDashEvent InputDashEvent;
+	
+	UPROPERTY()
+	FInputDashManagerEvent InputDashManagerEvent;
 
 
 protected:
@@ -158,7 +162,11 @@ public:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLockManagerEvent,ERobotCharacterPositionEnum ,Position, bool, Lock);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
@@ -168,13 +176,19 @@ public:
 	FLockEvent LockEvent;
 	
 	UPROPERTY()
+	FLockEvent UnlockEvent;
+	
+	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;
 	
 	UPROPERTY()
-	FHurtEvent GuardEvent;
+	FGuardManagerEvent GuardManagerEvent;
+	
+	UPROPERTY()
+	FGuardResetManagerEvent GuardResetManagerEvent;
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
@@ -185,16 +199,16 @@ public:
 
 public :
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FChargeEvent);
 	
 	virtual void ManageChargeEvent();
+	
+	UPROPERTY(EditAnywhere)
+	int Charge = 0;
+	
 	bool CanAttackDuo = false;
 	
 	UPROPERTY()
 	FChargeManagerEvent ChargeManagerEvent;
-	
-	UPROPERTY()
-	FChargeEvent ChargeIncrementEvent;
 	
 #pragma endregion
 	

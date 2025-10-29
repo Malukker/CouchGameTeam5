@@ -40,6 +40,11 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimTime = 0.0f;
 	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
 	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
+
+	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
+	{
+		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
@@ -59,7 +64,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			EndNotify->OnNotifiedEndAttack.Clear();
 		}
 	}
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -92,6 +97,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					{
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
+						Character->GuardResetManagerEvent.Broadcast();
 					}
 				}
 			}
@@ -125,7 +131,7 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 {
 	bIsAttackTraceEnabled = true;
 	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 

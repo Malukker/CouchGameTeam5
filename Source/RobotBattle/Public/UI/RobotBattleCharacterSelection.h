@@ -7,7 +7,7 @@
 #include "RobotBattleCharacterSelection.generated.h"
 
 enum class ERobotID : uint8;
-enum class EPlayerMenuInputDirection : uint8;
+enum class EPlayerMenuInputDirection : int;
 /**
  * 
  */
@@ -19,15 +19,15 @@ class ROBOTBATTLE_API URobotBattleCharacterSelection : public UUserWidget
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSelectionChange,
 		uint8, ControllerID,
-    	ERobotID, RobotID)
+    	ERobotID, RobotID);
 	UPROPERTY(BlueprintAssignable)
 	FOnSelectionChange SelectionChangeEvent;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, uint8, ControllerID)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, uint8, ControllerID);
 	UPROPERTY(BlueprintAssignable)
 	FOnSelectionValidation ValidateEvent;
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionCancellation, uint8, ControllerID)
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionCancellation, uint8, ControllerID);
 	UPROPERTY(BlueprintAssignable)
 	FOnSelectionCancellation CancellationEvent;
 
