@@ -4,9 +4,6 @@
 #include "Match/TeamManager.h"
 
 #include "Characters/RobotCharacter.h"
-#include "Characters/RobotCharacterUp.h"
-#include "Characters/RobotCharacterDown.h"
-
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
 #include <Characters/RobotCharacterSettings.h>
@@ -14,6 +11,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/UIGamePlayInterface.h"
 
 
 // Sets default values
@@ -89,14 +87,22 @@ void ATeamManager::SpawnCharacters()
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
+		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
+		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
+		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
-		//TeamLife += Character->Life;
-		//TeamGuardMax += Character->Guard;
+		TeamLifeMax += NewCharacter->Life;
+		TeamGuardMax += NewCharacter->Guard;
+		TeamChargeMax += NewCharacter->Charge;
 	}
 	TeamGuard = TeamGuardMax;
+	TeamLife = TeamLifeMax;
+	TeamCharge = TeamChargeMax;
+	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
@@ -136,10 +142,10 @@ FVector ATeamManager::GetTeamLocation()
 
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	if (CanTakeDamage && TeamGuard > 0)
+	if (CanGuard && TeamGuard > 0)
 	{
-		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast();
-		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast();
+		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
+		TeamGuard--;
 	}
 	else if (CanTakeDamage)
 	{
@@ -149,20 +155,79 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
 		if (TeamLife < 0) TeamLife = 0;
-		TeamGuard = TeamGuardMax;
+		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	}
 }
 
-void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
+void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
 {
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->UnlockEvent.Broadcast();
+		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->UnlockEvent.Broadcast();
+		}
 		break;
+	default: ;
+	}
+}
+
+void ATeamManager::GuardReset()
+{
+	TeamGuard = TeamGuardMax;
+}
+
+void ATeamManager::Guard(bool Guard)
+{
+	CanGuard = Guard;
+}
+
+void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		//TO DO
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		//TO DO
+		break;
+	default: ;
+	}
+}
+
+void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+		case ERobotCharacterPositionEnum::Down:
+			if (TeamCharge == TeamChargeMax)
+			{
+				RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent();
+			}
+			else
+			{
+				TeamCharge++;
+			}
+			break;
+		case ERobotCharacterPositionEnum::Up:
+			TeamChargeMax = 0;
+			break;
 	default: ;
 	}
 }
