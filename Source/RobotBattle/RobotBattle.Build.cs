@@ -20,7 +20,8 @@ public class RobotBattle : ModuleRules
 				"LocalMultiplayer",
 				"UMG",
 				"UnrealEd",
-				"Blutility"
+				"Blutility",
+				"AssetRegistry",
 			});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

@@ -75,15 +75,15 @@ void APlayerMenuActor::OnInputMoveMenu(const FInputActionValue& InputActionValue
 		}
 	}
 	
-	MoveEvent.Broadcast(Direction, SelfPlayerController);
+	InputMoveEvent.Broadcast(Direction, SelfPlayerController);
 }
 
 void APlayerMenuActor::OnInputValidate(const FInputActionValue& InputActionValue)
 {
-	ValidateEvent.Broadcast(SelfPlayerController);
+	InputValidateEvent.Broadcast(SelfPlayerController);
 }
 
 void APlayerMenuActor::OnInputCancel(const FInputActionValue& InputActionValue)
 {
-	CancelEvent.Broadcast(SelfPlayerController);
+	InputCancelEvent.Broadcast(SelfPlayerController);
 }
