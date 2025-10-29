@@ -14,8 +14,8 @@ ERobotCharacterStateID URobotCharacterStateLock::GetStateID()
 
 void URobotCharacterStateLock::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	Super::StateEnter(PreviousStateID);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 }
 
 void URobotCharacterStateLock::StateExit(ERobotCharacterStateID NextState)

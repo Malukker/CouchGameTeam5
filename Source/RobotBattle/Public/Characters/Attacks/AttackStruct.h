@@ -31,7 +31,7 @@ struct FAttackStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* AnimMontage;
+	UAnimMontage* AnimMontage = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FName> ConcernedBones = {};
