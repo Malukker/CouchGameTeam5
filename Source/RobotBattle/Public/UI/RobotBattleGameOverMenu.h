@@ -16,6 +16,8 @@ class ROBOTBATTLE_API URobotBattleGameOverMenu : public UUserWidget
 
 public:
 
+	virtual bool Initialize() override;
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class  UTextBlock* WinText;
 	
@@ -27,5 +29,15 @@ public:
 
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* MainMenuBtn;
+
+	UFUNCTION()
+	void OnClickedRestartButton();
+
+	UFUNCTION()
+	void OnClickedChangeCharacterButton();
+
+	UFUNCTION()
+	void OnClickedMainMenuButton();
+	
 	
 };
