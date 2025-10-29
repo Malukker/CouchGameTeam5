@@ -17,18 +17,38 @@ class ROBOTBATTLE_API URobotBattleCharacterSelection : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void AssignPlayerControllerToRobotPart(APlayerController* InController);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSelectionChange,
+		uint8, ControllerID,
+    	ERobotID, RobotID)
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectionChange SelectionChangeEvent;
 
-	void MoveToNextPart(EPlayerMenuInputDirection InDirection, APlayerController* InController);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, uint8, ControllerID)
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectionValidation ValidateEvent;
 
-	void CancelAssignment(APlayerController* InController);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionCancellation, uint8, ControllerID)
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectionCancellation CancellationEvent;
+
+	UFUNCTION()
+	void ValidateSelection(APlayerController* InController);
+
+	UFUNCTION()
+	void ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection InDirection, APlayerController* InController);
+
+	UFUNCTION()
+	void CancelSelection(APlayerController* InController);
 
 protected:
 	virtual void NativeOnInitialized() override;
 
 private:
 	UPROPERTY()
-	TMap<APlayerController*, ERobotID> BodyPartFromController;
+	TMap<APlayerController*, ERobotID> BodyPartByController;
+
+	UPROPERTY()
+	TMap<APlayerController*, bool> ValidationByController;
 
 	void BindEventsToMenuControl();
 };
