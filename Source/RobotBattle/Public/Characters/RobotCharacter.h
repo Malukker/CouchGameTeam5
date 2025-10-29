@@ -154,6 +154,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int Guard = 0;
+
+	virtual FVector GetRobotLocation() override;
 	
 
 #pragma endregion

@@ -4,14 +4,13 @@
 #include "Camera/CameraWorldSubsystem.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/CameraSettings.h"
+#include "Characters/Interface/Robot.h"
 #include "Kismet/GameplayStatics.h"
 
 
 void UCameraWorldSubsystem::PostInitialize()
 {
 	Super::PostInitialize();
-	CameraSettings = GetDefault<UCameraSettings>();
-	
 }
 
 void UCameraWorldSubsystem::Tick(float DeltaTime)
@@ -23,8 +22,8 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 
 void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
 {
-	TScriptInterface<ICameraFollowTarget> CameraFollowTarget = FollowTarget;
-	if (CameraFollowTarget!=nullptr)
+	TScriptInterface<IRobot> Robot = FollowTarget;
+	if (Robot!=nullptr)
 	{
 		FollowTargets.Add(FollowTarget);
 	}
@@ -46,19 +45,15 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 {
 	FVector NewLocation = FVector::ZeroVector;
-	uint8 Index = 0;
 	for (UObject* FollowTarget : FollowTargets)
 	{
-		TScriptInterface<ICameraFollowTarget> ICameraTarget = FollowTarget;
-		if (ICameraTarget->IsFollowable())
-		{
-			FVector TargetPosition = ICameraTarget->GetFollowPosition();
-			NewLocation += TargetPosition;
-			Index++;
-		}
+		TScriptInterface<IRobot> ICameraTarget = FollowTarget;
 		
+		
+			FVector TargetPosition = ICameraTarget->GetRobotLocation();
+			NewLocation += TargetPosition;
 	}
-	 NewLocation /= Index;
+	 NewLocation /= FollowTargets.Num();
 	NewLocation = FVector(NewLocation.X,CameraMain->GetOwner()->GetActorLocation().Y,NewLocation.Z);
 	return  NewLocation;
 }
@@ -136,13 +131,13 @@ float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
 	
 	for (int i = 0; i< FollowTargets.Num()-1; i++)
 	{
-		TScriptInterface<ICameraFollowTarget> ICameraFirstTarget = FollowTargets[i];
+		TScriptInterface<IRobot> ICameraFirstTarget = FollowTargets[i];
 		for (int j = i+1; j< FollowTargets.Num(); j++)
 		{
-			TScriptInterface<ICameraFollowTarget> ICameraSecondTarget = FollowTargets[j];
+			TScriptInterface<IRobot> ICameraSecondTarget = FollowTargets[j];
 			if (ICameraFirstTarget && ICameraSecondTarget)
 			{
-				float CurrentDistance = FMath::Abs(ICameraFirstTarget->GetFollowPosition().X - ICameraSecondTarget->GetFollowPosition().X);
+				float CurrentDistance = FMath::Abs(ICameraFirstTarget->GetRobotLocation().X - ICameraSecondTarget->GetRobotLocation().X);
 				if (CurrentDistance > GreatestDistance)
 				{
 					GreatestDistance = CurrentDistance;
@@ -220,6 +215,7 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
+	CameraSettings = GetDefault<UCameraSettings>();
 	CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
 
 	AActor* CameraBoundsActor = FindCameraBoundsActor();
