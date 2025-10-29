@@ -19,9 +19,11 @@ AMatchManager::AMatchManager()
 void AMatchManager::BeginPlay()
 {
 	Super::BeginPlay();
-	URobotBattleHUD* UI = CreateWidget<URobotBattleHUD>(UIGameplay);
+	URobotBattleHUD* UI = CreateWidget<URobotBattleHUD>(GetWorld(), UIGameplay);
+//TO DO
 	UI->AddToViewport();
-	IUIGamePlayInterface* UIInterface = Cast<IUIGamePlayInterface>(UI);
+	UI->StartTimer(RoundTime);
+	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UI);
 	for (ATeamManager* Team : Teams)
 	{
 		Team->UIInterface = UIInterface;

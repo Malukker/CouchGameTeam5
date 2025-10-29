@@ -23,11 +23,11 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	CurrentDashTime = 0;
 	if (Character->GetRobotCharacterDownChargeID()==ERobotCharacterDownChargeID::Dash)
 	{
-		Character->ChargeIncrementEvent.Broadcast();
+		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
 	}
-	if (FMathf::Sign(Character->GetOrientX()) == FMathf::Sign(Character->GetInputMoveX()))
+	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetDashDirectionX()))
 	{
-		Character->HurtEvent.AddDynamic(this, &URobotCharacterStateDash::OnStunEvent);
+		Character->InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
 	}
 	Character->LockEvent.AddDynamic(this, &URobotCharacterStateDash::OnLockEvent);
 	

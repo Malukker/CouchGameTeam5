@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "MatchManager.generated.h"
 
+class URobotBattleHUD;
+class ATeamManager;
+
 UCLASS()
 class ROBOTBATTLE_API AMatchManager : public AActor
 {
@@ -16,10 +19,13 @@ public:
 	AMatchManager();
 
 	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<URobotBattleHUD> UIGameplay;
+	float RoundTime = 60;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URobotBattleHUD> UIGameplay;
 	
 	UPROPERTY(EditAnywhere)
-	TSoftObjectPtr<ATeamManager> Teams;
+	TArray<TObjectPtr<ATeamManager>> Teams;
 
 protected:
 	// Called when the game starts or when spawned

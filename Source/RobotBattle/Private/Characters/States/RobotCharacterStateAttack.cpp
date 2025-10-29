@@ -92,6 +92,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					{
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
+						Character->GuardResetManagerEvent.Broadcast();
 					}
 				}
 			}

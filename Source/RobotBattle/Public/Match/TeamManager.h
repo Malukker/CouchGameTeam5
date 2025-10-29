@@ -9,6 +9,7 @@
 #include "TeamManager.generated.h"
 
 class URobotCharacterInputData;
+class IUIGamePlayInterface;
 class ARobotCharacter;
 class AArenaPlayerStart;
 class UInputMappingContext;
@@ -32,9 +33,8 @@ public:
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
-	
-	UPROPERTY()
-	TObjectPtr<IUIGamePlayInterface> UIInterface;
+
+	TScriptInterface<IUIGamePlayInterface> UIInterface;
 	
 
 	// Called every frame
@@ -52,7 +52,11 @@ private:
 	
 	float TeamGuardMax = 0;
 	float TeamGuard = 0;
-	bool CanTakeDamage = false;
+	bool CanTakeDamage = true;
+	bool CanGuard = false;
+	
+	float TeamChargeMax = 0;
+	float TeamCharge = 0;
 	
 	FVector GetTeamLocation();
 
@@ -61,6 +65,18 @@ private:
 	
 	UFUNCTION()
 	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
+	
+	UFUNCTION()
+	void GuardReset();
+	
+	UFUNCTION()
+	void DashInvinsibility(ERobotCharacterPositionEnum Position);
+	
+	UFUNCTION()
+	void Guard(bool Guard);
+	
+	UFUNCTION()
+	void Charge(ERobotCharacterPositionEnum Position);
 	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 

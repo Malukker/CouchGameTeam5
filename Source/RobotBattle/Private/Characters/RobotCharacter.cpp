@@ -18,7 +18,7 @@ ARobotCharacter::ARobotCharacter()
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
 	HurtManagerEvent.Broadcast(Damage, StunTime);
-	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }
 
 // Called when the game starts or when spawned

@@ -2,6 +2,8 @@
 
 
 #include "Characters/States/RobotCharacterStateWalk.h"
+
+#include "MathUtil.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,11 +21,13 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 
 	CharacterMovement->MaxWalkSpeed = WalkSpeedMax;
 	Character->PlayAnimMontage(WalkAnim);
-	
+
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputDash);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
 	Character->LockEvent.AddDynamic(this, &URobotCharacterStateWalk::OnLockEvent);
+	
+	WalkForwardTest();
 }
 
 void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
@@ -47,6 +51,29 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 	else
 	{
 		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		WalkForwardTest();
+	}
+}
+
+void URobotCharacterStateWalk::WalkForwardTest()
+{
+	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetInputMoveX()))
+	{
+		if (WalkForward)
+		{
+			Character->GuardManagerEvent.Broadcast(true);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
+		}
+		WalkForward = false;
+	}
+	else
+	{
+		if (!WalkForward)
+		{
+			Character->GuardManagerEvent.Broadcast(false);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
+		}
+		WalkForward = true;
 	}
 }
 
