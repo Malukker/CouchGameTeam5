@@ -13,4 +13,31 @@ UCLASS()
 class ROBOTBATTLE_API URobotBattleGameOverMenu : public UUserWidget
 {
 	GENERATED_BODY()
+
+public:
+
+	virtual bool Initialize() override;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class  UTextBlock* WinText;
+	
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	class UButton* RestartBtn;
+
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	class UButton* ChangeCharacterBtn;
+
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	class UButton* MainMenuBtn;
+
+	UFUNCTION()
+	void OnClickedRestartButton();
+
+	UFUNCTION()
+	void OnClickedChangeCharacterButton();
+
+	UFUNCTION()
+	void OnClickedMainMenuButton();
+	
+	
 };
