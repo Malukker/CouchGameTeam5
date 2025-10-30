@@ -55,7 +55,7 @@ void AMatchManager::EndFight(int LosingTeam)
 	}
 	for (int TeamWin : TeamsWin)
 	{
-		if (TeamWin == 1)
+		if (TeamWin == 2)
 		{
 			UIGameplay->RemoveFromParent();
 			URobotBattleGameOverMenu* UIGameOver = CreateWidget<URobotBattleGameOverMenu>(GetWorld(), UIGameOverClass);
