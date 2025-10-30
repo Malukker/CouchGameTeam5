@@ -1,0 +1,24 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Characters/RobotCharacterState.h"
+#include "RobotCharacterStateLock.generated.h"
+
+
+UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
+class ROBOTBATTLE_API URobotCharacterStateLock : public URobotCharacterState
+{
+	GENERATED_BODY()
+
+	virtual ERobotCharacterStateID GetStateID() override;
+	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
+	virtual void StateExit(ERobotCharacterStateID NextState) override;
+	virtual void StateTick(float DeltaTime) override;
+
+	int OriginalGravityScale;
+	
+	UFUNCTION()
+	void OnEventUnlock();
+};

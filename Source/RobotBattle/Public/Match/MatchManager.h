@@ -1,0 +1,49 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "MatchManager.generated.h"
+
+class URobotBattleGameOverMenu;
+class URobotBattleHUD;
+class ATeamManager;
+
+UCLASS()
+class ROBOTBATTLE_API AMatchManager : public AActor
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this actor's properties
+	AMatchManager();
+
+	UPROPERTY(EditAnywhere)
+	float RoundTime = 60;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URobotBattleHUD> UIGameplayClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URobotBattleGameOverMenu> UIGameOverClass;
+
+	URobotBattleHUD* UIGameplay;
+	
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<ATeamManager>> Teams;
+	TArray<int> TeamsWin;
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void ResetFight();
+
+	UFUNCTION()
+	void EndFight(int LosingTeam);
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+};
