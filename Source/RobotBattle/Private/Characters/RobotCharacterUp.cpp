@@ -53,6 +53,27 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputLeftDash);
 	}
+	
+	if (InputData->InputActionMoveX) {
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Started,
+			this,
+			&ARobotCharacterUp::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Completed,
+			this,
+			&ARobotCharacterUp::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Triggered,
+			this,
+			&ARobotCharacterUp::OnInputMoveX
+		);
+	}
 
 #pragma endregion
 }
@@ -112,4 +133,9 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 	{
 		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
+}
+
+void ARobotCharacterUp::OnInputMoveX(const FInputActionValue& InputActionValue)
+{
+	InputMoveX = InputActionValue.Get<float>();
 }

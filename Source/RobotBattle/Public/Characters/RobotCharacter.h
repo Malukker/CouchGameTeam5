@@ -149,11 +149,18 @@ public:
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 
-	UPROPERTY(EditAnywhere)
-	int Life = 0;
+	int Team;
 
 	UPROPERTY(EditAnywhere)
-	int Guard = 0;
+	int Life = 500;
+
+	UPROPERTY(EditAnywhere)
+	int Guard = 2;
+
+	virtual FVector GetRobotLocation() override;
+	
+	UPROPERTY(EditAnywhere)
+	int InvinsibilityFrames = 12;
 	
 
 #pragma endregion
@@ -201,8 +208,10 @@ public :
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
 	virtual void ManageChargeEvent();
-	UPROPERTY()
+	
+	UPROPERTY(EditAnywhere)
 	int Charge = 0;
+	
 	bool CanAttackDuo = false;
 	
 	UPROPERTY()

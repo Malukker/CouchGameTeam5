@@ -40,6 +40,11 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimTime = 0.0f;
 	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
 	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
+
+	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
+	{
+		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
@@ -76,7 +81,9 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
 			EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
-			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
+			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
+			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
+			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4);
 			if (UKismetSystemLibrary::SphereTraceSingle
 				(
 					GetWorld(),
@@ -93,6 +100,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
 						Character->GuardResetManagerEvent.Broadcast();
+						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 					}
 				}
 			}
@@ -125,8 +133,6 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 {
 	bIsAttackTraceEnabled = true;
-	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 
