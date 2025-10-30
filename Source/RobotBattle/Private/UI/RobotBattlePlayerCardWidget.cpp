@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/TextBlock.h"
 #include "UI/RobotBattlePlayerCardWidget.h"
+#include "Components/TextBlock.h"
 
 void URobotBattlePlayerCardWidget::SetPlayerName(const FString& NewName)
 {

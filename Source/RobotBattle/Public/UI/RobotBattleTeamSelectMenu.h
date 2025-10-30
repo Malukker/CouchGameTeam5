@@ -51,5 +51,5 @@ private:
 	UPROPERTY()
 	TMap<int32, URobotBattlePlayerCardWidget*> PlayerCards;
 
-	UHorizontalBox* GetZoneByName(const FString& ZoneName);	
+	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
 };
