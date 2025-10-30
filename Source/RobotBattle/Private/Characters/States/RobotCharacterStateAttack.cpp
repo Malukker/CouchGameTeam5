@@ -98,6 +98,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
 						Character->GuardResetManagerEvent.Broadcast();
+						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 					}
 				}
 			}
@@ -130,8 +131,6 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 {
 	bIsAttackTraceEnabled = true;
-	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 

@@ -14,8 +14,7 @@ class ARobotCharacter;
 class AArenaPlayerStart;
 class UInputMappingContext;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStunEvent);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeathEvent, int, Team);
 
 UCLASS()
 class ROBOTBATTLE_API ATeamManager : public AActor
@@ -35,12 +34,14 @@ public:
 	TObjectPtr<ATeamManager> Opponent;
 
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
-	
+
+	FDeathEvent DeathEvent;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
 	void SpawnCharacters();
+	void ResetCharacters();
 
 	FVector GetOpponentLocation();
 	
@@ -52,8 +53,14 @@ private:
 	
 	float TeamGuardMax = 0;
 	float TeamGuard = 0;
-	bool CanTakeDamage = true;
 	bool CanGuard = false;
+	
+	int InvinsibilityFramesOrigin = 0;
+	int InvinsibilityFrames = 0;
+	float DashBuffer = 0;
+	bool WantInvinsibility = false;
+	bool IsDashing = false;
+	bool CanTakeDamage = true;
 	
 	float TeamChargeMax = 0;
 	float TeamCharge = 0;
