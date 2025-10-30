@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "MatchManager.generated.h"
 
+class URobotBattleGameOverMenu;
 class URobotBattleHUD;
 class ATeamManager;
 
@@ -22,14 +23,25 @@ public:
 	float RoundTime = 60;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<URobotBattleHUD> UIGameplay;
+	TSubclassOf<URobotBattleHUD> UIGameplayClass;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URobotBattleGameOverMenu> UIGameOverClass;
+
+	URobotBattleHUD* UIGameplay;
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<ATeamManager>> Teams;
+	TArray<int> TeamsWin;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void ResetFight();
+
+	UFUNCTION()
+	void EndFight(int LosingTeam);
 
 public:
 	// Called every frame

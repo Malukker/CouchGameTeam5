@@ -124,6 +124,16 @@ void ATeamManager::SpawnCharacters()
 		"Bones_Attach");
 }
 
+void ATeamManager::ResetCharacters()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
+	TeamGuard = TeamGuardMax;
+	TeamLife = TeamLifeMax;
+	TeamCharge = 0;
+	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+}
+
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
 {
 	const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
@@ -162,7 +172,11 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
-		if (TeamLife < 0) TeamLife = 0;
+		if (TeamLife < 0)
+		{
+			TeamLife = 0;
+			DeathEvent.Broadcast(Team);
+		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	}
 }
