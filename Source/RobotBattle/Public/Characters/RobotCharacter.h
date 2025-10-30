@@ -149,6 +149,8 @@ public:
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 
+	int Team;
+
 	UPROPERTY(EditAnywhere)
 	int Life = 500;
 

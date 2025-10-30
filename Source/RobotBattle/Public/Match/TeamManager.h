@@ -26,7 +26,16 @@ public:
 	ATeamManager();
 
 	UPROPERTY(EditAnywhere)
+
 	uint8 Team = 0;
+	
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> TeamCollision;
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> OpponentCollision;
+	
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> AttackChannel;
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;

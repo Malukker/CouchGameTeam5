@@ -23,6 +23,7 @@ void AMatchManager::BeginPlay()
 	Super::BeginPlay();
 	UIGameplay = CreateWidget<URobotBattleHUD>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
+	
 	UIGameplay->StartTimer(RoundTime);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
