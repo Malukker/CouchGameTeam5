@@ -3,7 +3,9 @@
 
 #include "Characters/States/RobotCharacterStateGuard.h"
 
-
+#include "MathUtil.h"
+#include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterStateMachine.h"
 
 
 ERobotCharacterStateID URobotCharacterStateGuard::GetStateID()
@@ -13,15 +15,20 @@ ERobotCharacterStateID URobotCharacterStateGuard::GetStateID()
 
 void URobotCharacterStateGuard::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
-	Super::StateEnter(PreviousStateID);
+	Character->PlayAnimMontage(GuardAnimMontage);
+	Character->GuardManagerEvent.Broadcast(true);
 }
 
 void URobotCharacterStateGuard::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
+	Character->GuardManagerEvent.Broadcast(false);
 }
 
 void URobotCharacterStateGuard::StateTick(float DeltaTime)
 {
-	Super::StateTick(DeltaTime);
+	if (FMathf::Sign(Character->GetOrientX()) == FMathf::Sign(Character->GetInputMoveX()))
+	{
+		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+	}
 }

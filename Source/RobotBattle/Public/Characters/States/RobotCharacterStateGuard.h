@@ -19,4 +19,8 @@ class ROBOTBATTLE_API URobotCharacterStateGuard : public URobotCharacterState
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	
 	virtual void StateTick(float DeltaTime) override;
+
+private:
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* GuardAnimMontage;
 };
