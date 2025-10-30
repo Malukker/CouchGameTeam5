@@ -22,4 +22,7 @@ class ROBOTBATTLE_API IRobot
 
 public:
 	virtual void TakeDamageFromAttack(int Damage, float StunTime) = 0;
+	
+	virtual FVector GetRobotLocation() = 0;
+ 
 };

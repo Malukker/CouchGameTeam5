@@ -5,7 +5,9 @@
 #include "Characters/RobotCharacterStateMachine.h"
 #include <EnhancedInputSubsystems.h>
 #include "EnhancedInputComponent.h"
+#include "Camera/CameraWorldSubsystem.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -28,6 +30,7 @@ void ARobotCharacter::BeginPlay()
 	CreateStateMachine();
 
 	InitStateMachine();
+	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 }
 
 // Called every frame
@@ -153,6 +156,11 @@ ERobotCharacterPositionEnum ARobotCharacter::GetPositionEnum()
 ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
 {
 	return  ERobotCharacterDownChargeID::None;
+}
+
+FVector ARobotCharacter::GetRobotLocation()
+{
+	return GetActorLocation();
 }
 
 void ARobotCharacter::ManageChargeEvent()

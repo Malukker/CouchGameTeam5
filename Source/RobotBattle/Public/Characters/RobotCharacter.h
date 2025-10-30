@@ -153,7 +153,9 @@ public:
 	int Life = 500;
 
 	UPROPERTY(EditAnywhere)
-	int Guard = 2;
+	int Guard = 0;
+
+	virtual FVector GetRobotLocation() override;
 	
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
