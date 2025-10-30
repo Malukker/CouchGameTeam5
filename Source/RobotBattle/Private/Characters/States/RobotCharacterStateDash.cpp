@@ -52,6 +52,10 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 	if (CharacterMovement->IsMovingOnGround()) {
 		Character->ResetDash();
 	}
+	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetDashDirectionX()))
+	{
+		Character->InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
+	}
 
 	CharacterMovement->StopMovementImmediately();
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnStunEvent);

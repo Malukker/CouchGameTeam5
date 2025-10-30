@@ -150,12 +150,15 @@ public:
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 
 	UPROPERTY(EditAnywhere)
-	int Life = 0;
+	int Life = 500;
 
 	UPROPERTY(EditAnywhere)
 	int Guard = 0;
 
 	virtual FVector GetRobotLocation() override;
+	
+	UPROPERTY(EditAnywhere)
+	int InvinsibilityFrames = 12;
 	
 
 #pragma endregion
