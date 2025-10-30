@@ -74,7 +74,6 @@ protected:
 
 	void ClampPositionIntoCameraBounds(FVector& Position);
 	
-	
 
 	void GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax);
 

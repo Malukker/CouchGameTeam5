@@ -49,7 +49,6 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 	{
 		TScriptInterface<IRobot> ICameraTarget = FollowTarget;
 		
-		
 			FVector TargetPosition = ICameraTarget->GetRobotLocation();
 			NewLocation += TargetPosition;
 	}
