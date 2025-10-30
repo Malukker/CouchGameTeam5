@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#ifdef WITH_EDITOR
 #include "Editor/Blutility/Classes/EditorUtilityWidget.h"
+#endif
 #include "ImportationTool.generated.h"
 
 struct FAssetData;

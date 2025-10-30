@@ -81,7 +81,9 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
 			EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
-			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
+			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
+			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
+			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4);
 			if (UKismetSystemLibrary::SphereTraceSingle
 				(
 					GetWorld(),

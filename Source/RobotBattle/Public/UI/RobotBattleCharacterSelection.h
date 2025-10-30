@@ -40,15 +40,20 @@ public:
 	UFUNCTION()
 	void CancelSelection(APlayerController* InController);
 
+	UFUNCTION(BlueprintCallable)
+	void BindEventsToMenuControl();
+	
 protected:
 	virtual void NativeOnInitialized() override;
 
 private:
+	bool CanInput;
+	
 	UPROPERTY()
 	TMap<APlayerController*, ERobotID> BodyPartByController;
 
 	UPROPERTY()
 	TMap<APlayerController*, bool> ValidationByController;
 
-	void BindEventsToMenuControl();
+	void ResetInput();
 };

@@ -50,13 +50,17 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionCancel;
-	
-private:
+
 	UPROPERTY()
 	TObjectPtr<APlayerController> SelfPlayerController;
 	
+private:
+	EPlayerMenuInputDirection Direction;
+	
 	void BindActions(UEnhancedInputComponent* Enhanced);
 
+	void OnInputMoveRecord(const FInputActionValue& InputActionValue);
+	
 	void OnInputMoveMenu(const FInputActionValue& InputActionValue);
 	
 	void OnInputValidate(const FInputActionValue& InputActionValue);

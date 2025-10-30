@@ -1,12 +1,16 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Tools/ImportationTool.h"
+#include "Tools/ImportationTool.h"*
 
+#ifdef WITH_EDITOR
 #include "AssetSelection.h"
+#endif
 #include "Particles/ParticleSystem.h"
 #include "PhysicsEngine/PhysicsAsset.h"
+#ifdef WITH_EDITOR
 #include "Subsystems/EditorAssetSubsystem.h"
+#endif
 
 #pragma region Setup
 

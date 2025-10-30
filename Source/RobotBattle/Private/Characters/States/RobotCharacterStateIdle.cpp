@@ -2,7 +2,9 @@
 
 
 #include "Characters/States/RobotCharacterStateIdle.h"
+
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/RobotCharacterSettings.h"
 #include "Characters/States/RobotCharacterStateAttack.h"
@@ -38,7 +40,14 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
 
 	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
-		StateMachine->ChangeState(ERobotCharacterStateID::Walk);
+		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
+		{
+			StateMachine->ChangeState(ERobotCharacterStateID::Walk);
+		}
+		else if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
+		{
+			StateMachine->ChangeState(ERobotCharacterStateID::Guard);
+		}
 	}
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
@@ -69,5 +78,4 @@ void URobotCharacterStateIdle::OnLockEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
 }
-
 

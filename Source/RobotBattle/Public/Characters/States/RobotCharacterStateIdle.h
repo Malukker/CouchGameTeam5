@@ -37,4 +37,6 @@ private:
 	void OnStunEvent();
 	UFUNCTION()
 	void OnLockEvent();
+
+
 };
