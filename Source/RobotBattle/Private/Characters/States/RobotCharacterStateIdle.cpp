@@ -3,12 +3,10 @@
 
 #include "Characters/States/RobotCharacterStateIdle.h"
 
-#include "MathUtil.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/RobotCharacterSettings.h"
-#include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Characters/States/RobotCharacterStateAttack.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -41,15 +39,13 @@ void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
 void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
 
-	if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
-	{
-		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
+	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
+		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
+		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Walk);
 		}
-	}
-	else
-	{
-		if (FMathf::Sign(Character->GetOrientX()) == FMathf::Sign(Character->GetInputMoveX())) {
+		else if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
+		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Guard);
 		}
 	}
