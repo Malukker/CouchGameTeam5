@@ -27,8 +27,8 @@ void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(EPlayerMe
 {
 	if (!InController) { return; }
 
-	if (InDirection != EPlayerMenuInputDirection::Left || InDirection == EPlayerMenuInputDirection::Right) { return; }
-
+	if (InDirection != EPlayerMenuInputDirection::Right &&	 InDirection != EPlayerMenuInputDirection::Left) { return; }
+	
 	TArray<APlayerController*> PlayerControllers;
 	BodyPartByController.GetKeys(PlayerControllers);
 	for (auto PlayerController : PlayerControllers)
@@ -66,6 +66,10 @@ void URobotBattleCharacterSelection::NativeOnInitialized()
 	BindEventsToMenuControl();
 }
 
+void URobotBattleCharacterSelection::ResetInput()
+{
+}
+
 void URobotBattleCharacterSelection::BindEventsToMenuControl()
 {
 	TArray<AActor*> Players;
@@ -82,7 +86,7 @@ void URobotBattleCharacterSelection::BindEventsToMenuControl()
 
 	for (int i = 0; i < Players.Num(); i++)
 	{
-		BodyPartByController[UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i)] = ERobotID::Robot1;
-		ValidationByController[UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i)] = false;
+		BodyPartByController.Add(UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i), ERobotID::Robot1);
+		ValidationByController.Add(UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i), false);
 	}
 }

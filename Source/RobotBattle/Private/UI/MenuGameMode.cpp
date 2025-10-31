@@ -11,6 +11,7 @@
 void AMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	CreatePlayerMenuActors();
 	BindMenuInputsToPlayers();
 }
 
@@ -28,8 +29,9 @@ void AMenuGameMode::CreatePlayerMenuActors() const
 	{
 		if (Controller != nullptr)
 		{
-			APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActor<APlayerMenuActor>();
+			APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActor<APlayerMenuActor>(MenuActorBlueprintClass);
 			Controller->Possess(PlayerMenuActor);
+			PlayerMenuActor->SelfPlayerController = Controller;
 		}
 	}
 }

@@ -3,7 +3,6 @@
 
 #include "Characters/States/RobotCharacterStateWalk.h"
 
-#include "MathUtil.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -57,7 +56,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 
 void URobotCharacterStateWalk::WalkForwardTest()
 {
-	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetInputMoveX()))
+	if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
 	{
 		if (WalkForward)
 		{

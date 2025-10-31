@@ -38,6 +38,5 @@ private:
 	UFUNCTION()
 	void OnLockEvent();
 
-	UFUNCTION()
-	void OnGuardEvent(bool sens);
+
 };

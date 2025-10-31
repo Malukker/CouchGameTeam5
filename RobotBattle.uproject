@@ -12,6 +12,10 @@
 		{
 			"Name": "LocalMultiplayer",
 			"Type": "Runtime"
+		},
+		{
+			"Name": "ToolBox",
+			"Type": "Editor"
 		}
 	],
 	"Plugins": [
