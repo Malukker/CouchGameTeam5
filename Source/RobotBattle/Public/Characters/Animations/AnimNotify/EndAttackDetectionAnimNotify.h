@@ -6,7 +6,7 @@
 #include "Animation/AnimNotifies/AnimNotify.h"
 #include "EndAttackDetectionAnimNotify.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FEndOnNotifiedAttack);
+DECLARE_MULTICAST_DELEGATE_OneParam(FEndOnNotifiedAttack, AActor*, ConcernedActor);
 UCLASS()
 class ROBOTBATTLE_API UEndAttackDetectionAnimNotify : public UAnimNotify
 {

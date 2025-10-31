@@ -55,12 +55,12 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack.Clear();
+			StartNotify->OnNotifiedStartAttack.Remove(StartHandle);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.Clear();
+			EndNotify->OnNotifiedEndAttack.Remove(EndHandle);
 		}
 	}
 	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
@@ -123,24 +123,26 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack. AddUObject(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartHandle = StartNotify->OnNotifiedStartAttack.AddUObject(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.AddUObject(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
+			EndHandle = EndNotify->OnNotifiedEndAttack.AddUObject(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 }
 
-void URobotCharacterStateAttack::StartDetectionNotifyAttack()
+void URobotCharacterStateAttack::StartDetectionNotifyAttack(AActor* ConcernedActor)
 {
+	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = true;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 
-void URobotCharacterStateAttack::EndDetectionNotifyAttack()
+void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor)
 {
+	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = false;
 	AttackIndex += 2;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));

@@ -53,11 +53,14 @@ private:
 	
 	float CurrentAnimTime;
 
+	FDelegateHandle StartHandle;
+	FDelegateHandle EndHandle;
+
 	void InitAnimationNotify();
 	
-	void StartDetectionNotifyAttack();
+	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
-	void EndDetectionNotifyAttack();
+	void EndDetectionNotifyAttack(AActor* ConcernedActor);
 	
 	
 #pragma endregion
