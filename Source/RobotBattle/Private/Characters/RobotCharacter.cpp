@@ -143,6 +143,10 @@ int ARobotCharacter::GetDashDirectionX() const
 	return DashDirectionX;
 }
 
+void ARobotCharacter::DoGuardTest()
+{
+}
+
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
 	if (InputData == nullptr) return;
 	

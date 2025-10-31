@@ -26,7 +26,7 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
 	Character->LockEvent.AddDynamic(this, &URobotCharacterStateWalk::OnLockEvent);
 	
-	WalkForwardTest();
+	Character->DoGuardTest();
 }
 
 void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
@@ -49,30 +49,8 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 	}
 	else
 	{
+		Character->DoGuardTest();
 		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
-		WalkForwardTest();
-	}
-}
-
-void URobotCharacterStateWalk::WalkForwardTest()
-{
-	if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
-	{
-		if (WalkForward)
-		{
-			Character->GuardManagerEvent.Broadcast(true);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
-		}
-		WalkForward = false;
-	}
-	else
-	{
-		if (!WalkForward)
-		{
-			Character->GuardManagerEvent.Broadcast(false);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
-		}
-		WalkForward = true;
 	}
 }
 

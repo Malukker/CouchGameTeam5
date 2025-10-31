@@ -57,33 +57,13 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
-	else {
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
-	}
-
-	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) WalkForwardTest();
-}
-
-
-void URobotCharacterStateJump::WalkForwardTest()
-{
-	if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
-	{
-		if (WalkForward)
-		{
-			Character->GuardManagerEvent.Broadcast(true);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
-		}
-		WalkForward = false;
-	}
 	else
 	{
-		if (!WalkForward)
+		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
 		{
-			Character->GuardManagerEvent.Broadcast(false);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
+			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+			Character->DoGuardTest();
 		}
-		WalkForward = true;
 	}
 }
 

@@ -32,8 +32,6 @@ private:
 	
 	UFUNCTION()
 	void OnInputJump();
-	
-	void WalkForwardTest();
 
 	UFUNCTION()
 	void OnInputDash();
