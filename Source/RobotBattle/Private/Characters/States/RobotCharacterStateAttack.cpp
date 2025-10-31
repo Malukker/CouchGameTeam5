@@ -38,8 +38,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	KeyframeDeltaTime = AnimDuration / AttackAnim->GetNumberOfSampledKeys();
 	CurrentAnimDeltaTime = 0.0f;
 	CurrentAnimTime = 0.0f;
-	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
-	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
+	AttackIndex = 0;
 
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
@@ -78,8 +77,13 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 	{
 		if (CurrentAnimDeltaTime >= KeyframeDeltaTime)
 		{
-			StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
-			EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation(Character->GetMesh());
+			CurrentAnimDeltaTime -= KeyframeDeltaTime;
+			if (AttackIndex >= CurrentAttackStruct.ConcernedBones.Num())
+			{
+				return;
+			};
+			StartPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex])->GetSocketLocation(Character->GetMesh());
+			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
 			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
 			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
@@ -104,7 +108,6 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					}
 				}
 			}
-			CurrentAnimDeltaTime -= KeyframeDeltaTime;
 		}
 	}
 	if (CurrentAnimTime >= AnimDuration)
@@ -139,5 +142,6 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack()
 void URobotCharacterStateAttack::EndDetectionNotifyAttack()
 {
 	bIsAttackTraceEnabled = false;
+	AttackIndex += 2;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
 }

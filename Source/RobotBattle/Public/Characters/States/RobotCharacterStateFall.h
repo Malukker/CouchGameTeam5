@@ -30,6 +30,7 @@ public:
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
+	void WalkForwardTest();
 
 private:
 	UFUNCTION()
@@ -38,4 +39,7 @@ private:
 	void OnStunEvent();
 	UFUNCTION()
 	void OnLockEvent();
+
+	UPROPERTY()
+	bool WalkForward;
 };
