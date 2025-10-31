@@ -33,6 +33,7 @@ private:
 	
 	bool bIsAttackTraceEnabled;
 
+	int AttackIndex;
 	
 	FVector StartPos;
 	
@@ -51,10 +52,6 @@ private:
 	float CurrentAnimDeltaTime;
 	
 	float CurrentAnimTime;
-	
-	FName StartSocketName;
-
-	FName EndSocketName;
 
 	void InitAnimationNotify();
 	
