@@ -3,6 +3,7 @@
 
 #include "Characters/States/RobotCharacterStateFall.h"
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -48,6 +49,31 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 	}
 	else {
 		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+	}
+
+	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) WalkForwardTest();
+}
+
+
+void URobotCharacterStateFall::WalkForwardTest()
+{
+	if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
+	{
+		if (WalkForward)
+		{
+			Character->GuardManagerEvent.Broadcast(true);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
+		}
+		WalkForward = false;
+	}
+	else
+	{
+		if (!WalkForward)
+		{
+			Character->GuardManagerEvent.Broadcast(false);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
+		}
+		WalkForward = true;
 	}
 }
 
