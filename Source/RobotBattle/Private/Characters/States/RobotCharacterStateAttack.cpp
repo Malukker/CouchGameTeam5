@@ -77,6 +77,11 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 	{
 		if (CurrentAnimDeltaTime >= KeyframeDeltaTime)
 		{
+			CurrentAnimDeltaTime -= KeyframeDeltaTime;
+			if (AttackIndex >= CurrentAttackStruct.ConcernedBones.Num())
+			{
+				return;
+			};
 			StartPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex])->GetSocketLocation(Character->GetMesh());
 			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
@@ -103,7 +108,6 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					}
 				}
 			}
-			CurrentAnimDeltaTime -= KeyframeDeltaTime;
 		}
 	}
 	if (CurrentAnimTime >= AnimDuration)
