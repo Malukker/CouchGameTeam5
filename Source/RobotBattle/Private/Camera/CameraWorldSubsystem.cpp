@@ -16,7 +16,7 @@ void UCameraWorldSubsystem::PostInitialize()
 void UCameraWorldSubsystem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (CameraMain == nullptr) return;
+	//if (CameraMain == nullptr) return;
 	TickUpdateCameraPosition(DeltaTime);
 	TickUpdateCameraZoom(DeltaTime);
 }
@@ -62,7 +62,7 @@ UCameraComponent* UCameraWorldSubsystem::FindCameraByTag(const FName& Tag) const
 {
 	TArray<AActor*> Cameras; 
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag,Cameras);
-	if (Cameras.Num()==0) return nullptr;
+	//if (Cameras.Num()==0) return nullptr;
 	UCameraComponent* CameraComp = Cameras[0]->FindComponentByClass<UCameraComponent>();
 	return CameraComp;
 	
@@ -151,7 +151,7 @@ float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
 
 void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
 {
-	if (CameraMain==nullptr) return;
+	//if (CameraMain==nullptr) return;
 	float GreatestDistanceBetweenTargets = CalculateGreatestDistanceBetweenTargets();
 	float CurrentPercent = (GreatestDistanceBetweenTargets-CameraSettings->DistanceBetweenTargetsMin) / (CameraSettings->DistanceBetweenTargetsMax-CameraSettings->DistanceBetweenTargetsMin);
 	CurrentPercent=FMath::Clamp(CurrentPercent, 0.f, 1.f);
@@ -216,14 +216,17 @@ void UCameraWorldSubsystem::InitCameraZoomParameters()
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
-	CameraSettings = GetDefault<UCameraSettings>();
-	CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
-	if (CameraMain == nullptr) return;
-	AActor* CameraBoundsActor = FindCameraBoundsActor();
-	if (CameraBoundsActor!=nullptr)
-	{
-		InitCameraBounds(CameraBoundsActor);
-	}
-
-	InitCameraZoomParameters();
+	 InWorld.GetTimerManager().SetTimerForNextTick([this, &InWorld](){
+	 CameraSettings = GetDefault<UCameraSettings>();
+     	CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
+     	//if (CameraMain == nullptr) return;
+     	AActor* CameraBoundsActor = FindCameraBoundsActor();
+     	if (CameraBoundsActor!=nullptr)
+     	{
+     		InitCameraBounds(CameraBoundsActor);
+     	}
+     
+     	InitCameraZoomParameters();
+	 });
+	
 }
