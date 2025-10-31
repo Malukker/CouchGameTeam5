@@ -53,13 +53,12 @@ private:
 	
 	float CurrentAnimTime;
 
-	FDelegateHandle StartHandle;
-	FDelegateHandle EndHandle;
-
 	void InitAnimationNotify();
-	
+
+	UFUNCTION()
 	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
+	UFUNCTION()
 	void EndDetectionNotifyAttack(AActor* ConcernedActor);
 	
 	

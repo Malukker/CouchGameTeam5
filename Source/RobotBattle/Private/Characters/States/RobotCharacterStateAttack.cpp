@@ -55,12 +55,12 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack.Remove(StartHandle);
+			StartNotify->OnNotifiedStartAttack.RemoveDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.Remove(EndHandle);
+			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
@@ -78,10 +78,6 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 		if (CurrentAnimDeltaTime >= KeyframeDeltaTime)
 		{
 			CurrentAnimDeltaTime -= KeyframeDeltaTime;
-			if (AttackIndex >= CurrentAttackStruct.ConcernedBones.Num())
-			{
-				return;
-			};
 			StartPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex])->GetSocketLocation(Character->GetMesh());
 			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
@@ -123,12 +119,12 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartHandle = StartNotify->OnNotifiedStartAttack.AddUObject(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartNotify->OnNotifiedStartAttack.AddDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndHandle = EndNotify->OnNotifiedEndAttack.AddUObject(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
+			EndNotify->OnNotifiedEndAttack.AddDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 }
