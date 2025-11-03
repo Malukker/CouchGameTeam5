@@ -3,6 +3,8 @@
 
 #include "UI/RobotBattleTeamSelectMenu.h"
 
+#include "Characters/MainMenu/PlayerMenuActor.h"
+#include "GameFramework/PlayerController.h"
 #include "Blueprint/WidgetTree.h"
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
@@ -14,17 +16,17 @@ void URobotBattleTeamSelectMenu::NativeConstruct()
 
 	for (int32 i = 0; i < 4; i++)
 	{
-	
-		URobotBattlePlayerCardWidget* NewCard = WidgetTree->ConstructWidget<URobotBattlePlayerCardWidget>(PlayerCardClass);
-		
-		NewCard->SetPlayerName(FString::Printf(TEXT("Player %d"), i + 1));
+		AddPlayer(i);
+	}
 
-		if (i % 2 == 0)
-			Box_CenterUp->AddChild(NewCard);
-		else
-			Box_CenterDown->AddChild(NewCard);
-
-		PlayerCards.Add(i, NewCard);
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		if (APlayerMenuActor* MenuActor = Cast<APlayerMenuActor>(PC->GetPawn()))
+		{
+			MenuActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+			MenuActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+			MenuActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
+		}
 	}
 }
 
@@ -56,6 +58,9 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 		Box_CenterDown->AddChild(NewCard);
 
 	PlayerCards.Add(PlayerID, NewCard);
+
+	FString StartZone = (PlayerID % 2 == 0) ? "CenterUp" : "CenterDown";
+	CurrentZones.Add(PlayerID, StartZone);
 
 	UE_LOG(LogTemp, Log, TEXT("Added PlayerCard for Player %d"), PlayerID);
 	UE_LOG(LogTemp, Log, TEXT("Box_CenterUp Children Count: %d"), Box_CenterUp->GetChildrenCount());
@@ -95,4 +100,58 @@ UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) c
 	if (Name.Equals("CenterDown", ESearchCase::IgnoreCase)) return Box_CenterDown;
 
 	return nullptr;
+}
+
+void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller)
+{
+	UE_LOG(LogTemp, Log, TEXT("Move input: %d"), (int32)Direction);
+
+	int32 PlayerID = 0;
+	
+	FString* CurrentZonePtr = CurrentZones.Find(PlayerID);
+	FString CurrentZone = CurrentZonePtr ? *CurrentZonePtr : TEXT("CenterUp");
+
+	FString NewZone = CurrentZone;
+
+	if (Direction == EPlayerMenuInputDirection::Up)
+	{
+		if (CurrentZone.Contains("Down"))
+			NewZone = CurrentZone.Replace(TEXT("Down"), TEXT("Up"));
+	}
+	else if (Direction == EPlayerMenuInputDirection::Down)
+	{
+		if (CurrentZone.Contains("Up"))
+			NewZone = CurrentZone.Replace(TEXT("Up"), TEXT("Down"));
+	}
+	else if (Direction == EPlayerMenuInputDirection::Left)
+	{
+		if (CurrentZone.Contains("Away"))
+			NewZone = CurrentZone.Replace(TEXT("Away"), TEXT("Center"));
+		else if (CurrentZone.Contains("Center"))
+			NewZone = CurrentZone.Replace(TEXT("Center"), TEXT("Home"));
+	}
+	else if (Direction == EPlayerMenuInputDirection::Right)
+	{
+		if (CurrentZone.Contains("Home"))
+			NewZone = CurrentZone.Replace(TEXT("Home"), TEXT("Center"));
+		else if (CurrentZone.Contains("Center"))
+			NewZone = CurrentZone.Replace(TEXT("Center"), TEXT("Away"));
+	}
+
+	if (NewZone != CurrentZone)
+	{
+		CurrentZones.Add(PlayerID, NewZone);
+		MovePlayerToZone(PlayerID, NewZone);
+		UE_LOG(LogTemp, Log, TEXT("Player %d moved from %s to %s"), PlayerID, *CurrentZone, *NewZone);
+	}
+}
+
+void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Controller)
+{
+	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName());
+}
+
+void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)
+{
+	UE_LOG(LogTemp, Log, TEXT("Cancel input from %s"), *Controller->GetName());
 }

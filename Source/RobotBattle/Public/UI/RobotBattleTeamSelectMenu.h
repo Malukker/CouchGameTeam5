@@ -24,6 +24,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MovePlayerToZone(int32 PlayerID, const FString& ZoneName);
 
+	UFUNCTION()
+	void OnPlayerMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller);
+
+	UFUNCTION()
+	void OnPlayerValidateInput(APlayerController* Controller);
+
+	UFUNCTION()
+	void OnPlayerCancelInput(APlayerController* Controller);
+
 protected:
 	
 	UPROPERTY(meta = (BindWidget))
@@ -51,5 +60,8 @@ private:
 	UPROPERTY()
 	TMap<int32, URobotBattlePlayerCardWidget*> PlayerCards;
 
+	UPROPERTY()
+	TMap<int32, FString> CurrentZones;
+	
 	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
 };
