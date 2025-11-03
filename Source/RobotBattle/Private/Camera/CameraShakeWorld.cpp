@@ -4,27 +4,29 @@
 #include "Camera/CameraShakeWorld.h"
 
 #include "Camera/CameraSettings.h"
+#include "Characters/Attacks/AttackStruct.h"
 #include "Shakes/PerlinNoiseCameraShakePattern.h"
+
+void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID id)
+{
+	ShakePattern->Duration = CameraSettings->ShakeAttacksSettings[id].ShakeDuration;
+	ShakePattern->LocationAmplitudeMultiplier =CameraSettings->ShakeAttacksSettings[id].LocationAmplitudeMultiplier;
+	ShakePattern->LocationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[id].LocationFrequencyMultiplier;
+	ShakePattern->RotationAmplitudeMultiplier= CameraSettings->ShakeAttacksSettings[id].RotationAmplitudeMultiplier;
+	ShakePattern->RotationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[id].RotationFrequencyMultiplier;
+}
 
 
 UCameraShakeWorld::UCameraShakeWorld(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
-		const UCameraSettings* CameraSettings = GetDefault<UCameraSettings>();
 		ShakePattern = NewObject<UPerlinNoiseCameraShakePattern>(this, NAME_None, RF_Transient);
 
 		if (ShakePattern)
 		{
-		
-			ShakePattern->Duration = CameraSettings->ShakeDuration;
-			ShakePattern->LocationAmplitudeMultiplier = CameraSettings->LocationAmplitudeMultiplier;
-			ShakePattern->LocationFrequencyMultiplier = CameraSettings->LocationFrequencyMultiplier;
-			
-			ShakePattern->RotationAmplitudeMultiplier = CameraSettings->RotationAmplitudeMultiplier;
-			ShakePattern->RotationFrequencyMultiplier = CameraSettings->RotationFrequencyMultiplier;
-			
 			SetRootShakePattern(ShakePattern);
 		}
 	}
 }
+
