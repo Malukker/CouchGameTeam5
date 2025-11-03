@@ -6,8 +6,9 @@
 #include <EnhancedInputSubsystems.h>
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraWorldSubsystem.h"
+#include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-
+#include "Characters/RobotCharacterSettings.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -15,12 +16,6 @@ ARobotCharacter::ARobotCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-}
-
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
-{
-	HurtManagerEvent.Broadcast(Damage, StunTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }
 
 // Called when the game starts or when spawned
@@ -147,9 +142,61 @@ void ARobotCharacter::DoGuardTest()
 {
 }
 
+void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
+{
+}
+
+void ARobotCharacter::OnInputRightDash(const FInputActionValue& InputActionValue)
+{
+}
+
+void ARobotCharacter::OnInputLeftDash(const FInputActionValue& InputActionValue)
+{
+}
+
+void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue)
+{
+}
+
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
 	if (InputData == nullptr) return;
 	
+	if (InputData->InputActionMoveX) {
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Started,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Completed,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+		EnhancedInputComponent->BindAction(
+			InputData->InputActionMoveX,
+			ETriggerEvent::Triggered,
+			this,
+			&ARobotCharacter::OnInputMoveX
+		);
+	}
+
+	if (InputData->InputActionRightDash)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputRightDash);
+	}
+	
+	if (InputData->InputActionLeftDash)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputLeftDash);
+	}
+	
+
+	if (InputData->InputActionAttackDuo)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
+	}
 }
 
 ERobotCharacterPositionEnum ARobotCharacter::GetPositionEnum()
@@ -171,3 +218,19 @@ void ARobotCharacter::ManageChargeEvent()
 {
 }
 
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
+{
+	HurtManagerEvent.Broadcast(Damage, StunTime);
+	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+}
+
+void ARobotCharacter::Pause()
+{
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return;
+	InputMappingContext = CharacterSettings->InputMappingContextMenu.LoadSynchronous();
+}
+
+void ARobotCharacter::Resume()
+{
+}

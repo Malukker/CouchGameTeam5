@@ -20,13 +20,15 @@ public:
 
 protected:
 
-	void OnInputMoveX(const FInputActionValue& InputActionValue);
+	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	
 	void OnInputJump(const FInputActionValue& InputActionValue);
-
-	void OnInputLeftDash(const FInputActionValue& InputActionValue);
 	
-	void OnInputRightDash(const FInputActionValue& InputActionValue);
+	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue) override;
+
+	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
+	
+	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 
@@ -36,4 +38,6 @@ protected:
 	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
 
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID() override;
+
+	virtual  void Resume() override;
 };

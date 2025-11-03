@@ -96,17 +96,24 @@ protected:
 
 public:
 	float GetInputMoveX() const;
+	
 	EAttackID GetCurrentTypeAttack() const;
 	void SetStunTimer(float StunTime) ;
 	float GetStunTimer() const;
+	
+	int GetDashDirectionX() const;
 	void UseDash();
 	void ResetDash();
+	
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
-	int GetDashDirectionX() const;
+	
 	virtual void DoGuardTest();
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
+
+	virtual void Pause();
+	virtual  void Resume();
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -138,6 +145,10 @@ protected:
 	UPROPERTY()
 	EAttackID CurrentTypeAttack = EAttackID::None;
 
+	virtual void OnInputMoveX(const FInputActionValue& InputActionValue);
+	virtual void OnInputRightDash(const FInputActionValue& InputActionValue);
+	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue);
+	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue);
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
 

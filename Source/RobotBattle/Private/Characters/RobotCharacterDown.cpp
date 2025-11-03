@@ -5,6 +5,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterSettings.h"
 
 
 // Sets default values
@@ -29,6 +30,11 @@ void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 	InputJumpEvent.Broadcast();
 }
 
+void ARobotCharacterDown::OnInputAttackDuo(const FInputActionValue& InputActionValue)
+{
+	Super::OnInputAttackDuo(InputActionValue);
+}
+
 void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (!CanDash) return;
@@ -47,40 +53,10 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
 	
-	if (InputData->InputActionMoveX) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Started,
-			this,
-			&ARobotCharacterDown::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Completed,
-			this,
-			&ARobotCharacterDown::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Triggered,
-			this,
-			&ARobotCharacterDown::OnInputMoveX
-		);
-	}
 
 	if (InputData->InputActionJump)
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
-	}
-
-	if (InputData->InputActionRightDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputRightDash);
-	}
-	
-	if (InputData->InputActionLeftDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputLeftDash);
 	}
 }
 
@@ -92,6 +68,14 @@ ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()
 ERobotCharacterDownChargeID ARobotCharacterDown::GetRobotCharacterDownChargeID()
 {
 	return RobotCharacterDownChargeID;
+}
+
+void ARobotCharacterDown::Resume()
+{
+	Super::Resume();
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return;
+	InputMappingContext = CharacterSettings->InputMappingContextDown.LoadSynchronous();
 }
 
 void ARobotCharacterDown::DoGuardTest()

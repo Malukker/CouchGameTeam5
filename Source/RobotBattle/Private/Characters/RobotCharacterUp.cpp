@@ -6,6 +6,7 @@
 #include "MathUtil.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterSettings.h"
 
 // Sets default values
 ARobotCharacterUp::ARobotCharacterUp()
@@ -36,43 +37,6 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionAttack3, ETriggerEvent::Started, this,
 		                                   &ARobotCharacterUp::OnInputAttack3);
-	}
-
-	if (InputData->InputActionAttackDuo)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this,
-		                                   &ARobotCharacterUp::OnInputAttackDuo);
-	}
-
-	if (InputData->InputActionRightDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputRightDash);
-	}
-	
-	if (InputData->InputActionLeftDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputLeftDash);
-	}
-	
-	if (InputData->InputActionMoveX) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Started,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Completed,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Triggered,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
 	}
 
 #pragma endregion
@@ -138,4 +102,12 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 void ARobotCharacterUp::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
 	InputMoveX = InputActionValue.Get<float>();
+}
+
+void ARobotCharacterUp::Resume()
+{
+	Super::Resume();
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return;
+	InputMappingContext = CharacterSettings->InputMappingContextUp.LoadSynchronous();
 }
