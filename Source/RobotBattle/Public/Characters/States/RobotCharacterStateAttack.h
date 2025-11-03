@@ -33,6 +33,7 @@ private:
 	
 	bool bIsAttackTraceEnabled;
 
+	int AttackIndex;
 	
 	FVector StartPos;
 	
@@ -51,16 +52,14 @@ private:
 	float CurrentAnimDeltaTime;
 	
 	float CurrentAnimTime;
-	
-	FName StartSocketName;
-
-	FName EndSocketName;
 
 	void InitAnimationNotify();
+
+	UFUNCTION()
+	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
-	void StartDetectionNotifyAttack();
-	
-	void EndDetectionNotifyAttack();
+	UFUNCTION()
+	void EndDetectionNotifyAttack(AActor* ConcernedActor);
 	
 	
 #pragma endregion

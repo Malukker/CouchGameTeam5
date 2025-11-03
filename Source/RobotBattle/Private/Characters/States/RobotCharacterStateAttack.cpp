@@ -38,8 +38,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	KeyframeDeltaTime = AnimDuration / AttackAnim->GetNumberOfSampledKeys();
 	CurrentAnimDeltaTime = 0.0f;
 	CurrentAnimTime = 0.0f;
-	StartSocketName = CurrentAttackStruct.ConcernedBones[0];
-	EndSocketName = CurrentAttackStruct.ConcernedBones[1];
+	AttackIndex = 0;
 
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
@@ -56,12 +55,12 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack.Clear();
+			StartNotify->OnNotifiedStartAttack.RemoveDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.Clear();
+			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
@@ -78,8 +77,9 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 	{
 		if (CurrentAnimDeltaTime >= KeyframeDeltaTime)
 		{
-			StartPos = Character->GetMesh()->GetSocketByName(StartSocketName)->GetSocketLocation(Character->GetMesh());
-			EndPos = Character->GetMesh()->GetSocketByName(EndSocketName)->GetSocketLocation(Character->GetMesh());
+			CurrentAnimDeltaTime -= KeyframeDeltaTime;
+			StartPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex])->GetSocketLocation(Character->GetMesh());
+			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
 			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
 			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
@@ -104,7 +104,6 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					}
 				}
 			}
-			CurrentAnimDeltaTime -= KeyframeDeltaTime;
 		}
 	}
 	if (CurrentAnimTime >= AnimDuration)
@@ -120,24 +119,27 @@ void URobotCharacterStateAttack::InitAnimationNotify()
 	{
 		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			StartNotify->OnNotifiedStartAttack. AddUObject(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartNotify->OnNotifiedStartAttack.AddDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
 		}
 
 		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.AddUObject(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
+			EndNotify->OnNotifiedEndAttack.AddDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
 }
 
-void URobotCharacterStateAttack::StartDetectionNotifyAttack()
+void URobotCharacterStateAttack::StartDetectionNotifyAttack(AActor* ConcernedActor)
 {
+	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = true;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 
-void URobotCharacterStateAttack::EndDetectionNotifyAttack()
+void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor)
 {
+	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = false;
+	AttackIndex += 2;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
 }

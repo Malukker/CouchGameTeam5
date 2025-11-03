@@ -104,6 +104,7 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	int GetDashDirectionX() const;
+	virtual void DoGuardTest();
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
 	
@@ -129,6 +130,8 @@ protected:
 	int DashDirectionX = 0;
 	UPROPERTY()
 	bool CanDash = true;
+	UPROPERTY()
+	bool WalkForward;
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
