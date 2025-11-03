@@ -89,8 +89,13 @@ void ARobotCharacter::SetupMappingContextIntoController() const {
 
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	if (InputSystem == nullptr)return;
-
+	
 	InputSystem->AddMappingContext(InputMappingContext, 0);
+	
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return;
+	
+	InputSystem->AddMappingContext(CharacterSettings->InputMappingContextMenu.LoadSynchronous(), 1);
 }
 
 float ARobotCharacter::GetInputMoveX() const {
@@ -158,6 +163,11 @@ void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue
 {
 }
 
+void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
+{
+	
+}
+
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
 	if (InputData == nullptr) return;
 	
@@ -192,10 +202,14 @@ void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInput
 		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputLeftDash);
 	}
 	
-
 	if (InputData->InputActionAttackDuo)
 	{
 		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
+	}
+	
+	if (InputData->InputActionPause)
+	{
+		EnhancedInputComponent->BindAction(InputData->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
 	}
 }
 
@@ -214,23 +228,28 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
-void ARobotCharacter::ManageChargeEvent()
+void ARobotCharacter::ManageChargeEvent(bool CanAttack)
 {
+	CanAttackDuo = CanAttack;
+}
+
+void ARobotCharacter::AddDamageBonus()
+{
+	DamageBonus += 4;
+}
+
+int ARobotCharacter::GetDamageBonus()
+{
+	return DamageBonus;
+}
+
+void ARobotCharacter::ResetDamageBonus()
+{
+	DamageBonus = 0;
 }
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
 	HurtManagerEvent.Broadcast(Damage, StunTime);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
-}
-
-void ARobotCharacter::Pause()
-{
-	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
-	if (CharacterSettings == nullptr) return;
-	InputMappingContext = CharacterSettings->InputMappingContextMenu.LoadSynchronous();
-}
-
-void ARobotCharacter::Resume()
-{
 }

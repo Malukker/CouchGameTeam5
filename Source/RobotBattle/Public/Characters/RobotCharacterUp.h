@@ -26,8 +26,4 @@ protected:
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
-
-	virtual void ManageChargeEvent() override;
-	
-	virtual void Resume() override;
 };

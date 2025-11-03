@@ -94,6 +94,9 @@ private:
 	UFUNCTION()
 	void Charge(ERobotCharacterPositionEnum Position);
 	
+	UFUNCTION()
+	void AttackDuo(ERobotCharacterPositionEnum Position);
+
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

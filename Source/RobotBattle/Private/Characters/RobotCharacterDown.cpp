@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -22,21 +23,25 @@ void ARobotCharacterDown::BeginPlay()
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	InputMoveX = InputActionValue.Get<float>();
 }
 
 void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	InputJumpEvent.Broadcast();
 }
 
 void ARobotCharacterDown::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
-	Super::OnInputAttackDuo(InputActionValue);
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
 }
 
 void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (!CanDash) return;
 	DashDirectionX = 1;
 	InputDashEvent.Broadcast();
@@ -44,6 +49,7 @@ void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionV
 
 void ARobotCharacterDown::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (!CanDash) return;
 	DashDirectionX = -1;
 	InputDashEvent.Broadcast();
@@ -68,14 +74,6 @@ ERobotCharacterPositionEnum ARobotCharacterDown::GetPositionEnum()
 ERobotCharacterDownChargeID ARobotCharacterDown::GetRobotCharacterDownChargeID()
 {
 	return RobotCharacterDownChargeID;
-}
-
-void ARobotCharacterDown::Resume()
-{
-	Super::Resume();
-	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
-	if (CharacterSettings == nullptr) return;
-	InputMappingContext = CharacterSettings->InputMappingContextDown.LoadSynchronous();
 }
 
 void ARobotCharacterDown::DoGuardTest()

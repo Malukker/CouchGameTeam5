@@ -111,9 +111,6 @@ public:
 	virtual void DoGuardTest();
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
-
-	virtual void Pause();
-	virtual  void Resume();
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -149,6 +146,7 @@ protected:
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue);
+	virtual void OnInputPause(const FInputActionValue& InputActionValue);
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
 
@@ -191,8 +189,9 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
-
+	
 	UPROPERTY()
 	FLockEvent LockEvent;
 	
@@ -218,18 +217,28 @@ public:
 
 #pragma region Charge
 
-public :
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
-	virtual void ManageChargeEvent();
+	virtual void ManageChargeEvent(bool CanAttack);
 	
+	void AddDamageBonus();
+	int GetDamageBonus();
+	void ResetDamageBonus();
+
 	UPROPERTY(EditAnywhere)
 	int Charge = 0;
 	
+protected:
+	int DamageBonus = 0;
 	bool CanAttackDuo = false;
-	
+
+	public:
 	UPROPERTY()
 	FChargeManagerEvent ChargeManagerEvent;
+	
+	UPROPERTY()
+	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
 #pragma endregion
 	

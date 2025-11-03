@@ -38,6 +38,4 @@ protected:
 	ERobotCharacterDownChargeID RobotCharacterDownChargeID = ERobotCharacterDownChargeID::None;
 
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID() override;
-
-	virtual  void Resume() override;
 };
