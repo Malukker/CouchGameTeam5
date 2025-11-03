@@ -16,7 +16,8 @@ class ROBOTBATTLE_API URobotBattleTeamSelectMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
+	UFUNCTION(BlueprintCallable)
+	void CustomConstruct();
 
 	UFUNCTION(BlueprintCallable)
 	void AddPlayer(int32 PlayerID);

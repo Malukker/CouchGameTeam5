@@ -10,10 +10,8 @@
 #include "Components/HorizontalBox.h"
 #include "Components/PanelWidget.h"
 
-void URobotBattleTeamSelectMenu::NativeConstruct()
+void URobotBattleTeamSelectMenu::CustomConstruct()
 {
-	Super::NativeConstruct();
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		AddPlayer(i);
@@ -137,7 +135,7 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 		else if (CurrentZone.Contains("Center"))
 			NewZone = CurrentZone.Replace(TEXT("Center"), TEXT("Away"));
 	}
-
+	
 	if (NewZone != CurrentZone)
 	{
 		CurrentZones.Add(PlayerID, NewZone);
