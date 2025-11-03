@@ -7,6 +7,7 @@
 #include "MenuGameMode.generated.h"
 
 class UInputMappingContext;
+class APlayerMenuActor;
 /**
  * 
  */
@@ -19,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputMappingContext> ImcMenu;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerMenuActor> MenuActorBlueprintClass;
+	
 protected:
 	virtual void BeginPlay() override;
 	

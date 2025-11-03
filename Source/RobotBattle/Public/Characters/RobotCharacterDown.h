@@ -16,6 +16,8 @@ public:
 	ARobotCharacterDown();
 	virtual void BeginPlay() override;
 
+	void DoGuardTest() override;
+
 protected:
 
 	void OnInputMoveX(const FInputActionValue& InputActionValue);

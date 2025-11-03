@@ -23,6 +23,7 @@ void AMatchManager::BeginPlay()
 	Super::BeginPlay();
 	UIGameplay = CreateWidget<URobotBattleHUD>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
+	
 	UIGameplay->StartTimer(RoundTime);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
@@ -55,7 +56,7 @@ void AMatchManager::EndFight(int LosingTeam)
 	}
 	for (int TeamWin : TeamsWin)
 	{
-		if (TeamWin == 1)
+		if (TeamWin == 2)
 		{
 			UIGameplay->RemoveFromParent();
 			URobotBattleGameOverMenu* UIGameOver = CreateWidget<URobotBattleGameOverMenu>(GetWorld(), UIGameOverClass);

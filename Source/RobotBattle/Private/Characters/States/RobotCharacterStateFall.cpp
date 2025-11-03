@@ -3,6 +3,7 @@
 
 #include "Characters/States/RobotCharacterStateFall.h"
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -47,9 +48,15 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 		
 	}
 	else {
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
+		{
+			Character->DoGuardTest();
+			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		}
 	}
+
 }
+
 
 void URobotCharacterStateFall::OnDashEvent()
 {

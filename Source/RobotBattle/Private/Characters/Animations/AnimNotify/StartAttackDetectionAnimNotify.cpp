@@ -6,6 +6,6 @@
 void UStartAttackDetectionAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
-	OnNotifiedStartAttack.Broadcast();
+	OnNotifiedStartAttack.Broadcast(MeshComp->GetOwner());
 	Super::Notify(MeshComp, Animation, EventReference);
 }

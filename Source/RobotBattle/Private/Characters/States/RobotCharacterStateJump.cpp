@@ -57,10 +57,16 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
-	else {
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+	else
+	{
+		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
+		{
+			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+			Character->DoGuardTest();
+		}
 	}
 }
+
 
 void URobotCharacterStateJump::OnDashEvent()
 {
@@ -77,4 +83,5 @@ void URobotCharacterStateJump::OnLockEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
 }
+
 
