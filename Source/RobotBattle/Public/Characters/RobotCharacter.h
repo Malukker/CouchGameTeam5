@@ -96,14 +96,18 @@ protected:
 
 public:
 	float GetInputMoveX() const;
+	
 	EAttackID GetCurrentTypeAttack() const;
 	void SetStunTimer(float StunTime) ;
 	float GetStunTimer() const;
+	
+	int GetDashDirectionX() const;
 	void UseDash();
 	void ResetDash();
+	
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
-	int GetDashDirectionX() const;
+	
 	virtual void DoGuardTest();
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
@@ -138,6 +142,11 @@ protected:
 	UPROPERTY()
 	EAttackID CurrentTypeAttack = EAttackID::None;
 
+	virtual void OnInputMoveX(const FInputActionValue& InputActionValue);
+	virtual void OnInputRightDash(const FInputActionValue& InputActionValue);
+	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue);
+	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue);
+	virtual void OnInputPause(const FInputActionValue& InputActionValue);
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
 
@@ -180,8 +189,9 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
-
+	
 	UPROPERTY()
 	FLockEvent LockEvent;
 	
@@ -207,18 +217,28 @@ public:
 
 #pragma region Charge
 
-public :
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
-	virtual void ManageChargeEvent();
+	virtual void ManageChargeEvent(bool CanAttack);
 	
+	void AddDamageBonus();
+	int GetDamageBonus();
+	void ResetDamageBonus();
+
 	UPROPERTY(EditAnywhere)
 	int Charge = 0;
 	
+protected:
+	int DamageBonus = 0;
 	bool CanAttackDuo = false;
-	
+
+	public:
 	UPROPERTY()
 	FChargeManagerEvent ChargeManagerEvent;
+	
+	UPROPERTY()
+	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
 #pragma endregion
 	

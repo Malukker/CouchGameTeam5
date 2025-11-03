@@ -6,6 +6,10 @@
 #include "MathUtil.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterSettings.h"
+#include "Characters/RobotCharacterStateID.h"
+#include "Characters/RobotCharacterStateMachine.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARobotCharacterUp::ARobotCharacterUp()
@@ -38,72 +42,41 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 		                                   &ARobotCharacterUp::OnInputAttack3);
 	}
 
-	if (InputData->InputActionAttackDuo)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this,
-		                                   &ARobotCharacterUp::OnInputAttackDuo);
-	}
-
-	if (InputData->InputActionRightDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputRightDash);
-	}
-	
-	if (InputData->InputActionLeftDash)
-	{
-		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacterUp::OnInputLeftDash);
-	}
-	
-	if (InputData->InputActionMoveX) {
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Started,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Completed,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
-		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
-			ETriggerEvent::Triggered,
-			this,
-			&ARobotCharacterUp::OnInputMoveX
-		);
-	}
-
 #pragma endregion
 }
 
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
 	CurrentTypeAttack = EAttackID::Type1;
 	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
 	CurrentTypeAttack = EAttackID::Type2;
 	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
 	CurrentTypeAttack = EAttackID::Type3;
 	InputAttackEvent.Broadcast();
 }
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
 	if (CanAttackDuo == false) return;
 	CurrentTypeAttack = EAttackID::Ultimate;
 	InputAttackEvent.Broadcast();
-	CanAttackDuo = false;
-	ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion
 
@@ -112,13 +85,9 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 	return ERobotCharacterPositionEnum::Up;
 }
 
-void ARobotCharacterUp::ManageChargeEvent()
-{
-	CanAttackDuo = true;
-}
-
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	DashDirectionX = 1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{
@@ -128,6 +97,7 @@ void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionVal
 
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	DashDirectionX = -1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{
@@ -137,5 +107,6 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 
 void ARobotCharacterUp::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	InputMoveX = InputActionValue.Get<float>();
 }

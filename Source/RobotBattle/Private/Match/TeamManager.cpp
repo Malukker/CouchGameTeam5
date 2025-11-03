@@ -97,6 +97,7 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
@@ -261,20 +262,36 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 {
 	switch (Position)
 	{
-		case ERobotCharacterPositionEnum::Down:
-			TeamCharge++;
-			if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
-			if (TeamCharge == TeamChargeMax)
-			{
-				RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent();
-			}
-			break;
-		case ERobotCharacterPositionEnum::Up:
-			TeamCharge = 0;
-			break;
+	case ERobotCharacterPositionEnum::Down:
+		TeamCharge++;
+		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
+		if (TeamCharge == TeamChargeMax)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(true);
+		}
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		TeamCharge = 0;
+		RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(false);
+		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(true);
+		break;
 	default: ;
 	}
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+}
+
+void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(false);
+		break;
+	default: ;
+	}
 }
 
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {

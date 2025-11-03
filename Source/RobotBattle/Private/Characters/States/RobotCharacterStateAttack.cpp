@@ -42,6 +42,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
+		Character->ResetDamageBonus();
 		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
 }
@@ -64,6 +65,11 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 		}
 	}
 	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
+	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
+	{
+		Character->ResetDamageBonus();
+		Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -97,7 +103,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage, CurrentAttackStruct.StunTime);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
