@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerMenuActor.h"
+#include "Characters/MainMenu/PlayerMenuActor.h"
 
 #include "EnhancedInputComponent.h"
 
@@ -57,7 +57,7 @@ void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputCompone
 void APlayerMenuActor::OnInputMoveRecord(const FInputActionValue& InputActionValue)
 {
 	FVector2D Vector = InputActionValue.Get<FVector2D>();
-	if (Vector.Length() > .2f)
+	if (Vector.Length() > 0.2f)
 	
 	if (abs(Vector.X) > abs(Vector.Y))
 	{
@@ -72,7 +72,7 @@ void APlayerMenuActor::OnInputMoveRecord(const FInputActionValue& InputActionVal
 	}
 	else
 	{
-		if (FMath::Sign(Vector.X) > 0)
+		if (FMath::Sign(Vector.Y) > 0)
 		{
 			Direction = EPlayerMenuInputDirection::Up;
 		}
@@ -81,6 +81,10 @@ void APlayerMenuActor::OnInputMoveRecord(const FInputActionValue& InputActionVal
 			Direction = EPlayerMenuInputDirection::Down;
 		}
 	}
+	if (Vector.Length() < 0.2f)
+	{
+		Direction = EPlayerMenuInputDirection::None;
+	} 
 }
 
 void APlayerMenuActor::OnInputMoveMenu(const FInputActionValue& InputActionValue)

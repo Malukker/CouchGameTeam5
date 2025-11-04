@@ -40,5 +40,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionAttackDuo;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionPause;
+
 
 };
