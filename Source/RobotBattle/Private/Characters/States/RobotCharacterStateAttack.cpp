@@ -2,6 +2,8 @@
 
 
 #include "Characters/States/RobotCharacterStateAttack.h"
+
+#include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
@@ -10,7 +12,9 @@
 #include "Characters/Animations/AnimNotify/StartAttackDetectionAnimNotify.h"
 #include "Characters/Attacks/RobotCharacterAttacksData.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Camera/CameraShakeWorld.h"
 
 void URobotCharacterStateAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
 {
@@ -105,6 +109,15 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					{
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
+						
+						UCameraShakeWorld* ShakeInstance = NewObject<UCameraShakeWorld>();
+						if (ShakeInstance)
+						{
+							float ScaleShake = 1.f;
+							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotCharacterUpID(),ScaleShake);
+							UGameplayStatics::PlayWorldCameraShake(GetWorld(),ShakeInstance->GetClass(),OutHit.GetActor()->GetActorLocation(),0.f,1000.f,ScaleShake);
+						}
+					
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 					}
