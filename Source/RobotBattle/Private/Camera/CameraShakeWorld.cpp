@@ -5,16 +5,27 @@
 
 #include "Camera/CameraSettings.h"
 #include "Characters/Attacks/AttackStruct.h"
+#include "Characters/Enums/RobotCharacterUpID.h"
 #include "Shakes/PerlinNoiseCameraShakePattern.h"
+#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
-void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID id)
+void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotCharacterUpID UpID,float& Scale )
 {
-	ShakePattern->Duration = CameraSettings->ShakeAttacksSettings[id].ShakeDuration;
-	ShakePattern->LocationAmplitudeMultiplier =CameraSettings->ShakeAttacksSettings[id].LocationAmplitudeMultiplier;
-	ShakePattern->LocationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[id].LocationFrequencyMultiplier;
-	ShakePattern->RotationAmplitudeMultiplier= CameraSettings->ShakeAttacksSettings[id].RotationAmplitudeMultiplier;
-	ShakePattern->RotationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[id].RotationFrequencyMultiplier;
+	if (UpID==ERobotCharacterUpID::None)
+	{
+		UE_LOG(LogTemp, Log, TEXT("ID UP NONE PAS DE SHAKE"));
+		return;
+	}
+	ShakePattern->Duration = CameraSettings->ShakeAttacksSettings[AttackID].ShakeDuration;
+	ShakePattern->LocationAmplitudeMultiplier =CameraSettings->ShakeAttacksSettings[AttackID].LocationAmplitudeMultiplier;
+	ShakePattern->LocationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[AttackID].LocationFrequencyMultiplier;
+	ShakePattern->RotationAmplitudeMultiplier= CameraSettings->ShakeAttacksSettings[AttackID].RotationAmplitudeMultiplier;
+	ShakePattern->RotationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[AttackID].RotationFrequencyMultiplier;
+
+	Scale=CameraSettings->ShakeScaleSettings[UpID].ShakeScaleTypes[AttackID];
 }
+
+
 
 
 UCameraShakeWorld::UCameraShakeWorld(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)

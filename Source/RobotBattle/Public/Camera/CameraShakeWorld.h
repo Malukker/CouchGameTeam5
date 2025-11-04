@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraShakeBase.h"
 #include "CameraShakeWorld.generated.h"
+enum class ERobotCharacterUpID : uint8;
 class UCameraSettings;
 enum class EAttackID : uint8;
 class UPerlinNoiseCameraShakePattern;
@@ -49,10 +50,11 @@ class ROBOTBATTLE_API UCameraShakeWorld : public UCameraShakeBase
 	GENERATED_BODY()
 
 public:
+	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotCharacterUpID UpID,float& Scale);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
-
 	
-	void SetupShakeParametersOnAttackID(EAttackID id);
+
+
 
 private:
 

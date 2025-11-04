@@ -223,6 +223,11 @@ ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
 	return  ERobotCharacterDownChargeID::None;
 }
 
+ERobotCharacterUpID ARobotCharacter::GetRobotCharacterUpID()
+{
+	return RobotCharacterUpID;
+}
+
 FVector ARobotCharacter::GetRobotLocation()
 {
 	return GetActorLocation();
