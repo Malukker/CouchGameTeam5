@@ -46,14 +46,10 @@ public:
 protected:
 	virtual void NativeOnInitialized() override;
 
-private:
-	bool CanInput;
-	
+private:	
 	UPROPERTY()
 	TMap<APlayerController*, ERobotID> BodyPartByController;
 
 	UPROPERTY()
 	TMap<APlayerController*, bool> ValidationByController;
-
-	void ResetInput();
 };
