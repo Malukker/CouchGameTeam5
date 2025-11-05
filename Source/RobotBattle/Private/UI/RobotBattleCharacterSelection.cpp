@@ -4,6 +4,7 @@
 #include "Characters/RobotCharacter.h"
 #include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 
 void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InController)
 {
@@ -60,15 +61,10 @@ void URobotBattleCharacterSelection::CancelSelection(APlayerController* InContro
 	CancellationEvent.Broadcast(InController->GetLocalPlayer()->GetLocalPlayerIndex());
 }
 
-void URobotBattleCharacterSelection::NativeOnInitialized()
+void URobotBattleCharacterSelection::InitializeAndBindInputs()
 {
-	Super::NativeOnInitialized();
-	BindEventsToMenuControl();
+	GameInstance = Cast<URobotGameInstance>(GetWorld()->GetGameInstance());
 	
-}
-
-void URobotBattleCharacterSelection::BindEventsToMenuControl()
-{
 	TArray<AActor*> Players;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
 
