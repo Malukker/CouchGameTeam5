@@ -64,8 +64,6 @@ public:
 	TObjectPtr<APlayerController> SelfPlayerController;
 	
 private:
-	EPlayerMenuInputDirection Direction;
-	
 	void BindActions(UEnhancedInputComponent* Enhanced);
 	
 	void OnInputMoveUp(const FInputActionValue& InputActionValue);
