@@ -21,4 +21,10 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, Category="Characters")
 	TMap<ERobotID ,TSubclassOf<ARobotCharacter>> RobotCharacterDownClass;
+
+	UPROPERTY(Config, EditAnywhere, Category="SlowMotion",meta=(ClampMin="0.1", ClampMax="1.0", UIMin="0.1", UIMax="1.0"))
+	float SlowMotionDuration = 0.5f;
+
+	UPROPERTY(Config, EditAnywhere, Category="SlowMotion",meta=(ClampMin="0.1", ClampMax="1.0", UIMin="0.1", UIMax="1.0"))
+	float SlowMotionScale = 0.5f;
 };
