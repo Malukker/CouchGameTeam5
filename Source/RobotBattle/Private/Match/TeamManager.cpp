@@ -299,7 +299,7 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {
 	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
 	if (CharacterSettings == nullptr) return nullptr;
-	return CharacterSettings->InputData.LoadSynchronous();
+	return CharacterSettings->InputDataGameplay.LoadSynchronous();
 }
 
 UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position) {
