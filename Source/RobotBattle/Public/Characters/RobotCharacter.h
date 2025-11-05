@@ -113,7 +113,7 @@ public:
 	
 	virtual void DoGuardTest();
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime) override;
+	virtual void TakeDamageFromAttack(int Damage, float StunTime);
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
