@@ -81,7 +81,7 @@ void ATeamManager::SpawnCharacters()
 		RobotParts.Add(Pos, NewCharacter);
 
 		NewCharacter->SetRobotBodyID(GameInstance->RobotID[Team * 2 + PartNb]);
-		NewCharacter->InputData = InputData;
+		NewCharacter->InputDataGameplay = InputData;
 		NewCharacter->InputMappingContextMenu = InputMappingContextMenu;
 		switch (Pos)
 		{

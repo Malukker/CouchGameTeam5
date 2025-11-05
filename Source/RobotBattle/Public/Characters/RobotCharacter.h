@@ -16,6 +16,7 @@ enum class  ERobotID : uint8;
 enum class EAttackID: uint8;
 class URobotCharacterStateMachine;
 class URobotCharacterInputData;
+class URobotBattleInputDataMenu;
 class UInputMappingContext;
 class UEnhancedInputComponent;
 struct FInputActionValue;
@@ -83,7 +84,9 @@ public:
 	TObjectPtr<UInputMappingContext> InputMappingContextMenu;
 
 	UPROPERTY()
-	TObjectPtr<URobotCharacterInputData> InputData;
+	TObjectPtr<URobotCharacterInputData> InputDataGameplay;
+	UPROPERTY()
+	TObjectPtr<URobotBattleInputDataMenu> InputDataMenu;
 
 protected:
 	void SetupMappingContextIntoController(bool bMenu) const;
