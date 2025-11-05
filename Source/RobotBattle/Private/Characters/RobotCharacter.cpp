@@ -9,7 +9,9 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
+#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/MenuPauseRobotBattle.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -179,6 +181,9 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 	FInputModeGameAndUI InputMode;
 	PlayerController->SetInputMode(InputMode);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+	//HUDGameplay HUD = Cast<HUDGameplay>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
+	//HUD->SetPause();
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
