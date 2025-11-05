@@ -9,6 +9,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -41,7 +42,7 @@ void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	SetupMappingContextIntoController();
+	SetupMappingContextIntoController(false);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	if (EnhancedInputComponent == nullptr) return;
@@ -80,7 +81,7 @@ void ARobotCharacter::TickStateMachine(float DeltaTime) const {
 	StateMachine->Tick(DeltaTime);
 }
 
-void ARobotCharacter::SetupMappingContextIntoController() const {
+void ARobotCharacter::SetupMappingContextIntoController(bool bMenu) const {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
 
@@ -89,13 +90,15 @@ void ARobotCharacter::SetupMappingContextIntoController() const {
 
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	if (InputSystem == nullptr)return;
-	
-	InputSystem->AddMappingContext(InputMappingContext, 0);
-	
-	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
-	if (CharacterSettings == nullptr) return;
-	
-	InputSystem->AddMappingContext(CharacterSettings->InputMappingContextMenu.LoadSynchronous(), 1);
+
+	if (bMenu)
+	{
+		InputSystem->AddMappingContext(InputMappingContextMenu, 0);
+	}
+	else
+	{
+		InputSystem->AddMappingContext(InputMappingContextGameplay, 0);
+	}
 }
 
 float ARobotCharacter::GetInputMoveX() const {
@@ -165,7 +168,13 @@ void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue
 
 void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 {
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (PlayerController == nullptr) return;
 	
+	SetupMappingContextIntoController(true);
+	FInputModeGameAndUI InputMode;
+	PlayerController->SetInputMode(InputMode);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

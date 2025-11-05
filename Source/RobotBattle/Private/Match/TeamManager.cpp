@@ -56,6 +56,7 @@ void ATeamManager::SpawnCharacters()
 	URobotCharacterInputData* InputData = LoadInputDataFromConfig();
 	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
 	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
+	UInputMappingContext* InputMappingContextMenu = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::None);
 
 	TeamGuardMax = 0;
 	TeamGuard = 0;
@@ -81,13 +82,14 @@ void ATeamManager::SpawnCharacters()
 
 		NewCharacter->SetRobotBodyID(GameInstance->RobotID[Team * 2 + PartNb]);
 		NewCharacter->InputData = InputData;
+		NewCharacter->InputMappingContextMenu = InputMappingContextMenu;
 		switch (Pos)
 		{
 		case ERobotCharacterPositionEnum::Down:
-			NewCharacter->InputMappingContext = InputMappingContextDown;
+			NewCharacter->InputMappingContextGameplay = InputMappingContextDown;
 			break;
 		case ERobotCharacterPositionEnum::Up:
-			NewCharacter->InputMappingContext = InputMappingContextUp;
+			NewCharacter->InputMappingContextGameplay = InputMappingContextUp;
 			break;
 		default:
 			return;
@@ -312,7 +314,7 @@ UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotChar
 		return CharacterSettings->InputMappingContextUp.LoadSynchronous();
 
 	case ERobotCharacterPositionEnum::None:
-		return nullptr;
+		return CharacterSettings->InputMappingContextMenu.LoadSynchronous();
 	}
 	return nullptr;
 }
