@@ -34,6 +34,9 @@ public:
 	UFUNCTION()
 	void OnPlayerCancelInput(APlayerController* Controller);
 
+	UFUNCTION()
+	int32 GetControllerIndexForZone(const FString& ZoneName);
+
 protected:
 	
 	UPROPERTY(meta = (BindWidget))
@@ -63,6 +66,8 @@ private:
 
 	UPROPERTY()
 	TMap<int32, FString> CurrentZones;
+
+	bool IsZoneOccupied(const FString& ZoneName) const;
 	
 	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
 };
