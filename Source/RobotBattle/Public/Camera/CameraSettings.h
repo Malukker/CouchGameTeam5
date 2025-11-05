@@ -3,17 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CameraShakeWorld.h"
 #include "Engine/DeveloperSettings.h"
 #include "CameraSettings.generated.h"
 
-/**
- * 
- */
+enum class ERobotCharacterUpID : uint8;
+enum class EAttackID : uint8;
+
+
 UCLASS(Config=Game,DefaultConfig,meta=(DisplayName = "Camera Settings"))
 class ROBOTBATTLE_API UCameraSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
 public:
+
+#pragma region Camera Settings
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraMainTag;
 
@@ -37,4 +41,21 @@ public:
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float PositionDampingFactor;
+#pragma endregion Camera Settings
+
+	
+#pragma region Camera Shake Settings
+	
+	UPROPERTY(Config,EditAnywhere, Category = "CameraShakeSettings")
+	TMap<ERobotCharacterUpID,FShakeScaleTypeStruct> ShakeScaleSettings;
+	
+	UPROPERTY(Config,EditAnywhere, Category = "CameraShakeSettings")
+	TMap<EAttackID,FShakeStruct> ShakeAttacksSettings;
+
+	UPROPERTY(Config,EditAnywhere, Category = "CameraShakeSettings")
+	float ShakeScaleUltimate = 4.f;
+	
+
+#pragma endregion Camera Shake Settings
+	
 };
