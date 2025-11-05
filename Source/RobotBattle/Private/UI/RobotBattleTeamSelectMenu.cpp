@@ -22,15 +22,16 @@ void URobotBattleTeamSelectMenu::CustomConstruct()
 	{
 		AddPlayer(i);
 	}
+	
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
 
-	if (APlayerController* PC = GetOwningPlayer())
+	for (AActor* Actor : Players)
 	{
-		if (APlayerMenuActor* MenuActor = Cast<APlayerMenuActor>(PC->GetPawn()))
-		{
-			MenuActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
-			MenuActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
-			MenuActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
-		}
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+		TempActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
 	}
 }
 
@@ -66,6 +67,8 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 	FString StartZone = (PlayerID % 2 == 0) ? "CenterUp" : "CenterDown";
 	CurrentZones.Add(PlayerID, StartZone);
 
+	HasValidatedByPlayer.Add(PlayerID, false);
+	
 	UE_LOG(LogTemp, Log, TEXT("Added PlayerCard for Player %d"), PlayerID);
 	UE_LOG(LogTemp, Log, TEXT("Box_CenterUp Children Count: %d"), Box_CenterUp->GetChildrenCount());
 	UE_LOG(LogTemp, Log, TEXT("Box_CenterDown Children Count: %d"), Box_CenterDown->GetChildrenCount());
@@ -81,22 +84,15 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
 	if (!TargetZone) return;
 
-	if (IsZoneOccupied(ZoneName))
+	if (ZoneName != "CenterUp" && ZoneName != "CenterDown" && IsZoneOccupied(ZoneName))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
 		return;
 	}
 
-	if (UWidget* Parent = Card->GetParent())
-	{
-		if (UPanelWidget* ParentPanel = Cast<UPanelWidget>(Parent))
-		{
-			ParentPanel->RemoveChild(Card);
-		}
-	}
-
+	Card->RemoveFromParent();
 	TargetZone->AddChild(Card);
-	CurrentZones.Add(PlayerID, ZoneName);
+	CurrentZones[PlayerID] = ZoneName;
 
 	UE_LOG(LogTemp, Log, TEXT("Player %d moved to zone: %s"), PlayerID, *ZoneName);
 }
@@ -166,7 +162,6 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 	
 	if (NewZone != CurrentZone)
 	{
-		CurrentZones.Add(PlayerID, NewZone);
 		MovePlayerToZone(PlayerID, NewZone);
 		UE_LOG(LogTemp, Log, TEXT("Player %d moved from %s to %s"), PlayerID, *CurrentZone, *NewZone);
 	}
