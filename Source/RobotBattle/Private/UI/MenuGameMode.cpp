@@ -5,14 +5,30 @@
 
 #include "EnhancedInputSubsystems.h"
 #include "LocalMultiplayerSubsystem.h"
+#include "Blueprint/UserWidget.h"
 #include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/RobotBattleTeamSelectMenu.h"
+#include "UI/RobotBattleCharacterSelection.h"
+
+void AMenuGameMode::StartSelectionCharacter()
+{
+	CreateWidget<URobotBattleCharacterSelection>(GetWorld(), CharacterSelectWidget)->AddToViewport();
+}
+
+void AMenuGameMode::StartSelectionTeam()
+{
+	CreateWidget<URobotBattleTeamSelectMenu>(GetWorld(), TeamSelectWidget)->AddToViewport();
+}
 
 void AMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	CreatePlayerMenuActors();
 	BindMenuInputsToPlayers();
+	
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &StartSelectionTeam);
 }
 
 void AMenuGameMode::CreatePlayerMenuActors() const
@@ -25,14 +41,14 @@ void AMenuGameMode::CreatePlayerMenuActors() const
 
 	LocalMultiplayerSubsystem->CreatePlayers();
 
-	for (auto Controller : LocalMultiplayerSubsystem->Controllers)
+	for (int i = 0; i < 4; i++)
 	{
-		if (Controller != nullptr)
-		{
-			APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActor<APlayerMenuActor>(MenuActorBlueprintClass);
-			Controller->Possess(PlayerMenuActor);
-			PlayerMenuActor->SelfPlayerController = Controller;
-		}
+		APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActorDeferred <APlayerMenuActor>(
+			MenuActorBlueprintClass,
+			FTransform::Identity
+		);
+		PlayerMenuActor->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(i + 1);
+		PlayerMenuActor->FinishSpawning(FTransform::Identity);
 	}
 }
 

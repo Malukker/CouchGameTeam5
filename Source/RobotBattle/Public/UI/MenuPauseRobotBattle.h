@@ -17,6 +17,10 @@ class ROBOTBATTLE_API UMenuPauseRobotBattle : public UUserWidget
 public:
 
 	virtual bool Initialize() override;
+
+	virtual void NativeConstruct() override;
+
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* ResumeBtn;
@@ -44,4 +48,10 @@ private:
 
 	UPROPERTY()
 	UUserWidget* SettingwidgetInstance;
+
+	int32 CurrentIndex = 0;
+
+	TArray<UButton*> ButtonList;
+
+	void UpdateButtonFocus();
 };

@@ -64,6 +64,8 @@ public:
 	TObjectPtr<APlayerController> SelfPlayerController;
 	
 private:
+	void BeginPlay();
+	
 	void BindActions(UEnhancedInputComponent* Enhanced);
 	
 	void OnInputMoveUp(const FInputActionValue& InputActionValue);

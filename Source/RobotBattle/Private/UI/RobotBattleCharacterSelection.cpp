@@ -25,7 +25,7 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection InDirection,
                                                                        APlayerController* InController)
 {
-	if (!InController) { return; }
+	if (!InController  || ValidationByController[InController]) { return; }
 
 	if (InDirection != EPlayerMenuInputDirection::Right &&	 InDirection != EPlayerMenuInputDirection::Left) { return; }
 	
@@ -64,10 +64,7 @@ void URobotBattleCharacterSelection::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	BindEventsToMenuControl();
-}
-
-void URobotBattleCharacterSelection::ResetInput()
-{
+	
 }
 
 void URobotBattleCharacterSelection::BindEventsToMenuControl()

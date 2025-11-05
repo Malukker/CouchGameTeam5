@@ -9,27 +9,27 @@
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/PanelWidget.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/MainMenuHUD.h"
+#include "Match/RobotGameInstance.h"
+#include "UI/MenuGameMode.h"
 
 void URobotBattleTeamSelectMenu::CustomConstruct()
 {
-	MainMenuHUD = Cast<AMainMenuHUD>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		AddPlayer(i);
 	}
+	
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
 
-	if (APlayerController* PC = GetOwningPlayer())
+	for (AActor* Actor : Players)
 	{
-		if (APlayerMenuActor* MenuActor = Cast<APlayerMenuActor>(PC->GetPawn()))
-		{
-			MenuActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
-			MenuActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
-			MenuActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
-		}
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+		TempActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
 	}
 }
 
@@ -45,14 +45,14 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 		UE_LOG(LogTemp, Error, TEXT("Center boxes are NULL!"));
 		return;
 	}
-
+	
 	URobotBattlePlayerCardWidget* NewCard = WidgetTree->ConstructWidget<URobotBattlePlayerCardWidget>(PlayerCardClass);
 	if (!NewCard)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to create PlayerCard widget!"));
 		return;
 	}
-
+	
 	NewCard->SetPlayerName(FString::Printf(TEXT("Player %d"), PlayerID + 1));
 
 	if (PlayerID % 2 == 0)
@@ -66,7 +66,7 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 	CurrentZones.Add(PlayerID, StartZone);
 
 	HasValidatedByPlayer.Add(PlayerID, false);
-
+	
 	UE_LOG(LogTemp, Log, TEXT("Added PlayerCard for Player %d"), PlayerID);
 	UE_LOG(LogTemp, Log, TEXT("Box_CenterUp Children Count: %d"), Box_CenterUp->GetChildrenCount());
 	UE_LOG(LogTemp, Log, TEXT("Box_CenterDown Children Count: %d"), Box_CenterDown->GetChildrenCount());
@@ -82,17 +82,30 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
 	if (!TargetZone) return;
 
-	if (UWidget* Parent = Card->GetParent())
+	if (ZoneName != "CenterUp" && ZoneName != "CenterDown" && IsZoneOccupied(ZoneName))
 	{
-		if (UPanelWidget* ParentPanel = Cast<UPanelWidget>(Parent))
-		{
-			ParentPanel->RemoveChild(Card);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
+		return;
 	}
 
+	Card->RemoveFromParent();
 	TargetZone->AddChild(Card);
+	CurrentZones[PlayerID] = ZoneName;
 
 	UE_LOG(LogTemp, Log, TEXT("Player %d moved to zone: %s"), PlayerID, *ZoneName);
+}
+
+bool URobotBattleTeamSelectMenu::IsZoneOccupied(const FString& ZoneName) const
+{
+	for (const TPair<int32, FString>& Pair : CurrentZones)
+	{
+		if (Pair.Value.Equals(ZoneName, ESearchCase::IgnoreCase))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d"), *ZoneName, Pair.Key);
+			return true;
+		}
+	}
+	return false;
 }
 
 UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) const
@@ -112,7 +125,7 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 	UE_LOG(LogTemp, Log, TEXT("Move input: %d"), (int32)Direction);
 
 	int32 PlayerID = Controller->GetLocalPlayer()->GetLocalPlayerIndex();
-
+	
 	if (HasValidatedByPlayer[PlayerID]) { return; }
 
 	FString* CurrentZonePtr = CurrentZones.Find(PlayerID);
@@ -144,13 +157,18 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 		else if (CurrentZone.Contains("Center"))
 			NewZone = CurrentZone.Replace(TEXT("Center"), TEXT("Away"));
 	}
-
+	
 	if (NewZone != CurrentZone)
 	{
-		CurrentZones.Add(PlayerID, NewZone);
 		MovePlayerToZone(PlayerID, NewZone);
 		UE_LOG(LogTemp, Log, TEXT("Player %d moved from %s to %s"), PlayerID, *CurrentZone, *NewZone);
 	}
+}
+
+int32 URobotBattleTeamSelectMenu::GetControllerIndexForZone(const FString& ZoneName)
+{
+	if (CurrentZones.FindKey(ZoneName) == nullptr) return -1;
+	return *CurrentZones.FindKey(ZoneName);
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Controller)
@@ -162,6 +180,7 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 		return;
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName())
 	HasValidatedByPlayer[PlayerID] = true;
 
 	for (const auto Pair : HasValidatedByPlayer)
@@ -171,10 +190,17 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 			return;
 		} 
 	}
-	
-	MainMenuHUD->SetPositionsToCharacterSelection(CurrentZones);
 
-	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName())
+	URobotGameInstance* GI = Cast<URobotGameInstance>(GetGameInstance());
+	GI->SetPlayerPos(0, GetControllerIndexForZone("HomeDown"));
+	GI->SetPlayerPos(1, GetControllerIndexForZone("HomeUp"));
+	GI->SetPlayerPos(2, GetControllerIndexForZone("AwayDown"));
+	GI->SetPlayerPos(3, GetControllerIndexForZone("AwayUp"));
+	UE_LOG(LogTemp, Log, TEXT("Selection Team Finish !"))
+
+	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	RemoveFromParent();
+	GM->StartSelectionCharacter();
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)
