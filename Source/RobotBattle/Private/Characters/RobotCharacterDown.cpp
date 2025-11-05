@@ -61,9 +61,9 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 	Super::BindInputAndActions(EnhancedInputComponent);
 	
 
-	if (InputData->InputActionJump)
+	if (InputDataGameplay->InputActionJump)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
 	}
 }
 

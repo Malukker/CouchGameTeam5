@@ -23,21 +23,21 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
 #pragma region AttackBindings
-	if (InputData->InputActionAttack1)
+	if (InputDataGameplay->InputActionAttack1)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack1, ETriggerEvent::Started, this,
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttack1, ETriggerEvent::Started, this,
 		                                   &ARobotCharacterUp::OnInputAttack1);
 	}
 
-	if (InputData->InputActionAttack2)
+	if (InputDataGameplay->InputActionAttack2)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack2, ETriggerEvent::Started, this,
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttack2, ETriggerEvent::Started, this,
 		                                   &ARobotCharacterUp::OnInputAttack2);
 	}
 
-	if (InputData->InputActionAttack3)
+	if (InputDataGameplay->InputActionAttack3)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttack3, ETriggerEvent::Started, this,
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttack3, ETriggerEvent::Started, this,
 		                                   &ARobotCharacterUp::OnInputAttack3);
 	}
 

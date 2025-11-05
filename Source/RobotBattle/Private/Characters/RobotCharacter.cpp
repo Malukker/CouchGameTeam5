@@ -187,47 +187,47 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {
-	if (InputData == nullptr) return;
+	if (InputDataGameplay == nullptr) return;
 	
-	if (InputData->InputActionMoveX) {
+	if (InputDataGameplay->InputActionMoveX) {
 		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
+			InputDataGameplay->InputActionMoveX,
 			ETriggerEvent::Started,
 			this,
 			&ARobotCharacter::OnInputMoveX
 		);
 		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
+			InputDataGameplay->InputActionMoveX,
 			ETriggerEvent::Completed,
 			this,
 			&ARobotCharacter::OnInputMoveX
 		);
 		EnhancedInputComponent->BindAction(
-			InputData->InputActionMoveX,
+			InputDataGameplay->InputActionMoveX,
 			ETriggerEvent::Triggered,
 			this,
 			&ARobotCharacter::OnInputMoveX
 		);
 	}
 
-	if (InputData->InputActionRightDash)
+	if (InputDataGameplay->InputActionRightDash)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputRightDash);
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputRightDash);
 	}
 	
-	if (InputData->InputActionLeftDash)
+	if (InputDataGameplay->InputActionLeftDash)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputLeftDash);
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionLeftDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputLeftDash);
 	}
 	
-	if (InputData->InputActionAttackDuo)
+	if (InputDataGameplay->InputActionAttackDuo)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
 	}
 	
-	if (InputData->InputActionPause)
+	if (InputDataGameplay->InputActionPause)
 	{
-		EnhancedInputComponent->BindAction(InputData->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
 	}
 }
 

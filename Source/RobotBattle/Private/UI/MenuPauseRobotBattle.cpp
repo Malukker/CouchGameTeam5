@@ -3,6 +3,8 @@
 
 #include "UI/MenuPauseRobotBattle.h"
 
+#include "Characters/RobotBattleInputDataMenu.h"
+#include "Characters/RobotCharacter.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/RobotBattleGameOverMenu.h"
@@ -10,14 +12,6 @@
 void UMenuPauseRobotBattle::NativeConstruct()
 {
 	Super::NativeConstruct();
-
-	ButtonList = {ResumeBtn, OptionBtn, MainMenuBtn};
-
-	if (ButtonList.Num() > 0)
-	{
-		CurrentIndex = 0;
-		UpdateButtonFocus();
-	}
 }
 
 
@@ -68,50 +62,11 @@ void UMenuPauseRobotBattle::OptionGame()
 	}
 }
 
-FReply UMenuPauseRobotBattle::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+void UMenuPauseRobotBattle::NavigationMenu()
 {
-	const FKey Key = InKeyEvent.GetKey();
-	if (Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Down)
+	if (Character->InputDataMenu->InputActionMoveDown)
 	{
-		CurrentIndex = (CurrentIndex + 1) % ButtonList.Num();
-		UpdateButtonFocus();
-		return FReply::Handled();
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputRightDash);
 	}
-
-	if (Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Up)
-	{
-		CurrentIndex = (CurrentIndex - 1 + ButtonList.Num()) % ButtonList.Num();
-		UpdateButtonFocus();
-		return FReply::Handled();
-	}
-
-	if (Key == EKeys::Gamepad_FaceButton_Bottom || Key == EKeys::Enter)
-	{
-		if (ButtonList.IsValidIndex(CurrentIndex))
-		{
-			ButtonList[CurrentIndex]->OnClicked.Broadcast();
-		}
-		return FReply::Handled();
-	}
-	return Super::NativeOnKeyDown(InGeometry,InKeyEvent);
-}
-
-
-void UMenuPauseRobotBattle::UpdateButtonFocus()
-{
-	for (int32 i = 0; i < ButtonList.Num(); i++)
-	{
-		if (ButtonList[i])
-		{
-			ButtonList[i]->SetKeyboardFocus();
-			if (i == CurrentIndex)
-			{
-				ButtonList[i]->SetBackgroundColor(FLinearColor::Black);
-			}
-			else
-			{
-				ButtonList[i]->SetBackgroundColor(FLinearColor::White);
-			}
-		}
-	}
+	
 }
