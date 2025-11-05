@@ -30,7 +30,7 @@ UCameraShakeWorld::UCameraShakeWorld(const FObjectInitializer& ObjectInitializer
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
-		ShakePattern = NewObject<UPerlinNoiseCameraShakePattern>(this, NAME_None, RF_Transient);
+		ShakePattern = CreateDefaultSubobject<UPerlinNoiseCameraShakePattern>(TEXT("MyPerlinPattern"));
 
 		if (ShakePattern)
 		{
