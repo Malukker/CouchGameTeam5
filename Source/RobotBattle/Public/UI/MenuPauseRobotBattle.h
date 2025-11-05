@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MenuPauseRobotBattle.generated.h"
 
+class ARobotCharacter;
 /**
  * 
  */
@@ -19,8 +20,6 @@ public:
 	virtual bool Initialize() override;
 
 	virtual void NativeConstruct() override;
-
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 	
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* ResumeBtn;
@@ -40,6 +39,9 @@ public:
 	UFUNCTION()
 	void OptionGame();
 
+	UFUNCTION()
+	void NavigationMenu();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> OptionMenu;
@@ -53,5 +55,5 @@ private:
 
 	TArray<UButton*> ButtonList;
 
-	void UpdateButtonFocus();
+	ARobotCharacter* Character;
 };
