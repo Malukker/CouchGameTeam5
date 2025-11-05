@@ -27,9 +27,16 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	UPROPERTY()
+	bool WalkForward;
+	
 	UFUNCTION()
 	void OnInputJump();
 
 	UFUNCTION()
 	void OnInputDash();
+	UFUNCTION()
+	void OnStunEvent();
+	UFUNCTION()
+	void OnLockEvent();
 };

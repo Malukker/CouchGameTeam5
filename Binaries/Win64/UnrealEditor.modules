@@ -3,6 +3,7 @@
 	"Modules": 
 	{
 		"LocalMultiplayer": "UnrealEditor-LocalMultiplayer.dll",
-		"RobotBattle": "UnrealEditor-RobotBattle.dll"
+		"RobotBattle": "UnrealEditor-RobotBattle.dll",
+		"ToolBox": "UnrealEditor-ToolBox.dll"
 	}
 }

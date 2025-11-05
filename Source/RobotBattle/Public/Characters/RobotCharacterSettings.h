@@ -7,12 +7,13 @@
 #include "RobotCharacterSettings.generated.h"
 
 class URobotCharacterInputData;
+class URobotCharacterAttacksData;
 class UInputMappingContext;
 
 /**
  * 
  */
-UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Smash Character Settings"))
+UCLASS(Config = Game, DefaultConfig, meta = (DisplayName = "Robot Character Settings"))
 class ROBOTBATTLE_API URobotCharacterSettings : public UDeveloperSettings
 {
 	GENERATED_BODY()
@@ -26,7 +27,13 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	TSoftObjectPtr<UInputMappingContext> InputMappingContextDown;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
+	TSoftObjectPtr<UInputMappingContext> InputMappingContextMenu;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	float InputMoveXThreshold = 0.1f;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Attacks")
+	TSoftObjectPtr<URobotCharacterAttacksData> AttackData;
 };

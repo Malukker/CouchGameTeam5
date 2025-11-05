@@ -14,12 +14,9 @@ class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	FAttackStruct CurrentAttackStruct;
 
-	UPROPERTY()
-	UAnimMontage* AttackAnim;
-
+	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
+	
 	virtual ERobotCharacterStateID GetStateID() override;
 	
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
@@ -28,28 +25,42 @@ public:
 	
 	virtual void StateTick(float DeltaTime) override;
 
-#pragma region Animation
-	
-private:
-	float KeyframeDeltaTime;
-
-	float CurrentTime;
-	
-	FName StartSocketName;
-
-	FName EndSocketName;
-
-	void InitAnimationNotify();
-	
-	void StartDetectionNotifyAttack();
-	
-	void EndDetectionNotifyAttack();
-	
-#pragma endregion
-
 #pragma region Attack
 	
+private:
+	UPROPERTY()
+	FAttackStruct CurrentAttackStruct;
+	
 	bool bIsAttackTraceEnabled;
+
+	int AttackIndex;
+	
+	FVector StartPos;
+	
+	FVector EndPos;
+
+	UPROPERTY()
+	TArray<AActor*> ActorsToIgnore;
+
+	UPROPERTY()
+	UAnimMontage* AttackAnim;
+	
+	float KeyframeDeltaTime;
+	
+	float AnimDuration;
+
+	float CurrentAnimDeltaTime;
+	
+	float CurrentAnimTime;
+
+	void InitAnimationNotify();
+
+	UFUNCTION()
+	void StartDetectionNotifyAttack(AActor* ConcernedActor);
+	
+	UFUNCTION()
+	void EndDetectionNotifyAttack(AActor* ConcernedActor);
+	
 	
 #pragma endregion
 };

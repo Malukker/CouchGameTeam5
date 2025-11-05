@@ -9,12 +9,12 @@
 #include "TeamManager.generated.h"
 
 class URobotCharacterInputData;
+class IUIGamePlayInterface;
 class ARobotCharacter;
 class AArenaPlayerStart;
 class UInputMappingContext;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStunEvent);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDeathEvent, int, Team);
 
 UCLASS()
 class ROBOTBATTLE_API ATeamManager : public AActor
@@ -26,28 +26,53 @@ public:
 	ATeamManager();
 
 	UPROPERTY(EditAnywhere)
+
 	uint8 Team = 0;
+	
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> TeamCollision;
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> OpponentCollision;
+	
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> AttackChannel;
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
+	TScriptInterface<IUIGamePlayInterface> UIInterface;
+
+	FDeathEvent DeathEvent;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
 	void SpawnCharacters();
+	void ResetCharacters();
 
 	FVector GetOpponentLocation();
 	
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
-	int TeamLife = 0;
+	float TeamLifeMax = 0;
+	float TeamLife = 0;
 	
-	int TeamGuardMax = 0;
-	int TeamGuard = 0;
-	bool CanTakeDamage = false;
+	float TeamGuardMax = 0;
+	float TeamGuard = 0;
+	bool CanGuard = false;
+	
+	int InvinsibilityFramesOrigin = 0;
+	int InvinsibilityFrames = 0;
+	float DashBuffer = 0;
+	bool WantInvinsibility = false;
+	bool IsDashing = false;
+	bool CanTakeDamage = true;
+	
+	float TeamChargeMax = 0;
+	float TeamCharge = 0;
 	
 	FVector GetTeamLocation();
 
@@ -55,8 +80,23 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamPartLock(ERobotCharacterPositionEnum Position);
+	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
 	
+	UFUNCTION()
+	void GuardReset();
+	
+	UFUNCTION()
+	void DashInvinsibility(ERobotCharacterPositionEnum Position);
+	
+	UFUNCTION()
+	void Guard(bool Guard);
+	
+	UFUNCTION()
+	void Charge(ERobotCharacterPositionEnum Position);
+	
+	UFUNCTION()
+	void AttackDuo(ERobotCharacterPositionEnum Position);
+
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

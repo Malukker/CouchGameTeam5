@@ -4,7 +4,9 @@
 #include "Characters/States/RobotCharacterStateLock.h"
 
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateMachine.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 ERobotCharacterStateID URobotCharacterStateLock::GetStateID()
@@ -14,14 +16,29 @@ ERobotCharacterStateID URobotCharacterStateLock::GetStateID()
 
 void URobotCharacterStateLock::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventLock);
 	Super::StateEnter(PreviousStateID);
+
+	if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
+	{
+		OriginalGravityScale = CharacterMovement->GravityScale;
+		CharacterMovement->GravityScale = 0;
+		CharacterMovement->StopMovementImmediately();
+	}
+	
+	Character->UnlockEvent.AddDynamic(this, &URobotCharacterStateLock::OnEventUnlock);
 }
+
 
 void URobotCharacterStateLock::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventLock);
+
+	if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
+	{
+		CharacterMovement->GravityScale = OriginalGravityScale;
+	}
+	
+	Character->UnlockEvent.RemoveDynamic(this, &URobotCharacterStateLock::OnEventUnlock);
 	
 }
 
@@ -30,7 +47,7 @@ void URobotCharacterStateLock::StateTick(float DeltaTime)
 	Super::StateTick(DeltaTime);
 }
 
-void URobotCharacterStateLock::OnEventLock()
+void URobotCharacterStateLock::OnEventUnlock()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	

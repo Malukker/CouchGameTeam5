@@ -3,6 +3,7 @@
 
 #include "Characters/States/RobotCharacterStateFall.h"
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -20,11 +21,15 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetInputMoveX();
 
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateFall::OnDashEvent);
+	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateFall::OnStunEvent);
+	Character->LockEvent.AddDynamic(this, &URobotCharacterStateFall::OnLockEvent);
 }
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnDashEvent);
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnStunEvent);
+	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnLockEvent);
 	CharacterMovement->GravityScale = 1;
 	Character->ResetDash();
 	/*GEngine->AddOnScreenDebugMessage(
@@ -43,12 +48,30 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 		
 	}
 	else {
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
+		{
+			Character->DoGuardTest();
+			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		}
 	}
+
 }
+
 
 void URobotCharacterStateFall::OnDashEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
+}
+
+
+void URobotCharacterStateFall::OnStunEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
+}
+
+
+void URobotCharacterStateFall::OnLockEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
 }
 

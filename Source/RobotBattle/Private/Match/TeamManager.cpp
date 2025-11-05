@@ -4,16 +4,15 @@
 #include "Match/TeamManager.h"
 
 #include "Characters/RobotCharacter.h"
-#include "Characters/RobotCharacterUp.h"
-#include "Characters/RobotCharacterDown.h"
-
 #include "Arena/ArenaPlayerStart.h"
 #include "Arena/ArenaSettings.h"
 #include <Characters/RobotCharacterSettings.h>
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
+#include "Components/CapsuleComponent.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/UIGamePlayInterface.h"
 
 
 // Sets default values
@@ -27,7 +26,13 @@ ATeamManager::ATeamManager()
 void ATeamManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
+	if (DashBuffer > 0) DashBuffer -= DeltaTime;
+	if (DashBuffer < 0 && WantInvinsibility) WantInvinsibility = false;
+	
+	if (InvinsibilityFrames > 0) InvinsibilityFrames --;
+	if (InvinsibilityFrames == 0 && !CanTakeDamage) CanTakeDamage = true;
+		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
@@ -51,6 +56,7 @@ void ATeamManager::SpawnCharacters()
 	URobotCharacterInputData* InputData = LoadInputDataFromConfig();
 	UInputMappingContext* InputMappingContextDown = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Down);
 	UInputMappingContext* InputMappingContextUp = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::Up);
+	UInputMappingContext* InputMappingContextMenu = LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum::None);
 
 	TeamGuardMax = 0;
 	TeamGuard = 0;
@@ -76,27 +82,43 @@ void ATeamManager::SpawnCharacters()
 
 		NewCharacter->SetRobotBodyID(GameInstance->RobotID[Team * 2 + PartNb]);
 		NewCharacter->InputData = InputData;
+		NewCharacter->InputMappingContextMenu = InputMappingContextMenu;
 		switch (Pos)
 		{
 		case ERobotCharacterPositionEnum::Down:
-			NewCharacter->InputMappingContext = InputMappingContextDown;
+			NewCharacter->InputMappingContextGameplay = InputMappingContextDown;
 			break;
 		case ERobotCharacterPositionEnum::Up:
-			NewCharacter->InputMappingContext = InputMappingContextUp;
+			NewCharacter->InputMappingContextGameplay = InputMappingContextUp;
 			break;
 		default:
 			return;
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
+		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
+		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
+		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
+		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
+		NewCharacter->GetCapsuleComponent()->SetCollisionObjectType(TeamCollision);
+		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
+		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(AttackChannel, ECollisionResponse::ECR_Block);
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
-		//TeamLife += Character->Life;
-		//TeamGuardMax += Character->Guard;
+		TeamLifeMax += NewCharacter->Life;
+		TeamGuardMax += NewCharacter->Guard;
+		TeamChargeMax += NewCharacter->Charge;
+		InvinsibilityFramesOrigin += NewCharacter->InvinsibilityFrames;
 	}
 	TeamGuard = TeamGuardMax;
+	TeamLife = TeamLifeMax;
+	TeamCharge = 0;
+	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
@@ -108,6 +130,16 @@ void ATeamManager::SpawnCharacters()
 		true
 		),
 		"Bones_Attach");
+}
+
+void ATeamManager::ResetCharacters()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
+	TeamGuard = TeamGuardMax;
+	TeamLife = TeamLifeMax;
+	TeamCharge = 0;
+	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -136,25 +168,129 @@ FVector ATeamManager::GetTeamLocation()
 
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	if (CanTakeDamage && TeamGuard > 0) return;
-	RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
-	RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
-	RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
-	TeamLife -= Damage;
-	if (TeamLife < 0) TeamLife = 0;
-	TeamGuard = TeamGuardMax;
+	if (CanGuard && TeamGuard > 0)
+	{
+		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
+		TeamGuard--;
+	}
+	else if (CanTakeDamage)
+	{
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
+		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
+		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+		TeamLife -= Damage;
+		if (TeamLife < 0)
+		{
+			TeamLife = 0;
+			DeathEvent.Broadcast(Team);
+		}
+		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+	}
 }
 
-void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position)
+void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
 {
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->UnlockEvent.Broadcast();
+		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
+		if (Lock)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
+		}
+		else
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->UnlockEvent.Broadcast();
+		}
+		break;
+	default: ;
+	}
+}
+
+void ATeamManager::GuardReset()
+{
+	TeamGuard = TeamGuardMax;
+}
+
+void ATeamManager::Guard(bool Guard)
+{
+	CanGuard = Guard;
+}
+
+void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		if (IsDashing)
+		{
+			IsDashing = false;
+			InvinsibilityFrames = 0;
+		}
+		else
+		{
+			IsDashing = true;
+			CanTakeDamage = false;
+			InvinsibilityFrames = InvinsibilityFramesOrigin;
+			if (WantInvinsibility) InvinsibilityFrames += InvinsibilityFramesOrigin;
+		}
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		if (IsDashing)
+		{
+			InvinsibilityFrames += InvinsibilityFramesOrigin;
+		}
+		else
+		{
+			DashBuffer = 0.33f;
+			WantInvinsibility = true;
+		}
+		break;
+	default: ;
+	}
+}
+
+void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		TeamCharge++;
+		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
+		if (TeamCharge == TeamChargeMax)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(true);
+		}
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		TeamCharge = 0;
+		RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(false);
+		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(true);
+		break;
+	default: ;
+	}
+	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+}
+
+void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
+{
+	switch (Position)
+	{
+	case ERobotCharacterPositionEnum::Down:
+		RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+		break;
+	case ERobotCharacterPositionEnum::Up:
+		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(false);
 		break;
 	default: ;
 	}
@@ -178,7 +314,7 @@ UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotChar
 		return CharacterSettings->InputMappingContextUp.LoadSynchronous();
 
 	case ERobotCharacterPositionEnum::None:
-		return nullptr;
+		return CharacterSettings->InputMappingContextMenu.LoadSynchronous();
 	}
 	return nullptr;
 }

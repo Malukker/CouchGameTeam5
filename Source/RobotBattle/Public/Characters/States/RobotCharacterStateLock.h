@@ -17,6 +17,8 @@ class ROBOTBATTLE_API URobotCharacterStateLock : public URobotCharacterState
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	virtual void StateTick(float DeltaTime) override;
 
+	int OriginalGravityScale;
+	
 	UFUNCTION()
-	void OnEventLock();
+	void OnEventUnlock();
 };
