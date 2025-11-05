@@ -40,5 +40,5 @@ void URobotBattleGameOverMenu::OnClickedMainMenuButton()
 
 void URobotBattleGameOverMenu::OnClickedRestartButton()
 {
-	
+	UGameplayStatics::OpenLevel(this, FName(UGameplayStatics::GetCurrentLevelName(this, true)));
 }

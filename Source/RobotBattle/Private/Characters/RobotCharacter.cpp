@@ -27,6 +27,10 @@ void ARobotCharacter::BeginPlay()
 
 	InitStateMachine();
 	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
+	if (GetRobotBodyID() == ERobotID::None)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ROBOT ID NONE !"));
+	}
 }
 
 // Called every frame
