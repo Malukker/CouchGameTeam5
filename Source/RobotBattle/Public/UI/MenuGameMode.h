@@ -32,8 +32,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleCharacterSelection> CharacterSelectWidget;
 
+	UFUNCTION()
 	void StartSelectionCharacter();
 
+	UFUNCTION()
 	void StartSelectionTeam();
 	
 protected:
