@@ -5,13 +5,11 @@
 
 #include "Camera/CameraSettings.h"
 #include "Characters/Attacks/AttackStruct.h"
-#include "Characters/Enums/RobotCharacterUpID.h"
 #include "Shakes/PerlinNoiseCameraShakePattern.h"
-#include "WorldPartition/ContentBundle/ContentBundleLog.h"
 
-void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotCharacterUpID UpID,float& Scale )
+void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale )
 {
-	if (UpID==ERobotCharacterUpID::None)
+	if (UpID==ERobotID::None)
 	{
 		UE_LOG(LogTemp, Log, TEXT("ID UP NONE PAS DE SHAKE"));
 		return;

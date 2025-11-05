@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Attacks/AttackStruct.h"
 #include "Enums/RobotCharacterDownChargeID.h"
-#include "Enums/RobotCharacterUpID.h"
 #include "GameFramework/Character.h"
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
@@ -162,9 +161,7 @@ public:
 
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
-
-	UFUNCTION()
-	ERobotCharacterUpID GetRobotCharacterUpID();
+	
 
 	int Team;
 
@@ -174,8 +171,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Guard = 2;
 
-	UPROPERTY(EditAnywhere)
-	ERobotCharacterUpID RobotCharacterUpID = ERobotCharacterUpID::None;
+	
 
 	virtual FVector GetRobotLocation() override;
 	
