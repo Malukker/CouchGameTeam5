@@ -19,6 +19,7 @@ ARobotCharacterDown::ARobotCharacterDown()
 void ARobotCharacterDown::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)

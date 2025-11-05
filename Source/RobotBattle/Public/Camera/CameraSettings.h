@@ -7,6 +7,7 @@
 #include "Engine/DeveloperSettings.h"
 #include "CameraSettings.generated.h"
 
+enum class ERobotID : uint8;
 enum class ERobotCharacterUpID : uint8;
 enum class EAttackID : uint8;
 
@@ -47,7 +48,7 @@ public:
 #pragma region Camera Shake Settings
 	
 	UPROPERTY(Config,EditAnywhere, Category = "CameraShakeSettings")
-	TMap<ERobotCharacterUpID,FShakeScaleTypeStruct> ShakeScaleSettings;
+	TMap<ERobotID,FShakeScaleTypeStruct> ShakeScaleSettings;
 	
 	UPROPERTY(Config,EditAnywhere, Category = "CameraShakeSettings")
 	TMap<EAttackID,FShakeStruct> ShakeAttacksSettings;

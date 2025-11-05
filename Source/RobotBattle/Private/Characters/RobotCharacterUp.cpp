@@ -6,7 +6,6 @@
 #include "MathUtil.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateID.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Kismet/GameplayStatics.h"
