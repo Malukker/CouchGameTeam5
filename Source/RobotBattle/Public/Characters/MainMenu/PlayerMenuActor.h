@@ -43,7 +43,16 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveInMenu;
+	TObjectPtr<UInputAction> InputActionMoveUp;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionMoveDown;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionMoveLeft;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionMoveRight;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionValidate;
@@ -58,10 +67,16 @@ private:
 	EPlayerMenuInputDirection Direction;
 	
 	void BindActions(UEnhancedInputComponent* Enhanced);
-
-	void OnInputMoveRecord(const FInputActionValue& InputActionValue);
 	
-	void OnInputMoveMenu(const FInputActionValue& InputActionValue);
+	void OnInputMoveUp(const FInputActionValue& InputActionValue);
+
+	void OnInputMoveDown(const FInputActionValue& InputActionValue);
+
+	void OnInputMoveLeft(const FInputActionValue& InputActionValue);
+
+	void OnInputMoveRight(const FInputActionValue& InputActionValue);
+	
+	void OnInputMoveMenu(EPlayerMenuInputDirection Direction);
 	
 	void OnInputValidate(const FInputActionValue& InputActionValue);
 	
