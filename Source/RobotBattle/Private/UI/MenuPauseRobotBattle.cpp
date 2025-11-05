@@ -7,6 +7,20 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/RobotBattleGameOverMenu.h"
 
+void UMenuPauseRobotBattle::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	ButtonList = {ResumeBtn, OptionBtn, MainMenuBtn};
+
+	if (ButtonList.Num() > 0)
+	{
+		CurrentIndex = 0;
+		UpdateButtonFocus();
+	}
+}
+
+
 bool UMenuPauseRobotBattle::Initialize()
 {
 	Super::Initialize();
@@ -52,6 +66,52 @@ void UMenuPauseRobotBattle::OptionGame()
 	{
 		SettingwidgetInstance->AddToViewport();
 	}
+}
 
-	
+FReply UMenuPauseRobotBattle::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	const FKey Key = InKeyEvent.GetKey();
+	if (Key == EKeys::Gamepad_DPad_Down || Key == EKeys::Down)
+	{
+		CurrentIndex = (CurrentIndex + 1) % ButtonList.Num();
+		UpdateButtonFocus();
+		return FReply::Handled();
+	}
+
+	if (Key == EKeys::Gamepad_DPad_Up || Key == EKeys::Up)
+	{
+		CurrentIndex = (CurrentIndex - 1 + ButtonList.Num()) % ButtonList.Num();
+		UpdateButtonFocus();
+		return FReply::Handled();
+	}
+
+	if (Key == EKeys::Gamepad_FaceButton_Bottom || Key == EKeys::Enter)
+	{
+		if (ButtonList.IsValidIndex(CurrentIndex))
+		{
+			ButtonList[CurrentIndex]->OnClicked.Broadcast();
+		}
+		return FReply::Handled();
+	}
+	return Super::NativeOnKeyDown(InGeometry,InKeyEvent);
+}
+
+
+void UMenuPauseRobotBattle::UpdateButtonFocus()
+{
+	for (int32 i = 0; i < ButtonList.Num(); i++)
+	{
+		if (ButtonList[i])
+		{
+			ButtonList[i]->SetKeyboardFocus();
+			if (i == CurrentIndex)
+			{
+				ButtonList[i]->SetBackgroundColor(FLinearColor::Black);
+			}
+			else
+			{
+				ButtonList[i]->SetBackgroundColor(FLinearColor::White);
+			}
+		}
+	}
 }

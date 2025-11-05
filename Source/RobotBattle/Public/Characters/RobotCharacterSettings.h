@@ -20,7 +20,10 @@ class ROBOTBATTLE_API URobotCharacterSettings : public UDeveloperSettings
 	
 public:
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
-	TSoftObjectPtr<URobotCharacterInputData> InputData;
+	TSoftObjectPtr<URobotCharacterInputData> InputDataGameplay;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
+	TSoftObjectPtr<URobotCharacterInputData> InputDataMenu;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	TSoftObjectPtr<UInputMappingContext> InputMappingContextUp;
