@@ -35,7 +35,7 @@ bool URobotBattleMainMenu::Initialize()
 
 void URobotBattleMainMenu::StartGame()
 {
-	UGameplayStatics::OpenLevel(this, FName(""));
+	
 }
 
 void URobotBattleMainMenu::OptionGame()
