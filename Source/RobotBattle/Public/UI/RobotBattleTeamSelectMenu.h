@@ -7,6 +7,7 @@
 #include "RobotBattlePlayerCardWidget.h"
 #include "RobotBattleTeamSelectMenu.generated.h"
 
+class AMainMenuHUD;
 class UHorizontalBox;
 class UPlayerCardWidget;
 
@@ -59,10 +60,16 @@ protected:
 
 private:
 	UPROPERTY()
+	TObjectPtr<AMainMenuHUD> MainMenuHUD;
+	
+	UPROPERTY()
 	TMap<int32, URobotBattlePlayerCardWidget*> PlayerCards;
 
 	UPROPERTY()
 	TMap<int32, FString> CurrentZones;
+
+	UPROPERTY()
+	TMap<int32, bool> HasValidatedByPlayer;
 	
 	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
 };
