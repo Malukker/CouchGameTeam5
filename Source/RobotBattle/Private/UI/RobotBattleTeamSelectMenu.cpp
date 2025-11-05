@@ -9,15 +9,13 @@
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/PanelWidget.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/MainMenuHUD.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/MenuGameMode.h"
 
 void URobotBattleTeamSelectMenu::CustomConstruct()
 {
-	MainMenuHUD = Cast<AMainMenuHUD>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		AddPlayer(i);
@@ -182,6 +180,7 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 		return;
 	}
 
+	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName())
 	HasValidatedByPlayer[PlayerID] = true;
 
 	for (const auto Pair : HasValidatedByPlayer)
@@ -191,16 +190,17 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 			return;
 		} 
 	}
-	
-	MainMenuHUD->SetPositionsToCharacterSelection(CurrentZones);
 
-	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName())
 	URobotGameInstance* GI = Cast<URobotGameInstance>(GetGameInstance());
 	GI->SetPlayerPos(0, GetControllerIndexForZone("HomeDown"));
 	GI->SetPlayerPos(1, GetControllerIndexForZone("HomeUp"));
 	GI->SetPlayerPos(2, GetControllerIndexForZone("AwayDown"));
 	GI->SetPlayerPos(3, GetControllerIndexForZone("AwayUp"));
-	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName());
+	UE_LOG(LogTemp, Log, TEXT("Selection Team Finish !"))
+
+	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	RemoveFromParent();
+	GM->StartSelectionCharacter();
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

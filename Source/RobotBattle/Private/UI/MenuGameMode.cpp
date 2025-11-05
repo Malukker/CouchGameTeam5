@@ -8,6 +8,16 @@
 #include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Match/RobotGameInstance.h"
 
+void AMenuGameMode::StartSelectionCharacter()
+{
+	
+}
+
+void AMenuGameMode::StartSelectionTeam()
+{
+	
+}
+
 void AMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
