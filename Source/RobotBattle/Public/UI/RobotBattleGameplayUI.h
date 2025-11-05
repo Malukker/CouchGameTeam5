@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "UIGamePlayInterface.h"
 #include "Blueprint/UserWidget.h"
-#include "RobotBattleHUD.generated.h"
+#include "RobotBattleGameplayUI.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ROBOTBATTLE_API URobotBattleHUD : public UUserWidget, public IUIGamePlayInterface
+class ROBOTBATTLE_API URobotBattleGameplayUI : public UUserWidget, public IUIGamePlayInterface
 {
 	GENERATED_BODY()
 

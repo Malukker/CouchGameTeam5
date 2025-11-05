@@ -5,7 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Match/TeamManager.h"
-#include "UI/RobotBattleHUD.h"
+#include "UI/RobotBattleGameplayUI.h"
 #include "UI/RobotBattleGameOverMenu.h"
 
 
@@ -21,7 +21,7 @@ AMatchManager::AMatchManager()
 void AMatchManager::BeginPlay()
 {
 	Super::BeginPlay();
-	UIGameplay = CreateWidget<URobotBattleHUD>(GetWorld(), UIGameplayClass);
+	UIGameplay = CreateWidget<URobotBattleGameplayUI>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
 	
 	UIGameplay->StartTimer(RoundTime);

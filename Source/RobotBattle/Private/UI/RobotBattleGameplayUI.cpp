@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/RobotBattleHUD.h"
+#include "UI/RobotBattleGameplayUI.h"
 
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
@@ -10,14 +10,14 @@
 
 #pragma region Timer
 
-void URobotBattleHUD::NativeConstruct()
+void URobotBattleGameplayUI::NativeConstruct()
 {
 	Super::NativeConstruct();
 	elapsedTime = 0.0f;
 	IsActive = false;
 }
 
-void URobotBattleHUD::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
+void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
@@ -35,7 +35,7 @@ void URobotBattleHUD::NativeTick(const FGeometry & MyGeometry, float InDeltaTime
 	UpdateTimer();
 	
 }
-void URobotBattleHUD::UpdateTimer()
+void URobotBattleGameplayUI::UpdateTimer()
 {
 	if (TimerText)
 	{
@@ -48,13 +48,13 @@ void URobotBattleHUD::UpdateTimer()
 }
 
 
-void URobotBattleHUD::StartTimer(float time)
+void URobotBattleGameplayUI::StartTimer(float time)
 {
 	elapsedTime = time;
 	IsActive = true;
 }
 
-void URobotBattleHUD::StopTimer()
+void URobotBattleGameplayUI::StopTimer()
 {
 	if (HealthBarPlayer1->GetPercent() > HealthBarPlayer2->GetPercent())
 	{
@@ -73,7 +73,7 @@ void URobotBattleHUD::StopTimer()
 }
 #pragma endregion
 
-void URobotBattleHUD::SetHealthPlayer(int Team, float Health, float MaxHealth)
+void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHealth)
 {
 	if (Team == 0)
 	{
@@ -101,7 +101,7 @@ void URobotBattleHUD::SetHealthPlayer(int Team, float Health, float MaxHealth)
 	}
 }
 
-void URobotBattleHUD::SetChargePlayer(int Team, float Charge, float MaxCharge)
+void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCharge)
 {
 	if (Team == 0)
 	{
@@ -119,7 +119,7 @@ void URobotBattleHUD::SetChargePlayer(int Team, float Charge, float MaxCharge)
 	}
 }
 
-void URobotBattleHUD::SetRoundPlayer(int Team, int Win)
+void URobotBattleGameplayUI::SetRoundPlayer(int Team, int Win)
 {
 	if (Team == 0)
 	{

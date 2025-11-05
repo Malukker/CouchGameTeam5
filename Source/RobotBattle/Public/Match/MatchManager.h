@@ -7,7 +7,7 @@
 #include "MatchManager.generated.h"
 
 class URobotBattleGameOverMenu;
-class URobotBattleHUD;
+class URobotBattleGameplayUI;
 class ATeamManager;
 
 UCLASS()
@@ -23,11 +23,11 @@ public:
 	float RoundTime = 60;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<URobotBattleHUD> UIGameplayClass;
+	TSubclassOf<URobotBattleGameplayUI> UIGameplayClass;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleGameOverMenu> UIGameOverClass;
 
-	URobotBattleHUD* UIGameplay;
+	URobotBattleGameplayUI* UIGameplay;
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<ATeamManager>> Teams;
