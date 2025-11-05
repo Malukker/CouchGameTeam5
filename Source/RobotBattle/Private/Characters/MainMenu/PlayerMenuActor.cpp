@@ -14,6 +14,12 @@ void APlayerMenuActor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	BindActions(Cast<UEnhancedInputComponent>(PlayerInputComponent));
 }
 
+void APlayerMenuActor::BeginPlay()
+{
+	Super::BeginPlay();
+	SelfPlayerController = Cast<APlayerController>(Controller);
+}
+
 void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	if (InputActionMoveUp)

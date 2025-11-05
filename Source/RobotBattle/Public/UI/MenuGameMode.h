@@ -23,6 +23,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerMenuActor> MenuActorBlueprintClass;
+
+	void StartSelectionCharacter();
+	void StartSelectionTeam();
 	
 protected:
 	virtual void BeginPlay() override;
