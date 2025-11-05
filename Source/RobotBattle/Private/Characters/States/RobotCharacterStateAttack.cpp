@@ -109,15 +109,12 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					{
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
-						
+
 						UCameraShakeWorld* ShakeInstance = NewObject<UCameraShakeWorld>();
-						if (ShakeInstance)
-						{
-							float ScaleShake = 1.f;
-							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake);
-							UGameplayStatics::PlayWorldCameraShake(GetWorld(),ShakeInstance->GetClass(),OutHit.GetActor()->GetActorLocation(),0.f,1000.f,ScaleShake);
-							//UGameplayStatics::SetGlobalTimeDilation(GetWorld(),);
-						}
+						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+						float ScaleShake = 1.f;
+						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake);
+						Camera->StartCameraShake(ShakeInstance->GetClass(),ScaleShake);
 					
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
