@@ -78,13 +78,15 @@ protected:
 
 public:
 	UPROPERTY()
-	TObjectPtr<UInputMappingContext> InputMappingContext;
+	TObjectPtr<UInputMappingContext> InputMappingContextGameplay;
+	UPROPERTY()
+	TObjectPtr<UInputMappingContext> InputMappingContextMenu;
 
 	UPROPERTY()
 	TObjectPtr<URobotCharacterInputData> InputData;
 
 protected:
-	void SetupMappingContextIntoController() const;
+	void SetupMappingContextIntoController(bool bMenu) const;
 
 #pragma endregion
 
