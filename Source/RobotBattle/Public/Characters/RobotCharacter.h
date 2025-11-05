@@ -85,8 +85,6 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<URobotCharacterInputData> InputDataGameplay;
-	UPROPERTY()
-	TObjectPtr<URobotBattleInputDataMenu> InputDataMenu;
 
 protected:
 	void SetupMappingContextIntoController(bool bMenu) const;

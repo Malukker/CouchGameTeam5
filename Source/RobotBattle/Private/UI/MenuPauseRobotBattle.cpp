@@ -3,7 +3,6 @@
 
 #include "UI/MenuPauseRobotBattle.h"
 
-#include "Characters/RobotBattleInputDataMenu.h"
 #include "Characters/RobotCharacter.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
@@ -64,9 +63,5 @@ void UMenuPauseRobotBattle::OptionGame()
 
 void UMenuPauseRobotBattle::NavigationMenu()
 {
-	if (Character->InputDataMenu->InputActionMoveDown)
-	{
-		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionRightDash,ETriggerEvent::Started,this,&ARobotCharacter::OnInputRightDash);
-	}
 	
 }

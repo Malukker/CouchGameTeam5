@@ -28,7 +28,7 @@ void AMenuGameMode::BeginPlay()
 	CreatePlayerMenuActors();
 	BindMenuInputsToPlayers();
 	
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &StartSelectionTeam);
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &AMenuGameMode::StartSelectionTeam);
 }
 
 void AMenuGameMode::CreatePlayerMenuActors() const

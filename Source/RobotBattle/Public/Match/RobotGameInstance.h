@@ -16,9 +16,9 @@ class ROBOTBATTLE_API URobotGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<ERobotID> RobotID;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<uint8> PlayersPos;
 
 	ERobotID GetRobotID(int Number);
