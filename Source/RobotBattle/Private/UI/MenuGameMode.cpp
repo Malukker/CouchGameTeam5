@@ -8,6 +8,16 @@
 #include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Match/RobotGameInstance.h"
 
+void AMenuGameMode::StartSelectionCharacter()
+{
+	
+}
+
+void AMenuGameMode::StartSelectionTeam()
+{
+	
+}
+
 void AMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,14 +35,14 @@ void AMenuGameMode::CreatePlayerMenuActors() const
 
 	LocalMultiplayerSubsystem->CreatePlayers();
 
-	for (auto Controller : LocalMultiplayerSubsystem->Controllers)
+	for (int i = 0; i < 4; i++)
 	{
-		if (Controller != nullptr)
-		{
-			APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActor<APlayerMenuActor>(MenuActorBlueprintClass);
-			Controller->Possess(PlayerMenuActor);
-			PlayerMenuActor->SelfPlayerController = Controller;
-		}
+		APlayerMenuActor* PlayerMenuActor = GetWorld()->SpawnActorDeferred <APlayerMenuActor>(
+			MenuActorBlueprintClass,
+			FTransform::Identity
+		);
+		PlayerMenuActor->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(i + 1);
+		PlayerMenuActor->FinishSpawning(FTransform::Identity);
 	}
 }
 

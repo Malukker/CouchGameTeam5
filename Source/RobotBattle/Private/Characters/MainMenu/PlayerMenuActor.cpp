@@ -14,22 +14,51 @@ void APlayerMenuActor::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	BindActions(Cast<UEnhancedInputComponent>(PlayerInputComponent));
 }
 
+void APlayerMenuActor::BeginPlay()
+{
+	Super::BeginPlay();
+	SelfPlayerController = Cast<APlayerController>(Controller);
+}
+
 void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
-	if (InputActionMoveInMenu)
-	{
+	if (InputActionMoveUp)
+	{		
 		EnhancedInputComponent->BindAction(
-			InputActionMoveInMenu,
-			ETriggerEvent::Triggered,
+			InputActionMoveUp,
+			ETriggerEvent::Started,
 			this,
-			&APlayerMenuActor::OnInputMoveRecord
-			);
-		
+			&APlayerMenuActor::OnInputMoveUp
+		);
+	}
+
+	if (InputActionMoveDown)
+	{		
 		EnhancedInputComponent->BindAction(
-			InputActionMoveInMenu,
-			ETriggerEvent::Completed,
+			InputActionMoveDown,
+			ETriggerEvent::Started,
 			this,
-			&APlayerMenuActor::OnInputMoveMenu
+			&APlayerMenuActor::OnInputMoveDown
+		);
+	}
+
+	if (InputActionMoveLeft)
+	{		
+		EnhancedInputComponent->BindAction(
+			InputActionMoveLeft,
+			ETriggerEvent::Started,
+			this,
+			&APlayerMenuActor::OnInputMoveLeft
+		);
+	}
+
+	if (InputActionMoveRight)
+	{		
+		EnhancedInputComponent->BindAction(
+			InputActionMoveRight,
+			ETriggerEvent::Started,
+			this,
+			&APlayerMenuActor::OnInputMoveRight
 		);
 	}
 
@@ -54,40 +83,27 @@ void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputCompone
 	}
 }
 
-void APlayerMenuActor::OnInputMoveRecord(const FInputActionValue& InputActionValue)
+void APlayerMenuActor::OnInputMoveUp(const FInputActionValue& InputActionValue)
 {
-	FVector2D Vector = InputActionValue.Get<FVector2D>();
-	if (Vector.Length() > 0.2f)
-	
-	if (abs(Vector.X) > abs(Vector.Y))
-	{
-		if (FMath::Sign(Vector.X) > 0)
-		{
-			Direction = EPlayerMenuInputDirection::Right;
-		}
-		else 
-		{
-			Direction = EPlayerMenuInputDirection::Left;
-		}
-	}
-	else
-	{
-		if (FMath::Sign(Vector.Y) > 0)
-		{
-			Direction = EPlayerMenuInputDirection::Up;
-		}
-		else 
-		{
-			Direction = EPlayerMenuInputDirection::Down;
-		}
-	}
-	if (Vector.Length() < 0.2f)
-	{
-		Direction = EPlayerMenuInputDirection::None;
-	} 
+	OnInputMoveMenu(EPlayerMenuInputDirection::Up);
 }
 
-void APlayerMenuActor::OnInputMoveMenu(const FInputActionValue& InputActionValue)
+void APlayerMenuActor::OnInputMoveDown(const FInputActionValue& InputActionValue)
+{
+	OnInputMoveMenu(EPlayerMenuInputDirection::Down);
+}
+
+void APlayerMenuActor::OnInputMoveLeft(const FInputActionValue& InputActionValue)
+{
+	OnInputMoveMenu(EPlayerMenuInputDirection::Left);
+}
+
+void APlayerMenuActor::OnInputMoveRight(const FInputActionValue& InputActionValue)
+{
+	OnInputMoveMenu(EPlayerMenuInputDirection::Right);
+}
+
+void APlayerMenuActor::OnInputMoveMenu(EPlayerMenuInputDirection Direction)
 {
 	InputMoveEvent.Broadcast(Direction, SelfPlayerController);
 }

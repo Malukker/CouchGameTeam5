@@ -114,8 +114,9 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 						if (ShakeInstance)
 						{
 							float ScaleShake = 1.f;
-							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotCharacterUpID(),ScaleShake);
+							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake);
 							UGameplayStatics::PlayWorldCameraShake(GetWorld(),ShakeInstance->GetClass(),OutHit.GetActor()->GetActorLocation(),0.f,1000.f,ScaleShake);
+							//UGameplayStatics::SetGlobalTimeDilation(GetWorld(),);
 						}
 					
 						Character->GuardResetManagerEvent.Broadcast();

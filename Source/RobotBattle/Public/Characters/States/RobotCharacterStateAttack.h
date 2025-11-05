@@ -63,4 +63,7 @@ private:
 	
 	
 #pragma endregion
+
+private :
+	float SlowMotionTime=1.f;
 };
