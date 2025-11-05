@@ -9,10 +9,15 @@
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/PanelWidget.h"
+#include "GameFramework/GameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/MainMenuHUD.h"
 #include "Match/RobotGameInstance.h"
 
 void URobotBattleTeamSelectMenu::CustomConstruct()
 {
+	MainMenuHUD = Cast<AMainMenuHUD>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
+
 	for (int32 i = 0; i < 4; i++)
 	{
 		AddPlayer(i);
@@ -127,6 +132,8 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 
 	int32 PlayerID = Controller->GetLocalPlayer()->GetLocalPlayerIndex();
 	
+	if (HasValidatedByPlayer[PlayerID]) { return; }
+
 	FString* CurrentZonePtr = CurrentZones.Find(PlayerID);
 	FString CurrentZone = CurrentZonePtr ? *CurrentZonePtr : TEXT("CenterUp");
 
@@ -158,7 +165,7 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 	}
 	
 	if (NewZone != CurrentZone)
-	{ 
+	{
 		CurrentZones.Add(PlayerID, NewZone);
 		MovePlayerToZone(PlayerID, NewZone);
 		UE_LOG(LogTemp, Log, TEXT("Player %d moved from %s to %s"), PlayerID, *CurrentZone, *NewZone);
@@ -173,6 +180,26 @@ int32 URobotBattleTeamSelectMenu::GetControllerIndexForZone(const FString& ZoneN
 
 void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Controller)
 {
+	int32 PlayerID = Controller->GetLocalPlayer()->GetLocalPlayerIndex();
+
+	if (CurrentZones[PlayerID] == "CenterUp" || CurrentZones[PlayerID] == "CenterDown")
+	{
+		return;
+	}
+
+	HasValidatedByPlayer[PlayerID] = true;
+
+	for (const auto Pair : HasValidatedByPlayer)
+	{
+		if (!Pair.Value)
+		{
+			return;
+		} 
+	}
+	
+	MainMenuHUD->SetPositionsToCharacterSelection(CurrentZones);
+
+	UE_LOG(LogTemp, Log, TEXT("Validate input from %s"), *Controller->GetName())
 	URobotGameInstance* GI = Cast<URobotGameInstance>(GetGameInstance());
 	GI->SetPlayerPos(0, GetControllerIndexForZone("HomeDown"));
 	GI->SetPlayerPos(1, GetControllerIndexForZone("HomeUp"));
@@ -183,5 +210,8 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)
 {
-	UE_LOG(LogTemp, Log, TEXT("Cancel input from %s"), *Controller->GetName());
+	int32 PlayerID = Controller->GetLocalPlayer()->GetLocalPlayerIndex();
+	HasValidatedByPlayer[PlayerID] = false;
+
+	UE_LOG(LogTemp, Log, TEXT("Cancel input from %s"), *Controller->GetName())
 }

@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MenuGameMode.generated.h"
 
+class AMainMenuHUD;
 class UInputMappingContext;
 class APlayerMenuActor;
 /**
