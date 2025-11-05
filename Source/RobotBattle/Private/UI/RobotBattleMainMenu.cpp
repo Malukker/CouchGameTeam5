@@ -6,6 +6,7 @@
 #include "Chaos/PBDRigidClusteringAlgo.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/MenuGameMode.h"
 
 
 bool URobotBattleMainMenu::Initialize()
@@ -35,7 +36,9 @@ bool URobotBattleMainMenu::Initialize()
 
 void URobotBattleMainMenu::StartGame()
 {
-	UGameplayStatics::OpenLevel(this, FName(""));
+	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GM->StartSelectionTeam();
+	RemoveFromParent();
 }
 
 void URobotBattleMainMenu::OptionGame()
