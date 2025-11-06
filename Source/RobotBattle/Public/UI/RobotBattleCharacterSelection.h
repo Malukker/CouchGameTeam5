@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RobotBattleCharacterSelection.generated.h"
 
+class AMenuGameMode;
 class URobotGameInstance;
 enum class ERobotID : uint8;
 enum class EPlayerMenuInputDirection : int;
@@ -53,4 +54,7 @@ private:
 
 	UPROPERTY()
 	TMap<APlayerController*, bool> ValidationByController;
+
+	UPROPERTY()
+	TObjectPtr<AMenuGameMode> GameMode;
 };

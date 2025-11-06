@@ -41,6 +41,8 @@ public:
 
 	UFUNCTION()
 	void StartSelectionTeam();
+
+	void LoadBattleLevel();
 	
 protected:
 	virtual void BeginPlay() override;
