@@ -11,3 +11,4 @@ void URobotBattlePlayerCardWidget::SetPlayerName(const FString& NewName)
 		Text_PlayerName->SetText(FText::FromString(NewName));
 	}
 }
+

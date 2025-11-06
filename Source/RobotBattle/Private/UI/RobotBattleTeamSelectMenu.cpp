@@ -10,6 +10,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/VerticalBox.h"
 #include "Components/PanelWidget.h"
+#include "Components/VerticalBoxSlot.h"
 #include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
@@ -55,11 +56,15 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 	}
 	
 	NewCard->SetPlayerName(FString::Printf(TEXT("Player %d"), PlayerID + 1));
+	UVerticalBoxSlot* CardCenter;
 
-	if (PlayerID % 2 == 0)
-		Box_CenterUp->AddChild(NewCard);
+	if (PlayerID < 2)
+		CardCenter = Box_CenterUp->AddChildToVerticalBox(NewCard);
 	else
-		Box_CenterDown->AddChild(NewCard);
+		CardCenter = Box_CenterDown->AddChildToVerticalBox(NewCard);
+
+	FSlateChildSize Size;
+	CardCenter->SetSize(Size);
 
 	PlayerCards.Add(PlayerID, NewCard);
 
@@ -80,17 +85,33 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	URobotBattlePlayerCardWidget* Card = PlayerCards[PlayerID];
 	if (!Card) return;
 
-	UPanelWidget* TargetZone = GetZoneByName(ZoneName);
-	if (!TargetZone) return;
-
-	if (ZoneName != "CenterUp" && ZoneName != "CenterDown" && IsZoneOccupied(ZoneName))
+	if (ZoneName.Contains("Center"))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
-		return;
-	}
+		UVerticalBox* TargetZone = nullptr;
+		if (ZoneName.Equals("CenterUp", ESearchCase::IgnoreCase)) TargetZone = Box_CenterUp;
+		if (ZoneName.Equals("CenterDown", ESearchCase::IgnoreCase)) TargetZone = Box_CenterDown;
+		if (!TargetZone) return;
 
-	Card->RemoveFromParent();
-	TargetZone->AddChild(Card);
+		Card->RemoveFromParent();
+		UVerticalBoxSlot* CardCenter = TargetZone->AddChildToVerticalBox(Card);
+
+		FSlateChildSize Size;
+		CardCenter->SetSize(Size);
+	}
+	else
+	{
+		UPanelWidget* TargetZone = GetZoneByName(ZoneName);
+		if (!TargetZone) return;
+
+		if (IsZoneOccupied(ZoneName))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
+			return;
+		}
+
+		Card->RemoveFromParent();
+		TargetZone->AddChild(Card);
+	}
 	CurrentZones[PlayerID] = ZoneName;
 
 	UE_LOG(LogTemp, Log, TEXT("Player %d moved to zone: %s"), PlayerID, *ZoneName);
@@ -115,9 +136,6 @@ UPanelWidget* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) con
 	if (Name.Equals("HomeDown", ESearchCase::IgnoreCase)) return Box_HomeDown;
 	if (Name.Equals("AwayUp", ESearchCase::IgnoreCase)) return Box_AwayUp;
 	if (Name.Equals("AwayDown", ESearchCase::IgnoreCase)) return Box_AwayDown;
-	if (Name.Equals("CenterUp", ESearchCase::IgnoreCase)) return Box_CenterUp;
-	if (Name.Equals("CenterDown", ESearchCase::IgnoreCase)) return Box_CenterDown;
-
 	return nullptr;
 }
 
