@@ -62,8 +62,6 @@ protected:
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;
 
 private:
-	UPROPERTY()
-	TObjectPtr<AMainMenuHUD> MainMenuHUD;
 	
 	UPROPERTY()
 	TMap<int32, URobotBattlePlayerCardWidget*> PlayerCards;

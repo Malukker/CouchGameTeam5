@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MenuGameMode.generated.h"
 
+class URobotBattleMainMenu;
 class URobotBattleCharacterSelection;
 class URobotBattleTeamSelectMenu;
 class AMainMenuHUD;
@@ -25,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerMenuActor> MenuActorBlueprintClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<URobotBattleMainMenu> MainMenuWidget;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleTeamSelectMenu> TeamSelectWidget;

@@ -11,6 +11,7 @@
 #include "Match/RobotGameInstance.h"
 #include "UI/RobotBattleTeamSelectMenu.h"
 #include "UI/RobotBattleCharacterSelection.h"
+#include "UI/RobotBattleMainMenu.h"
 
 void AMenuGameMode::StartSelectionCharacter()
 {
@@ -34,7 +35,7 @@ void AMenuGameMode::BeginPlay()
 	CreatePlayerMenuActors();
 	BindMenuInputsToPlayers();
 	
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &AMenuGameMode::StartSelectionTeam);
+	CreateWidget<URobotBattleMainMenu>(GetWorld(), MainMenuWidget)->AddToViewport();
 }
 
 void AMenuGameMode::CreatePlayerMenuActors() const
