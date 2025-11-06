@@ -201,6 +201,17 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	GM->StartSelectionCharacter();
 	RemoveFromParent();
+	
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
+
+	for (AActor* Actor : Players)
+	{
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
+	}
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

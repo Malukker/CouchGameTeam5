@@ -25,7 +25,7 @@ void AMenuGameMode::StartSelectionTeam()
 
 void AMenuGameMode::LoadBattleLevel()
 {
-	//UGameplayStatics::OpenLevel(GetWorld(), )
+	UGameplayStatics::OpenLevel(GetWorld(), "Gameplay ");
 }
 
 void AMenuGameMode::BeginPlay()

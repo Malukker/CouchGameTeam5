@@ -35,6 +35,19 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 		GameInstance->RobotID[Index] = Pair.Value;
 	}
 
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
+
+	for (const auto Actor : Players)
+	{
+		const auto TempActor = Cast<APlayerMenuActor>(Actor);
+
+		TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer);
+		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::ValidateSelection);
+		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::CancelSelection);
+	}
+
+	RemoveFromParent();
 	GameMode->LoadBattleLevel();
 }
 
