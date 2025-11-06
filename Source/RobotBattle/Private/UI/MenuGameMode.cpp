@@ -7,6 +7,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/MainMenu/PlayerMenuActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/RobotBattleTeamSelectMenu.h"
 #include "UI/RobotBattleCharacterSelection.h"
@@ -19,6 +20,11 @@ void AMenuGameMode::StartSelectionCharacter()
 void AMenuGameMode::StartSelectionTeam()
 {
 	CreateWidget<URobotBattleTeamSelectMenu>(GetWorld(), TeamSelectWidget)->AddToViewport();
+}
+
+void AMenuGameMode::LoadBattleLevel()
+{
+	//UGameplayStatics::OpenLevel(GetWorld(), )
 }
 
 void AMenuGameMode::BeginPlay()
