@@ -8,7 +8,7 @@
 enum class ERobotID : uint8;
 class UCameraSettings;
 enum class EAttackID : uint8;
-class UPerlinNoiseCameraShakePattern;
+class UWaveOscillatorCameraShakePattern;
 
 
 USTRUCT(BlueprintType)
@@ -61,5 +61,5 @@ private:
 	UPROPERTY()
 	const UCameraSettings* CameraSettings = GetDefault<UCameraSettings>();
 	UPROPERTY()
-	TObjectPtr<UPerlinNoiseCameraShakePattern> ShakePattern;
+	TObjectPtr<UWaveOscillatorCameraShakePattern> ShakePattern;
 };
