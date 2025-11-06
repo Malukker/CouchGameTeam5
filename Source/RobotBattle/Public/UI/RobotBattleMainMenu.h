@@ -29,12 +29,12 @@ public:
 
 private:
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Main Menu")
 	void StartGame();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Main Menu")
 	void OptionGame();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Main Menu")
 	void QuitGame();
 };

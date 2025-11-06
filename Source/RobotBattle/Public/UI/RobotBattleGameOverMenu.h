@@ -30,13 +30,13 @@ public:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* MainMenuBtn;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Game Over")
 	void OnClickedRestartButton();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Game Over")
 	void OnClickedChangeCharacterButton();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Game Over")
 	void OnClickedMainMenuButton();
 	
 	

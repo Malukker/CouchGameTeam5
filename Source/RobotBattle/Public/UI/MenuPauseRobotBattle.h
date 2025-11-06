@@ -30,16 +30,16 @@ public:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* OptionBtn;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
 	void ResumeGame();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
 	void MainMenuGame();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
 	void OptionGame();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
 	void NavigationMenu();
 
 protected:
