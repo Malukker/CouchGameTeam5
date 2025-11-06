@@ -184,7 +184,6 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		if (TeamLife < 0)
 		{
 			TeamLife = 0;
-			DeathEvent.Broadcast(Team);
 
 			//Make a slowmotion during a certain delay
 			const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
@@ -193,7 +192,8 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 			{
 				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
-			}, ArenaSettings->SlowMotionDuration, false);
+				DeathEvent.Broadcast(Team);
+			}, ArenaSettings->SlowMotionDuration/(ArenaSettings->SlowMotionScale * 10), false);
 			
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
