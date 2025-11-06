@@ -199,8 +199,8 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 	UE_LOG(LogTemp, Log, TEXT("Selection Team Finish !"))
 
 	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	RemoveFromParent();
 	GM->StartSelectionCharacter();
+	RemoveFromParent();
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

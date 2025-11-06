@@ -11,6 +11,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/UIGamePlayInterface.h"
 
@@ -184,6 +185,16 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		{
 			TeamLife = 0;
 			DeathEvent.Broadcast(Team);
+
+			//Make a slowmotion during a certain delay
+			const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ArenaSettings->SlowMotionScale);
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+			{
+				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
+			}, ArenaSettings->SlowMotionDuration, false);
+			
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	}
