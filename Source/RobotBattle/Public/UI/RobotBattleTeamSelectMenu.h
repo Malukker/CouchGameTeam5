@@ -9,6 +9,7 @@
 
 class AMainMenuHUD;
 class UHorizontalBox;
+class UVerticalBox;
 class UPlayerCardWidget;
 
 UCLASS()
@@ -53,10 +54,10 @@ protected:
 	UHorizontalBox* Box_AwayDown;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* Box_CenterUp;
+	UVerticalBox* Box_CenterUp;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* Box_CenterDown;
+	UVerticalBox* Box_CenterDown;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;
@@ -74,5 +75,5 @@ private:
 
 	bool IsZoneOccupied(const FString& ZoneName) const;
 	
-	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
+	UPanelWidget* GetZoneByName(const FString& ZoneName) const;	
 };

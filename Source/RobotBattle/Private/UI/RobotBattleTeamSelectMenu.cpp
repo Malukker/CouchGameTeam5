@@ -8,6 +8,7 @@
 #include "Blueprint/WidgetTree.h"
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
+#include "Components/VerticalBox.h"
 #include "Components/PanelWidget.h"
 #include "GameFramework/GameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -79,7 +80,7 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	URobotBattlePlayerCardWidget* Card = PlayerCards[PlayerID];
 	if (!Card) return;
 
-	UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
+	UPanelWidget* TargetZone = GetZoneByName(ZoneName);
 	if (!TargetZone) return;
 
 	if (ZoneName != "CenterUp" && ZoneName != "CenterDown" && IsZoneOccupied(ZoneName))
@@ -108,7 +109,7 @@ bool URobotBattleTeamSelectMenu::IsZoneOccupied(const FString& ZoneName) const
 	return false;
 }
 
-UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) const
+UPanelWidget* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) const
 {
 	if (Name.Equals("HomeUp", ESearchCase::IgnoreCase)) return Box_HomeUp;
 	if (Name.Equals("HomeDown", ESearchCase::IgnoreCase)) return Box_HomeDown;
