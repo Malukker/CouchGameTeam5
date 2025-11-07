@@ -2,16 +2,13 @@
 
 
 #include "UI/RobotBattleTeamSelectMenu.h"
-
 #include "Characters/MainMenu/PlayerMenuActor.h"
-#include "GameFramework/PlayerController.h"
 #include "Blueprint/WidgetTree.h"
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/VerticalBox.h"
-#include "Components/PanelWidget.h"
 #include "Components/VerticalBoxSlot.h"
-#include "GameFramework/GameMode.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/MenuGameMode.h"
@@ -93,14 +90,14 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 		if (!TargetZone) return;
 
 		Card->RemoveFromParent();
-		UVerticalBoxSlot* CardCenter = TargetZone->AddChildToVerticalBox(Card);
+		UVerticalBoxSlot* CardSlot = TargetZone->AddChildToVerticalBox(Card);
 
 		FSlateChildSize Size;
-		CardCenter->SetSize(Size);
+		CardSlot->SetSize(Size);
 	}
 	else
 	{
-		UPanelWidget* TargetZone = GetZoneByName(ZoneName);
+		UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
 		if (!TargetZone) return;
 
 		if (IsZoneOccupied(ZoneName))
@@ -110,7 +107,10 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 		}
 
 		Card->RemoveFromParent();
-		TargetZone->AddChild(Card);
+		UHorizontalBoxSlot* CardSlot = TargetZone->AddChildToHorizontalBox(Card);
+
+		FSlateChildSize Size;
+		CardSlot->SetSize(Size);
 	}
 	CurrentZones[PlayerID] = ZoneName;
 
@@ -130,7 +130,7 @@ bool URobotBattleTeamSelectMenu::IsZoneOccupied(const FString& ZoneName) const
 	return false;
 }
 
-UPanelWidget* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) const
+UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) const
 {
 	if (Name.Equals("HomeUp", ESearchCase::IgnoreCase)) return Box_HomeUp;
 	if (Name.Equals("HomeDown", ESearchCase::IgnoreCase)) return Box_HomeDown;

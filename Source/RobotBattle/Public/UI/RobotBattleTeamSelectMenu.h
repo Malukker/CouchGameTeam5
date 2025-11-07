@@ -75,5 +75,5 @@ private:
 
 	bool IsZoneOccupied(const FString& ZoneName) const;
 	
-	UPanelWidget* GetZoneByName(const FString& ZoneName) const;	
+	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
 };
