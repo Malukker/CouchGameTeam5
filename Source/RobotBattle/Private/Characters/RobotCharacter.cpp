@@ -181,9 +181,6 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 	FInputModeGameAndUI InputMode;
 	PlayerController->SetInputMode(InputMode);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
-
-	//HUDGameplay HUD = Cast<HUDGameplay>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
-	//HUD->SetPause();
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

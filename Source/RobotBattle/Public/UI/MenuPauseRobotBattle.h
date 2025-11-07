@@ -7,6 +7,7 @@
 #include "MenuPauseRobotBattle.generated.h"
 
 class ARobotCharacter;
+class APlayerMenuActor;
 /**
  * 
  */
@@ -20,6 +21,9 @@ public:
 	virtual bool Initialize() override;
 
 	virtual void NativeConstruct() override;
+
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
+	void BindToPlayerMenuActor(APlayerMenuActor* PlayerMenuActor);
 	
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UButton* ResumeBtn;
@@ -40,7 +44,16 @@ public:
 	void OptionGame();
 
 	UFUNCTION(BlueprintCallable, Category="Pause Menu")
-	void NavigationMenu();
+	void NavigationMenuUp();
+
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
+	void NavigationMenuDown();
+
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
+	void NavigationMenuValidate();
+
+	UFUNCTION(BlueprintCallable, Category="Pause Menu")
+	void NavigationMenuFocus();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
@@ -48,6 +61,13 @@ protected:
 
 private:
 
+	UFUNCTION()
+	void OnMenuMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller);
+
+	UFUNCTION()
+	void OnMenuValidateInput(APlayerController* Controller);
+
+	
 	UPROPERTY()
 	UUserWidget* SettingwidgetInstance;
 
