@@ -193,7 +193,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 			{
 				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
 				DeathEvent.Broadcast(Team);
-			}, ArenaSettings->SlowMotionDuration/(ArenaSettings->SlowMotionScale * 10), false);
+			}, ArenaSettings->SlowMotionDuration * ArenaSettings->SlowMotionScale, false);
 			
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);

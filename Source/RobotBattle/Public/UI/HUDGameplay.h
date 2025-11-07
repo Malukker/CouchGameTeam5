@@ -13,4 +13,16 @@ UCLASS()
 class ROBOTBATTLE_API AHUDGameplay : public AHUD
 {
 	GENERATED_BODY()
+	
+	virtual void BeginPlay() override;
+	
+public:
+	UFUNCTION()
+	void SpawnUIPause();
+	
+private:
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> UIPauseClass;
+	UUserWidget* UIPause;
 };

@@ -8,10 +8,8 @@
 #include "Camera/CameraWorldSubsystem.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterSettings.h"
-#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/MenuPauseRobotBattle.h"
+#include "UI/HUDGameplay.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -33,6 +31,9 @@ void ARobotCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("ROBOT ID NONE !"));
 	}
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) return;
+	HUDGameplay = Cast<AHUDGameplay>(PlayerController->MyHUD);
 }
 
 // Called every frame
@@ -179,8 +180,12 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 	
 	SetupMappingContextIntoController(true);
 	FInputModeGameAndUI InputMode;
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
 	PlayerController->SetInputMode(InputMode);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+	if (!HUDGameplay) return;
+	HUDGameplay->SpawnUIPause();
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

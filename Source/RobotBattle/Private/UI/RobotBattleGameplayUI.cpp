@@ -6,7 +6,6 @@
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "UI/RobotBattleMainMenu.h"
 
 #pragma region Timer
 

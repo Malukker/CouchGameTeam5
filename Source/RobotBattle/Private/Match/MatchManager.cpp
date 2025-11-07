@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
-#include "UI/RobotBattleGameOverMenu.h"
+#include "Blueprint/UserWidget.h"
 
 
 // Sets default values
@@ -59,7 +59,7 @@ void AMatchManager::EndFight(int LosingTeam)
 		if (TeamWin == 2)
 		{
 			UIGameplay->RemoveFromParent();
-			URobotBattleGameOverMenu* UIGameOver = CreateWidget<URobotBattleGameOverMenu>(GetWorld(), UIGameOverClass);
+			UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
 			UIGameOver->AddToViewport();
 			return;
 		}
