@@ -14,7 +14,22 @@ public class ToolBox : ModuleRules
 			"UnrealEd",
 			"Blutility",
 			"UMG",
-			"AssetRegistry"
+			"AssetRegistry",
+			"RobotBattle"
 		});
+		
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"Slate",
+			"SlateCore",
+			"EditorStyle",
+			"UnrealEd",
+			"ToolMenus",
+			"LevelEditor"
+			
+		});
+
+		
+		
 	}
 }

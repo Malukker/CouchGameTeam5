@@ -4,12 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "EditorUtilityWidget.h"
+#include "RobotBattle/Public/Characters/Attacks/AttackStruct.h"
 #include "ShakeCameraTest.generated.h"
 
-enum class EAttackID : uint8;
-/**
- * 
- */
+
 UCLASS()
 class TOOLBOX_API UShakeCameraTest : public UEditorUtilityWidget
 {
@@ -21,26 +19,43 @@ class TOOLBOX_API UShakeCameraTest : public UEditorUtilityWidget
 	void StartCameraShake();
 
 	UFUNCTION(BlueprintCallable)
-	void SetShakeValue();
+	void SaveShakeValue();
+
+	
+	UFUNCTION(BlueprintCallable)
+	void SaveShakeScaleValue();
+
+	
 
 #pragma region ShakeValue
-	UPROPERTY(BlueprintReadWrite)
-	float Duration;
 
 	UPROPERTY(BlueprintReadWrite)
-	float LocationAmplitudeMultiplier;
+	float Scale = 2.f;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float Duration = 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float LocationFrequencyMultiplier;
+	float LocationAmplitudeMultiplier = 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float RotationAmplitudeMultiplier;
+	float LocationFrequencyMultiplier= 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	float RotationFrequencyMultiplier;
+	float RotationAmplitudeMultiplier= 0.f;
 
 	UPROPERTY(BlueprintReadWrite)
-	EAttackID AttackID;
+	float RotationFrequencyMultiplier= 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	EAttackID AttackID= EAttackID::None;
+
+	UPROPERTY(BlueprintReadWrite)
+	ERobotID RobotID = ERobotID::None;
+
+	
+	UPROPERTY(BlueprintReadWrite)
+	float ShakeScaleUltimate = 0.f;
 
 #pragma endregion
 };
