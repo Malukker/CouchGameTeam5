@@ -5,7 +5,7 @@
 
 #include "Camera/CameraSettings.h"
 #include "Characters/Attacks/AttackStruct.h"
-#include "Shakes/PerlinNoiseCameraShakePattern.h"
+#include "Shakes/WaveOscillatorCameraShakePattern.h"
 
 void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale )
 {
@@ -14,6 +14,7 @@ void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobot
 		UE_LOG(LogTemp, Log, TEXT("ID UP NONE PAS DE SHAKE"));
 		return;
 	}
+	
 	ShakePattern->Duration = CameraSettings->ShakeAttacksSettings[AttackID].ShakeDuration;
 	ShakePattern->LocationAmplitudeMultiplier =CameraSettings->ShakeAttacksSettings[AttackID].LocationAmplitudeMultiplier;
 	ShakePattern->LocationFrequencyMultiplier= CameraSettings->ShakeAttacksSettings[AttackID].LocationFrequencyMultiplier;
@@ -30,7 +31,8 @@ UCameraShakeWorld::UCameraShakeWorld(const FObjectInitializer& ObjectInitializer
 {
 	if (!HasAnyFlags(RF_ClassDefaultObject))
 	{
-		ShakePattern = CreateDefaultSubobject<UPerlinNoiseCameraShakePattern>(TEXT("MyPerlinPattern"));
+		ShakePattern = CreateDefaultSubobject<UWaveOscillatorCameraShakePattern>(TEXT("MyPerlinPattern"));
+		
 
 		if (ShakePattern)
 		{
