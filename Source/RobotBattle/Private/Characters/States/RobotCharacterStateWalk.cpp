@@ -64,7 +64,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 		{
 			if (!WalkForward)
 			{
-				CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
+				CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(false);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
 			}
@@ -74,7 +74,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 		{
 			if (WalkForward)
 			{
-				CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
+				CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(true);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
 			}
