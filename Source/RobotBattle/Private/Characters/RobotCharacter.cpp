@@ -31,9 +31,6 @@ void ARobotCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("ROBOT ID NONE !"));
 	}
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (!PlayerController) return;
-	HUDGameplay = Cast<AHUDGameplay>(PlayerController->MyHUD);
 }
 
 // Called every frame
@@ -114,7 +111,7 @@ float ARobotCharacter::GetInputMoveX() const {
 
 bool ARobotCharacter::IsWalkingForward() const
 {
-	return FMath::Sign(GetOrientX()) != FMath::Sign(GetInputMoveX());
+	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
 }
 
 EAttackID ARobotCharacter::GetCurrentTypeAttack() const
@@ -181,12 +178,16 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 	if (PlayerController == nullptr) return;
 	
 	SetupMappingContextIntoController(true);
-	FInputModeGameAndUI InputMode;
+	FInputModeUIOnly InputMode;
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
 	PlayerController->SetInputMode(InputMode);
 	UGameplayStatics::SetGamePaused(GetWorld(), true);
 
-	if (!HUDGameplay) return;
+	if (!HUDGameplay)
+	{
+		HUDGameplay = Cast<AHUDGameplay>(PlayerController->MyHUD);
+		if (!HUDGameplay) return;
+	}
 	HUDGameplay->SpawnUIPause();
 }
 

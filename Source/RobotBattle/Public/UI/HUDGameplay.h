@@ -24,5 +24,7 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIPauseClass;
+	
+	UPROPERTY()
 	UUserWidget* UIPause;
 };
