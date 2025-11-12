@@ -5,10 +5,11 @@
 
 #include "Blueprint/UserWidget.h"
 
-void AHUDGameplay::SpawnUIPause()
+TSharedPtr<SWidget> AHUDGameplay::SpawnUIPause()
 {
-	if (!UIPause) return;
+	if (!UIPause) return nullptr;
 	UIPause->AddToViewport();
+	return TSharedPtr<SWidget>(UIPause->TakeWidget());
 }
 
 void AHUDGameplay::BeginPlay()
