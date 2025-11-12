@@ -16,7 +16,7 @@ class TOOLBOX_API AShakeActorTest : public AActor
 public:
 	// Sets default values for this actor's properties
 	AShakeActorTest();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	TSubclassOf<UShakeCameraTestRuntime> ShakeTestWidget;
 	virtual void Destroyed() override;
 protected:

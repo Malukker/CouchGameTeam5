@@ -15,9 +15,7 @@ AShakeActorTest::AShakeActorTest()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	static ConstructorHelpers::FClassFinder<UShakeCameraTestRuntime> WidgetBPClass(
-		TEXT("/Game/Tools/Widgets/WBP_ShakeCameraTestRuntime.WBP_ShakeCameraTestRuntime_C")
-	);
+	static ConstructorHelpers::FClassFinder<UShakeCameraTestRuntime> WidgetBPClass(TEXT("/Game/Tools/Widgets/WBP_ShakeCameraTestRuntime.WBP_ShakeCameraTestRuntime_C"));
 	
 	if (WidgetBPClass.Succeeded())
 	{

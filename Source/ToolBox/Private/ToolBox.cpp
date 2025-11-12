@@ -43,31 +43,10 @@ void FToolBoxModule::FillMenu(FMenuBuilder& MenuBuilder)
 		FSlateIcon(),
 		FUIAction(FExecuteAction::CreateLambda([]()
 		{
-			// if (UEditorUtilitySubsystem* EditorUtilitySubsystem = GEditor->GetEditorSubsystem<UEditorUtilitySubsystem>())
-			// {
-			// 	const FString Path = TEXT("/Game/Tools/EUW_ShakeCameraTest.EUW_ShakeCameraTest");
-			// 	if (UEditorUtilityWidgetBlueprint* WidgetBP = LoadObject<UEditorUtilityWidgetBlueprint>(nullptr, *Path))
-			// 	{
-			// 		EditorUtilitySubsystem->SpawnAndRegisterTab(WidgetBP);
-			// 	}else
-			// 	{
-			// 		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Widget not found! Check the path.")));
-			// 	}
-			// }
-
-
 			if (UWorld* World = GEditor->PlayWorld)
 			{
-				
-				FVector Location(0, 0, 200);
-				FRotator Rotation(0, 0, 0);
-
-				if (AShakeActorTest* ActorTest = World->SpawnActor<AShakeActorTest>(AShakeActorTest::StaticClass(), Location, Rotation))
+				if (World->SpawnActor<AShakeActorTest>(AShakeActorTest::StaticClass()))
 				{
-					// ActorTest->ShakeTestWidget = LoadClass<UUserWidget>(
-					// 	nullptr,
-					// 	TEXT("/Script/Engine.Blueprint'/Game/Tools/BP_ShakeActorTest.BP_ShakeActorTest_C")
-					// );
 					UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Spawned"), true);
 				}
 			}
