@@ -19,7 +19,6 @@ class TOOLBOX_API UShakeCameraTestRuntime : public UUserWidget
 
 
 public:
-
 	
 	UFUNCTION(BlueprintCallable)
 	void StartCameraShake();
@@ -32,7 +31,7 @@ public:
 	void SaveShakeScaleValue();
 
 	UFUNCTION(BlueprintCallable)
-	void ApplyToDeveloperSettings();
+	void DestroyActor();
 
 	
 

@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "ShakeActorTest.generated.h"
 
+class UShakeCameraTestRuntime;
+
 UCLASS()
 class TOOLBOX_API AShakeActorTest : public AActor
 {
@@ -14,13 +16,17 @@ class TOOLBOX_API AShakeActorTest : public AActor
 public:
 	// Sets default values for this actor's properties
 	AShakeActorTest();
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> ShakeTestWidget;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UShakeCameraTestRuntime> ShakeTestWidget;
+	virtual void Destroyed() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+private:
+	UPROPERTY()
+	UShakeCameraTestRuntime* WidgetTest;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

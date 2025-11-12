@@ -10,38 +10,9 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Tools/Shake/CameraShakeSave.h"
-
-void UShakeCameraTestRuntime::ApplyToDeveloperSettings()
-{
-	UCameraShakeSave* SaveData = Cast<UCameraShakeSave>(
-		UGameplayStatics::LoadGameFromSlot(TEXT("CameraSettingsSlot"), 0));
-
-	if (!SaveData)
-	{
-		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("No saved data found"), false);
-		return;
-	}
+#include "Tools/Shake/ShakeActorTest.h"
 
 
-	UCameraSettings* Settings = GetMutableDefault<UCameraSettings>();
-	
-	for (const TPair<EAttackID, FShakeStruct>& Pair : SaveData-> ShakeAttacksSettings)
-	{
-		Settings->ShakeAttacksSettings.Add(Pair.Key, Pair.Value);
-	}
-
-	for (const TPair<ERobotID,FShakeScaleTypeStruct>& Pair : SaveData-> ShakeScaleSettings)
-	{
-		Settings->ShakeScaleSettings.Add(Pair.Key, Pair.Value);
-	}
-
-	Settings->ShakeScaleUltimate = SaveData->UltimateScale;
-	
-	
-	Settings->SaveConfig();
-
-	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Camera shake values applied to settings"), true);
-}
 
 
 void UShakeCameraTestRuntime::StartCameraShake()
@@ -97,7 +68,30 @@ void UShakeCameraTestRuntime::SaveShakeValue()
 	{
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Save Failed!"), false);
 	}
-	//ApplyToDeveloperSettings();
+
+#pragma region SaveToSettings
+	UCameraShakeSave* SaveData = Cast<UCameraShakeSave>(
+		UGameplayStatics::LoadGameFromSlot(TEXT("CameraSettingsSlot"), 0));
+
+	if (!SaveData)
+	{
+		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("No saved data found"), false);
+		return;
+	}
+
+
+	UCameraSettings* Settings = GetMutableDefault<UCameraSettings>();
+	
+	for (const TPair<EAttackID, FShakeStruct>& Pair : SaveData-> ShakeAttacksSettings)
+	{
+		Settings->ShakeAttacksSettings.Add(Pair.Key, Pair.Value);
+	}
+	
+	
+	Settings->SaveConfig();
+
+	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Camera shake values applied to settings"), true);
+#pragma endregion
 }
 
 void UShakeCameraTestRuntime::SaveShakeScaleValue()
@@ -150,7 +144,7 @@ void UShakeCameraTestRuntime::SaveShakeScaleValue()
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Save Scale Failed!"), false);
 	}
 
-	
+#pragma region SaveToSettings
 	UCameraShakeSave* SaveData = Cast<UCameraShakeSave>(
 			UGameplayStatics::LoadGameFromSlot(TEXT("CameraSettingsSlot"), 0));
 
@@ -175,7 +169,17 @@ void UShakeCameraTestRuntime::SaveShakeScaleValue()
 	
 	Settings->SaveConfig();
 
-	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Camera shake values applied to settings"), true);
+	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Camera scale values applied to settings"), true);
+#pragma endregion
+}
+
+void UShakeCameraTestRuntime::DestroyActor()
+{
+
+	if (AActor* ShakeActor =UGameplayStatics::GetActorOfClass(GetWorld(),AShakeActorTest::StaticClass()))
+	{
+		ShakeActor->Destroy();
+	}
 	
 }
 
