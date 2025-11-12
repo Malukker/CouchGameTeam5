@@ -77,26 +77,4 @@ ERobotCharacterDownChargeID ARobotCharacterDown::GetRobotCharacterDownChargeID()
 	return RobotCharacterDownChargeID;
 }
 
-void ARobotCharacterDown::DoGuardTest()
-{
-	if (FMath::Sign(GetOrientX()) != FMath::Sign(GetInputMoveX()))
-	{
-		if (WalkForward)
-		{
-			GuardManagerEvent.Broadcast(true);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
-		}
-		WalkForward = false;
-	}
-	else
-	{
-		if (!WalkForward)
-		{
-			GuardManagerEvent.Broadcast(false);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
-		}
-		WalkForward = true;
-	}
-}
-
 

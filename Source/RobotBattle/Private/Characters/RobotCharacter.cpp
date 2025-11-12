@@ -112,6 +112,11 @@ float ARobotCharacter::GetInputMoveX() const {
 	return InputMoveX;
 }
 
+bool ARobotCharacter::IsWalkingForward() const
+{
+	return FMath::Sign(GetOrientX()) != FMath::Sign(GetInputMoveX());
+}
+
 EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
@@ -153,9 +158,6 @@ int ARobotCharacter::GetDashDirectionX() const
 	return DashDirectionX;
 }
 
-void ARobotCharacter::DoGuardTest()
-{
-}
 
 void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
