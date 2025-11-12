@@ -1,7 +1,11 @@
 ﻿#include "ToolBox.h"
+
+#include "EditorUtilitySubsystem.h"
+#include "EditorUtilityWidgetBlueprint.h"
 #include "ToolMenus.h"
 #include "Engine/Engine.h"
 #include "LevelEditor.h"
+#include "Tools/ShakeCameraTest.h"
 #define LOCTEXT_NAMESPACE "FToolBoxModule"
 
 
@@ -40,10 +44,19 @@ void FToolBoxModule::FillMenu(FMenuBuilder& MenuBuilder)
 		FSlateIcon(),
 		FUIAction(FExecuteAction::CreateLambda([]()
 		{
+			if (UEditorUtilitySubsystem* EditorUtilitySubsystem = GEditor->GetEditorSubsystem<UEditorUtilitySubsystem>())
+			{
+				const FString Path = TEXT("/Game/Tools/EUW_ShakeCameraTest.EUW_ShakeCameraTest");
+				if (UEditorUtilityWidgetBlueprint* WidgetBP = LoadObject<UEditorUtilityWidgetBlueprint>(nullptr, *Path))
+				{
+					EditorUtilitySubsystem->SpawnAndRegisterTab(WidgetBP);
+				}else
+				{
+					FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(TEXT("Widget not found! Check the path.")));
+				}
+			}
 			
-			
-		}))
-		);
+		})));
 
 
 	MenuBuilder.AddMenuEntry(
@@ -62,6 +75,7 @@ void FToolBoxModule::ShutdownModule()
 {
 	UToolMenus::UnRegisterStartupCallback(this);
 }
+
 
 
 #undef LOCTEXT_NAMESPACE
