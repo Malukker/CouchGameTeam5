@@ -24,7 +24,15 @@ void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobot
 	Scale=CameraSettings->ShakeScaleSettings[UpID].ShakeScaleTypes[AttackID];
 }
 
-
+void UCameraShakeWorld::SetupShakeParametersForTool(float ShakeDuration, float LocationAmplitudeMultiplier,
+	float LocationFrequencyMultiplier, float RotationAmplitudeMultiplier, float RotationFrequencyMultiplier)
+{
+	ShakePattern->Duration = ShakeDuration;
+	ShakePattern->LocationAmplitudeMultiplier = LocationAmplitudeMultiplier;
+	ShakePattern->LocationFrequencyMultiplier =  LocationFrequencyMultiplier;
+	ShakePattern->RotationAmplitudeMultiplier = RotationAmplitudeMultiplier; 
+	ShakePattern->RotationFrequencyMultiplier = RotationFrequencyMultiplier; 
+}
 
 
 UCameraShakeWorld::UCameraShakeWorld(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
