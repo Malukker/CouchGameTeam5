@@ -44,7 +44,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Walk);
 		}
-		else if (FMath::Sign(Character->GetOrientX()) != FMath::Sign(Character->GetInputMoveX()))
+		else if (Character->IsWalkingForward())
 		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Guard);
 		}
