@@ -14,7 +14,7 @@ void UShakeCameraTest::StartCameraShake()
 	APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 	UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),Scale);
 	UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
-	ShakeInstance->SetupShakeParametersForTool(Duration,LocationAmplitudeMultiplier,LocationFrequencyMultiplier,RotationAmplitudeMultiplier,RotationFrequencyMultiplier);
+	ShakeInstance->SetupShakeParametersForTool(LocationAmplitudeMultiplier,LocationFrequencyMultiplier,RotationAmplitudeMultiplier,RotationFrequencyMultiplier);
 }
 
 void UShakeCameraTest::SaveShakeValue()
