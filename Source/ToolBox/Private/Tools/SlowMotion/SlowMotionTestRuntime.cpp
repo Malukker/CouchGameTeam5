@@ -3,22 +3,32 @@
 
 #include "Tools/SlowMotion/SlowMotionTestRuntime.h"
 
+#include "MaterialHLSLTree.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tools/ToolBoxFunctionLibrary.h"
+#include "Tools/SlowMotion/SlowMotionActorTest.h"
 
 void USlowMotionTestRuntime::SetSlowMotion()
 {
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(),Scale);
-	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("SlowMotion  Start"),true);
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
-	{
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
-		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("SlowMotion  End"),true);
-	}, Duration/(Scale * 10), false);
+	ASlowMotionActorTest* Actor = Cast<ASlowMotionActorTest>(
+		UGameplayStatics::GetActorOfClass(GetWorld(), ASlowMotionActorTest::StaticClass()));
+	Actor->StartSlowMotion.Execute(Scale,Duration);
 }
 
 void USlowMotionTestRuntime::SaveSlowMotion()
 {
 	
+}
+
+void USlowMotionTestRuntime::DestroyActor()
+{
+	if (AActor* ShakeActor =UGameplayStatics::GetActorOfClass(GetWorld(),ASlowMotionActorTest::StaticClass()))
+	{
+		ShakeActor->Destroy();
+	}
+}
+
+void USlowMotionTestRuntime::Tick(float DeltaTime)
+{
+
 }
