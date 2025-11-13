@@ -15,10 +15,10 @@ class TOOLBOX_API USlowMotionTestRuntime : public UUserWidget
 	GENERATED_BODY()
 
 	public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite)
 	float Duration;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadWrite)
 	float Scale;
 
 	UFUNCTION(BlueprintCallable)
@@ -26,4 +26,16 @@ class TOOLBOX_API USlowMotionTestRuntime : public UUserWidget
 
 	UFUNCTION(BlueprintCallable)
 	void SaveSlowMotion();
+
+	UFUNCTION(BlueprintCallable)
+	void DestroyActor();
+
+
+	
+
+	private:
+	FTimerHandle TimerHandle;
+	virtual void Tick(float DeltaTime);
+
+	
 };
