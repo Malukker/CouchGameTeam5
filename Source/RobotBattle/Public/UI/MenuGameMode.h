@@ -25,6 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerMenuActor> MenuActorBlueprintClass;
+
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UWorld> GameplayLevel;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> MainMenuWidget;
