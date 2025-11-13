@@ -6,8 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MatchManager.generated.h"
 
-class URobotBattleGameOverMenu;
 class URobotBattleGameplayUI;
+class UUserWidget;
 class ATeamManager;
 
 UCLASS()
@@ -25,7 +25,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleGameplayUI> UIGameplayClass;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<URobotBattleGameOverMenu> UIGameOverClass;
+	TSubclassOf<UUserWidget> UIGameOverClass;
 
 	URobotBattleGameplayUI* UIGameplay;
 	
