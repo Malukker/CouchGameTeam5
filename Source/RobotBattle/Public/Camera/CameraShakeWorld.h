@@ -51,6 +51,7 @@ class ROBOTBATTLE_API UCameraShakeWorld : public UCameraShakeBase
 
 public:
 	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale);
+	void SetupShakeParametersForTool(float ShakeDuration,float LocationAmplitudeMultiplier,float LocationFrequencyMultiplier,float RotationAmplitudeMultiplier,float RotationFrequencyMultiplier);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
 	
 
