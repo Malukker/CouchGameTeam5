@@ -39,7 +39,6 @@ void AShakeActorTest::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("ShakeTestWidget = %s"), *GetNameSafe(ShakeTestWidget));
 	if (UShakeCameraTestRuntime* Widget = CreateWidget<UShakeCameraTestRuntime>(GetWorld(), ShakeTestWidget))
 	{
 		WidgetTest = Widget;
