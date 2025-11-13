@@ -30,7 +30,7 @@ void ASlowMotionActorTest::OnEventStartSlowMotion(float Scale, float Duration)
 		
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("SlowMotion  End"),true);
-	}, Duration/Scale, false);
+	}, Duration*Scale, false);
 }
 
 void ASlowMotionActorTest::Destroyed()
