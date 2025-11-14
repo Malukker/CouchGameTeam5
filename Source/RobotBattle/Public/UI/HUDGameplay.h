@@ -17,8 +17,7 @@ class ROBOTBATTLE_API AHUDGameplay : public AHUD
 	virtual void BeginPlay() override;
 	
 public:
-	UFUNCTION()
-	void SpawnUIPause();
+	TSharedPtr<SWidget> SpawnUIPause();
 	
 private:
 	

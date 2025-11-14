@@ -176,19 +176,19 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
-	
-	SetupMappingContextIntoController(true);
-	FInputModeUIOnly InputMode;
-	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
-	PlayerController->SetInputMode(InputMode);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 
 	if (!HUDGameplay)
 	{
 		HUDGameplay = Cast<AHUDGameplay>(PlayerController->MyHUD);
 		if (!HUDGameplay) return;
 	}
-	HUDGameplay->SpawnUIPause();
+	SetupMappingContextIntoController(true);
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(HUDGameplay->SpawnUIPause());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
+	PlayerController->SetInputMode(InputMode);
+	
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

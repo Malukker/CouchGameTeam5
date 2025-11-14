@@ -50,7 +50,8 @@ class ROBOTBATTLE_API UCameraShakeWorld : public UCameraShakeBase
 	GENERATED_BODY()
 
 public:
-	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale);
+	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale,float& Duration);
+	void SetupShakeParametersForTool(float LocationAmplitudeMultiplier,float LocationFrequencyMultiplier,float RotationAmplitudeMultiplier,float RotationFrequencyMultiplier);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
 	
 
