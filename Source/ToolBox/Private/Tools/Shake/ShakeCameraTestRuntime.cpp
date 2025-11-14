@@ -17,8 +17,9 @@
 
 void UShakeCameraTestRuntime::StartCameraShake()
 {
-	//Start a camera shake
+	
 	APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+
 	UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),Scale);
 	if (Duration==0 || Scale==0)
 	{
@@ -26,7 +27,14 @@ void UShakeCameraTestRuntime::StartCameraShake()
 		return;
 	}
 	UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
-	ShakeInstance->SetupShakeParametersForTool(Duration,LocationAmplitudeMultiplier,LocationFrequencyMultiplier,RotationAmplitudeMultiplier,RotationFrequencyMultiplier);
+	ShakeInstance->SetupShakeParametersForTool(LocationAmplitudeMultiplier,LocationFrequencyMultiplier,RotationAmplitudeMultiplier,RotationFrequencyMultiplier);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&Camera, &ShakeInstance]()
+	{
+		Camera->StopCameraShake(ShakeInstance, false);
+		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("ShakeTest Ended"), true);
+	}, Duration, false);
+	
 	UToolBoxFunctionLibrary::SlateNotification(FText::FromString("ShakeTestSuccess"),true);
 }
 
