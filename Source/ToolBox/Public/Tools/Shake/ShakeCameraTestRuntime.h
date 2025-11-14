@@ -66,4 +66,8 @@ public:
 	float ShakeScaleUltimate = 0.f;
 
 #pragma endregion
+
+private:
+	UPROPERTY()
+	FTimerHandle TimerHandle;
 };
