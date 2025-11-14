@@ -28,8 +28,8 @@ void UShakeCameraTestRuntime::StartCameraShake()
 	}
 	UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
 	ShakeInstance->SetupShakeParametersForTool(LocationAmplitudeMultiplier,LocationFrequencyMultiplier,RotationAmplitudeMultiplier,RotationFrequencyMultiplier);
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&Camera, &ShakeInstance]()
+	
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera,ShakeInstance]()
 	{
 		Camera->StopCameraShake(ShakeInstance, false);
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("ShakeTest Ended"), true);
