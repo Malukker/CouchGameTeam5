@@ -35,6 +35,8 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	bool WalkForward;
+	
 	UFUNCTION()
 	void InitJumpAccordingToParameters();
 

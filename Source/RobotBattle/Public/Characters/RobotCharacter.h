@@ -9,6 +9,7 @@
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
+class AHUDGameplay;
 enum class ERobotCharacterUpID : uint8;
 enum class ERobotCharacterPositionEnum : uint8;
 enum class ERobotCharacterDownChargeID : uint8;
@@ -35,6 +36,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	AHUDGameplay* HUDGameplay;
 
 public:	
 	// Called every frame
@@ -85,8 +88,6 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<URobotCharacterInputData> InputDataGameplay;
-	UPROPERTY()
-	TObjectPtr<URobotBattleInputDataMenu> InputDataMenu;
 
 protected:
 	void SetupMappingContextIntoController(bool bMenu) const;
@@ -102,6 +103,7 @@ protected:
 
 public:
 	float GetInputMoveX() const;
+	bool IsWalkingForward() const;
 	
 	EAttackID GetCurrentTypeAttack() const;
 	void SetStunTimer(float StunTime) ;
@@ -113,8 +115,6 @@ public:
 	
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
-	
-	virtual void DoGuardTest();
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime);
 	
@@ -140,8 +140,6 @@ protected:
 	int DashDirectionX = 0;
 	UPROPERTY()
 	bool CanDash = true;
-	UPROPERTY()
-	bool WalkForward;
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 

@@ -3,6 +3,7 @@
 
 #include "Characters/States/RobotCharacterStateAttack.h"
 
+#include "Camera/CameraComponent.h"
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
@@ -110,12 +111,22 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
 						bIsAttackTraceEnabled = false;
 
-						UCameraShakeWorld* ShakeInstance = NewObject<UCameraShakeWorld>();
-						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-						float ScaleShake = 1.f;
-						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake);
-						Camera->StartCameraShake(ShakeInstance->GetClass(),ScaleShake);
-					
+						//Start a camera shake
+						{
+							
+							APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+							float ScaleShake = 1.f;
+							float DurationShake = 0.f;
+							UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
+							UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
+							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
+							//Delay for the shake
+							FTimerHandle TimerHandle;
+							GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
+							{
+								Camera->StopCameraShake(ShakeInstance, false);
+							}, DurationShake, false);
+						}
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
 					}

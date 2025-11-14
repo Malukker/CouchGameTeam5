@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "RobotBattleCharacterSelection.generated.h"
 
+class AMenuGameMode;
+class URobotGameInstance;
 enum class ERobotID : uint8;
 enum class EPlayerMenuInputDirection : int;
 /**
@@ -17,6 +19,9 @@ class ROBOTBATTLE_API URobotBattleCharacterSelection : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<URobotGameInstance> GameInstance;
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSelectionChange,
 		uint8, ControllerID,
     	ERobotID, RobotID);
@@ -41,15 +46,15 @@ public:
 	void CancelSelection(APlayerController* InController);
 
 	UFUNCTION(BlueprintCallable)
-	void BindEventsToMenuControl();
-	
-protected:
-	virtual void NativeOnInitialized() override;
+	void InitializeAndBindInputs();
 
-private:	
+private:
 	UPROPERTY()
 	TMap<APlayerController*, ERobotID> BodyPartByController;
 
 	UPROPERTY()
 	TMap<APlayerController*, bool> ValidationByController;
+
+	UPROPERTY()
+	TObjectPtr<AMenuGameMode> GameMode;
 };

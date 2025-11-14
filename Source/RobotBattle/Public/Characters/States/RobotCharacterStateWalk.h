@@ -19,7 +19,10 @@ public:
 	UAnimMontage* WalkAnim;
 
 	UPROPERTY(EditDefaultsOnly)
-	float WalkSpeedMax = 250.0f;
+	float ForwardWalkSpeedMax = 250.0f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float BackwardWalkSpeedMax = 150.0f;
 
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;

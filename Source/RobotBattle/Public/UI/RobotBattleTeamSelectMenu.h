@@ -9,6 +9,7 @@
 
 class AMainMenuHUD;
 class UHorizontalBox;
+class UVerticalBox;
 class UPlayerCardWidget;
 
 UCLASS()
@@ -53,17 +54,15 @@ protected:
 	UHorizontalBox* Box_AwayDown;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* Box_CenterUp;
+	UVerticalBox* Box_CenterUp;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* Box_CenterDown;
+	UVerticalBox* Box_CenterDown;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;
 
 private:
-	UPROPERTY()
-	TObjectPtr<AMainMenuHUD> MainMenuHUD;
 	
 	UPROPERTY()
 	TMap<int32, URobotBattlePlayerCardWidget*> PlayerCards;

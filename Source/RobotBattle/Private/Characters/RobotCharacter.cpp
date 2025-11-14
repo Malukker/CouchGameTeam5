@@ -8,10 +8,8 @@
 #include "Camera/CameraWorldSubsystem.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterSettings.h"
-#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/MenuPauseRobotBattle.h"
+#include "UI/HUDGameplay.h"
 
 // Sets default values
 ARobotCharacter::ARobotCharacter()
@@ -111,6 +109,11 @@ float ARobotCharacter::GetInputMoveX() const {
 	return InputMoveX;
 }
 
+bool ARobotCharacter::IsWalkingForward() const
+{
+	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
+}
+
 EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
@@ -152,9 +155,6 @@ int ARobotCharacter::GetDashDirectionX() const
 	return DashDirectionX;
 }
 
-void ARobotCharacter::DoGuardTest()
-{
-}
 
 void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
@@ -176,14 +176,19 @@ void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
-	
-	SetupMappingContextIntoController(true);
-	FInputModeGameAndUI InputMode;
-	PlayerController->SetInputMode(InputMode);
-	UGameplayStatics::SetGamePaused(GetWorld(), true);
 
-	//HUDGameplay HUD = Cast<HUDGameplay>(UGameplayStatics::GetGameMode(GetWorld())->HUDClass);
-	//HUD->SetPause();
+	if (!HUDGameplay)
+	{
+		HUDGameplay = Cast<AHUDGameplay>(PlayerController->MyHUD);
+		if (!HUDGameplay) return;
+	}
+	SetupMappingContextIntoController(true);
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(HUDGameplay->SpawnUIPause());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::LockOnCapture);
+	PlayerController->SetInputMode(InputMode);
+	
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 
 void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) {

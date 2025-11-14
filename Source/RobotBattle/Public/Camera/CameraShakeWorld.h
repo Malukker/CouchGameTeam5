@@ -8,7 +8,7 @@
 enum class ERobotID : uint8;
 class UCameraSettings;
 enum class EAttackID : uint8;
-class UPerlinNoiseCameraShakePattern;
+class UWaveOscillatorCameraShakePattern;
 
 
 USTRUCT(BlueprintType)
@@ -50,7 +50,8 @@ class ROBOTBATTLE_API UCameraShakeWorld : public UCameraShakeBase
 	GENERATED_BODY()
 
 public:
-	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale);
+	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale,float& Duration);
+	void SetupShakeParametersForTool(float LocationAmplitudeMultiplier,float LocationFrequencyMultiplier,float RotationAmplitudeMultiplier,float RotationFrequencyMultiplier);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
 	
 
@@ -61,5 +62,5 @@ private:
 	UPROPERTY()
 	const UCameraSettings* CameraSettings = GetDefault<UCameraSettings>();
 	UPROPERTY()
-	TObjectPtr<UPerlinNoiseCameraShakePattern> ShakePattern;
+	TObjectPtr<UWaveOscillatorCameraShakePattern> ShakePattern;
 };

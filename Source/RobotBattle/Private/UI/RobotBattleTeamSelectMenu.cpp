@@ -2,14 +2,13 @@
 
 
 #include "UI/RobotBattleTeamSelectMenu.h"
-
 #include "Characters/MainMenu/PlayerMenuActor.h"
-#include "GameFramework/PlayerController.h"
 #include "Blueprint/WidgetTree.h"
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
-#include "Components/PanelWidget.h"
-#include "GameFramework/GameMode.h"
+#include "Components/VerticalBox.h"
+#include "Components/VerticalBoxSlot.h"
+#include "Components/HorizontalBoxSlot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/MenuGameMode.h"
@@ -54,11 +53,15 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 	}
 	
 	NewCard->SetPlayerName(FString::Printf(TEXT("Player %d"), PlayerID + 1));
+	UVerticalBoxSlot* CardCenter;
 
-	if (PlayerID % 2 == 0)
-		Box_CenterUp->AddChild(NewCard);
+	if (PlayerID < 2)
+		CardCenter = Box_CenterUp->AddChildToVerticalBox(NewCard);
 	else
-		Box_CenterDown->AddChild(NewCard);
+		CardCenter = Box_CenterDown->AddChildToVerticalBox(NewCard);
+
+	FSlateChildSize Size;
+	CardCenter->SetSize(Size);
 
 	PlayerCards.Add(PlayerID, NewCard);
 
@@ -79,17 +82,36 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	URobotBattlePlayerCardWidget* Card = PlayerCards[PlayerID];
 	if (!Card) return;
 
-	UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
-	if (!TargetZone) return;
-
-	if (ZoneName != "CenterUp" && ZoneName != "CenterDown" && IsZoneOccupied(ZoneName))
+	if (ZoneName.Contains("Center"))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
-		return;
-	}
+		UVerticalBox* TargetZone = nullptr;
+		if (ZoneName.Equals("CenterUp", ESearchCase::IgnoreCase)) TargetZone = Box_CenterUp;
+		if (ZoneName.Equals("CenterDown", ESearchCase::IgnoreCase)) TargetZone = Box_CenterDown;
+		if (!TargetZone) return;
 
-	Card->RemoveFromParent();
-	TargetZone->AddChild(Card);
+		Card->RemoveFromParent();
+		UVerticalBoxSlot* CardSlot = TargetZone->AddChildToVerticalBox(Card);
+
+		FSlateChildSize Size;
+		CardSlot->SetSize(Size);
+	}
+	else
+	{
+		UHorizontalBox* TargetZone = GetZoneByName(ZoneName);
+		if (!TargetZone) return;
+
+		if (IsZoneOccupied(ZoneName))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Zone %s déjà occupée par Player %d. Déplacement annulé."), *ZoneName, PlayerID);
+			return;
+		}
+
+		Card->RemoveFromParent();
+		UHorizontalBoxSlot* CardSlot = TargetZone->AddChildToHorizontalBox(Card);
+
+		FSlateChildSize Size;
+		CardSlot->SetSize(Size);
+	}
 	CurrentZones[PlayerID] = ZoneName;
 
 	UE_LOG(LogTemp, Log, TEXT("Player %d moved to zone: %s"), PlayerID, *ZoneName);
@@ -114,9 +136,6 @@ UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) c
 	if (Name.Equals("HomeDown", ESearchCase::IgnoreCase)) return Box_HomeDown;
 	if (Name.Equals("AwayUp", ESearchCase::IgnoreCase)) return Box_AwayUp;
 	if (Name.Equals("AwayDown", ESearchCase::IgnoreCase)) return Box_AwayDown;
-	if (Name.Equals("CenterUp", ESearchCase::IgnoreCase)) return Box_CenterUp;
-	if (Name.Equals("CenterDown", ESearchCase::IgnoreCase)) return Box_CenterDown;
-
 	return nullptr;
 }
 
@@ -199,8 +218,19 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 	UE_LOG(LogTemp, Log, TEXT("Selection Team Finish !"))
 
 	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	RemoveFromParent();
 	GM->StartSelectionCharacter();
+	RemoveFromParent();
+	
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
+
+	for (AActor* Actor : Players)
+	{
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
+	}
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

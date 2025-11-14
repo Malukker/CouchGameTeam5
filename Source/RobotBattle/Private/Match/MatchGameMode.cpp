@@ -21,7 +21,7 @@ void AMatchGameMode::CreateAndInitPlayers() const{
 	if (LocalMultiplayerSubsystem == nullptr) return;
 
 	LocalMultiplayerSubsystem->CreatePlayers();
-
+	
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATeamManager::StaticClass(), FoundActors);
 
