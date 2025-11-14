@@ -36,12 +36,14 @@ public:
 
 	void RemoveFollowTarget(UObject* FollowTarget);
 
-protected:UPROPERTY()
+protected:
+	UPROPERTY()
 	TArray<UObject*> FollowTargets;
 
 	void TickUpdateCameraPosition(float DeltaTime);
 
 	FVector CalculateAveragePositionBetweenTargets();
+	float GreatestHeightBetweenTargets();
 #pragma endregion Follow Targets
 
 #pragma region MainCamera
