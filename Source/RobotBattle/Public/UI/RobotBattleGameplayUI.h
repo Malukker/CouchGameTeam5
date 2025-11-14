@@ -85,5 +85,5 @@ private:
 	
 	UFUNCTION()
 	void UpdateTimer();
-	
+	void PauseTimer();
 };

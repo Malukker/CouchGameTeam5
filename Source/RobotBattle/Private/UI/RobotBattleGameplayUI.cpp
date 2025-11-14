@@ -6,6 +6,7 @@
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 
 #pragma region Timer
 
@@ -20,6 +21,9 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (UGameplayStatics::IsGamePaused(GetWorld()))
+		return;
+	
 	if (IsActive && elapsedTime > 0.0f)
 	{
 		elapsedTime -= InDeltaTime;
@@ -44,6 +48,7 @@ void URobotBattleGameplayUI::UpdateTimer()
 		FString TextTimer = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
 		TimerText->SetText(FText::FromString(TextTimer));
 	}
+	
 }
 
 
