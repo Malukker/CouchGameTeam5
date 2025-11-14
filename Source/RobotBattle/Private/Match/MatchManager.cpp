@@ -7,6 +7,7 @@
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -61,6 +62,7 @@ void AMatchManager::EndFight(int LosingTeam)
 			UIGameplay->RemoveFromParent();
 			UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
 			UIGameOver->AddToViewport();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			return;
 		}
 	}

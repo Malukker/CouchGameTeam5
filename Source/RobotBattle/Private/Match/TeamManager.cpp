@@ -181,7 +181,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
-		if (TeamLife < 0)
+		if (TeamLife <= 0)
 		{
 			TeamLife = 0;
 
