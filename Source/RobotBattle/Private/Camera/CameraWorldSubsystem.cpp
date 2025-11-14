@@ -56,8 +56,21 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 		NewLocation += TargetPosition;
 	}
 	NewLocation /= FollowTargets.Num();
-	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z);
+	//NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z);
+	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, GreatestHeightBetweenTargets()-CameraSettings->HeightOffset);
 	return NewLocation;
+}
+
+float UCameraWorldSubsystem::GreatestHeightBetweenTargets()
+{
+
+	float GreatestHeight = 0.f;
+	for (UObject* FollowTarget : FollowTargets)
+	{
+		TScriptInterface<IRobot> ICameraTarget = FollowTarget;
+		GreatestHeight = FMath::Max(GreatestHeight,ICameraTarget->GetRobotLocation().Z);
+	}
+	return GreatestHeight;
 }
 
 UCameraComponent* UCameraWorldSubsystem::FindCameraByTag(const FName& Tag) const
