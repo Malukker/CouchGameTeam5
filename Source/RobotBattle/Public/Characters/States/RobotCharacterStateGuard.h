@@ -23,4 +23,7 @@ class ROBOTBATTLE_API URobotCharacterStateGuard : public URobotCharacterState
 private:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* GuardAnimMontage;
+
+	UFUNCTION()
+	void OnStunEvent();
 };

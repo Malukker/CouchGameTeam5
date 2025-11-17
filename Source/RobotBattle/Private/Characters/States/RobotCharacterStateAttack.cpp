@@ -50,6 +50,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 		Character->ResetDamageBonus();
 		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
+	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
@@ -75,6 +76,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 		Character->ResetDamageBonus();
 		Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -170,4 +172,10 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor
 	bIsAttackTraceEnabled = false;
 	AttackIndex += 2;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
+}
+
+
+void URobotCharacterStateAttack::OnStunEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
