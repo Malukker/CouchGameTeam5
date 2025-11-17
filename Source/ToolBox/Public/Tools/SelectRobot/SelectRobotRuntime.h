@@ -35,5 +35,6 @@ public :
 	void ChangeRobotController(int PlayerIndex, int PlayerController);
 
 private :
+	URobotGameInstance* GI = nullptr;
 	
 };

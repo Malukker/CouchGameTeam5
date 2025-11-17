@@ -12,7 +12,7 @@
 void USelectRobotRuntime::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (URobotGameInstance* GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld())))
+	if ( (GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))))
 	{
 		GI->OnInputDeviceConnectionChange.AddDynamic(this,&USelectRobotRuntime::SetControllers);
 	}
@@ -42,11 +42,8 @@ void USelectRobotRuntime::DestroyActor()
 
 void USelectRobotRuntime::ChangeRobotController(int PlayerIndex, int Controller)
 {
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),PlayerIndex);
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-	
-	
-
+	ULocalPlayer* LP = GI->GetLocalPlayerByIndex(PlayerIndex);
+	LP->SetControllerId(Controller);
 
 	UToolBoxFunctionLibrary::SlateNotification(
 		FText::FromString("Controller Reassigned !"),
