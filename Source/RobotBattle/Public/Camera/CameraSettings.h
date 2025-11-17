@@ -36,6 +36,9 @@ public:
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float DistanceBetweenTargetsMax;
+
+	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	float HeightOffset;
 	
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float SizeDampingFactor;
