@@ -162,6 +162,11 @@ FVector ATeamManager::GetOpponentLocation()
 	return Opponent->GetTeamLocation();
 }
 
+bool ATeamManager::IsAlive()
+{
+	return TeamLife > 0;
+}
+
 FVector ATeamManager::GetTeamLocation()
 {
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
@@ -181,7 +186,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
-		if (TeamLife < 0)
+		if (TeamLife <= 0)
 		{
 			TeamLife = 0;
 

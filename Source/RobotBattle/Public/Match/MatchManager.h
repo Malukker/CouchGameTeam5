@@ -39,9 +39,12 @@ protected:
 
 	UFUNCTION()
 	void ResetFight();
+	
+	UFUNCTION()
+	void EndFightOnTimeOut();
 
 	UFUNCTION()
-	void EndFight(int LosingTeam);
+	void EndFightOnRobotDefeat(int LosingTeam);
 
 public:
 	// Called every frame

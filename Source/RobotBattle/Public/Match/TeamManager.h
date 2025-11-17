@@ -53,6 +53,7 @@ public:
 	void ResetCharacters();
 
 	FVector GetOpponentLocation();
+	bool IsAlive();
 	
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;

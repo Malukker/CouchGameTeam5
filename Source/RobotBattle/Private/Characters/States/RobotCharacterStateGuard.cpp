@@ -18,12 +18,14 @@ void URobotCharacterStateGuard::StateEnter(ERobotCharacterStateID PreviousStateI
 	Super::StateEnter(PreviousStateID);
 	Character->PlayAnimMontage(GuardAnimMontage);
 	Character->GuardManagerEvent.Broadcast(true);
+	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateGuard::OnStunEvent);
 }
 
 void URobotCharacterStateGuard::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
 	Character->GuardManagerEvent.Broadcast(false);
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateGuard::OnStunEvent);
 }
 
 void URobotCharacterStateGuard::StateTick(float DeltaTime)
@@ -32,4 +34,9 @@ void URobotCharacterStateGuard::StateTick(float DeltaTime)
 	if (FMath::Abs(Character->GetInputMoveX()) < CharacterSettings->InputMoveXThreshold) {
 			StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	}
+}
+
+void URobotCharacterStateGuard::OnStunEvent()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
