@@ -28,6 +28,12 @@ public :
 	UFUNCTION(BlueprintCallable)
 	void DestroyActor();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnInputChange(int DeviceID,EInputDeviceConnectionState State);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeRobotController(int PlayerIndex, int PlayerController);
+
 private :
 	
 };

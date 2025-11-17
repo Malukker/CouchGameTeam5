@@ -3,8 +3,10 @@
 
 #include "Tools/SelectRobot/SelectRobotRuntime.h"
 
+#include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
+#include "Tools/ToolBoxFunctionLibrary.h"
 #include "Tools/SelectRobot/SelectRobotActor.h"
 
 void USelectRobotRuntime::NativeConstruct()
@@ -23,12 +25,11 @@ void USelectRobotRuntime::SetControllers(EInputDeviceConnectionState NewConnecti
 	if (NewConnectionState == EInputDeviceConnectionState::Connected)
 	{
 		Controllers.Add(InputDeviceId.GetId());
-		return;
 	}else
 	{
 		Controllers.Remove(InputDeviceId.GetId());
 	}
-	
+	OnInputChange(InputDeviceId.GetId(),NewConnectionState);
 }
 
 void USelectRobotRuntime::DestroyActor()
@@ -37,6 +38,21 @@ void USelectRobotRuntime::DestroyActor()
 	{
 		ShakeActor->Destroy();
 	}
+}
+
+void USelectRobotRuntime::ChangeRobotController(int PlayerIndex, int Controller)
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),PlayerIndex);
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+	
+	
+
+
+	UToolBoxFunctionLibrary::SlateNotification(
+		FText::FromString("Controller Reassigned !"),
+		true
+	);
+	
 }
 
 
