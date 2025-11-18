@@ -63,5 +63,7 @@ private:
 	
 	
 #pragma endregion
-	
+
+	UFUNCTION()
+	void OnStunEvent();
 };

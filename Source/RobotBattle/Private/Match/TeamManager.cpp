@@ -162,6 +162,11 @@ FVector ATeamManager::GetOpponentLocation()
 	return Opponent->GetTeamLocation();
 }
 
+bool ATeamManager::IsAlive()
+{
+	return TeamLife > 0;
+}
+
 FVector ATeamManager::GetTeamLocation()
 {
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
