@@ -5,8 +5,9 @@
 #include "ToolMenus.h"
 #include "Engine/Engine.h"
 #include "LevelEditor.h"
-#include "Tools/ShakeCameraTest.h"
+
 #include "Tools/ToolBoxFunctionLibrary.h"
+#include "Tools/SelectRobot/SelectRobotActor.h"
 #include "Tools/Shake/ShakeActorTest.h"
 #include "Tools/SlowMotion/SlowMotionActorTest.h"
 #define LOCTEXT_NAMESPACE "FToolBoxModule"
@@ -68,6 +69,29 @@ void FToolBoxModule::FillMenu(FMenuBuilder& MenuBuilder)
 			if (UWorld* World = GEditor->PlayWorld)
 			{
 				if (World->SpawnActor<ASlowMotionActorTest>(ASlowMotionActorTest::StaticClass()))
+				{
+					UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Spawned"), true);
+				}
+			}
+			else
+			{
+				UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Start Play"), false);
+			}
+			
+		}))
+	);
+
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Select Robot"),
+		FText::FromString("Select Robot ToolTip"),
+		FSlateIcon(),
+		FUIAction(FExecuteAction::CreateLambda([]()
+		{
+
+			if (UWorld* World = GEditor->PlayWorld)
+			{
+				if (World->SpawnActor<ASelectRobotActor>(ASelectRobotActor::StaticClass()))
 				{
 					UToolBoxFunctionLibrary::SlateNotification(FText::FromString("Spawned"), true);
 				}
