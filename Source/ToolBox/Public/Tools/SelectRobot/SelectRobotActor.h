@@ -17,6 +17,8 @@ public:
 	ASelectRobotActor();
 	UPROPERTY()
 	TSubclassOf<USelectRobotRuntime> SelectRobotWidget;
+	UPROPERTY()
+	USelectRobotRuntime* WidgetTest;
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,6 +30,5 @@ public:
 	virtual void Destroyed() override;
 
 private:
-	UPROPERTY()
-	USelectRobotRuntime* WidgetTest;
+	
 };
