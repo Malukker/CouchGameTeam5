@@ -253,7 +253,7 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
-void ARobotCharacter::ManageChargeEvent(bool CanAttack)
+void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
 }

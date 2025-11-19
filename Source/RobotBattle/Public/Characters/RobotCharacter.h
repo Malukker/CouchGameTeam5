@@ -227,7 +227,7 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
-	virtual void ManageChargeEvent(bool CanAttack);
+	virtual void SetCanAttackDuo(bool CanAttack);
 	
 	void AddDamageBonus();
 	int GetDamageBonus();

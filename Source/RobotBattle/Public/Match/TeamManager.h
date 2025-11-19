@@ -51,6 +51,7 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void InversePlayer();
 
 	FVector GetOpponentLocation();
 	bool IsAlive();
@@ -71,6 +72,10 @@ private:
 	bool WantInvinsibility = false;
 	bool IsDashing = false;
 	bool CanTakeDamage = true;
+	
+	float UltimateBuffer = 0;
+	bool IsUltimating = false;
+	int WantUltimate = -1;
 	
 	float TeamChargeMax = 0;
 	float TeamCharge = 0;
