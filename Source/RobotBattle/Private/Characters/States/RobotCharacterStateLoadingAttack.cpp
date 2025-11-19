@@ -4,6 +4,7 @@
 #include "Characters/States/RobotCharacterStateLoadingAttack.h"
 
 #include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Attacks/RobotCharacterAttacksData.h"
@@ -13,7 +14,7 @@ void URobotCharacterStateLoadingAttack::StateInit(URobotCharacterStateMachine* I
 {
 	Super::StateInit(InStateMachine);
 	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
-	LoadingTime = AttacksData->LoadingAttack[Character->GetRobotBodyID()];
+	LoadingTimeDefault = AttacksData->LoadingAttack[Character->GetRobotBodyID()];
 }
 
 ERobotCharacterStateID URobotCharacterStateLoadingAttack::GetStateID()
@@ -25,12 +26,17 @@ void URobotCharacterStateLoadingAttack::StateEnter(ERobotCharacterStateID Previo
 {
 	Super::StateEnter(PreviousStateID);
 	Character->PlayAnimMontage(LoadingAnim);
+	Character->ResetDamageBonus();
+
+	Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	
+	LoadingTime = LoadingTimeDefault;
 }
 
 void URobotCharacterStateLoadingAttack::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
+	Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::None);
 }
 
 void URobotCharacterStateLoadingAttack::StateTick(float DeltaTime)

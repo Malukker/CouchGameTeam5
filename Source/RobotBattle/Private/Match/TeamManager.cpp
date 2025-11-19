@@ -323,9 +323,9 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
+			if (WantUltimate == 1) IsUltimating = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
 			UltimateBuffer = 0.33f;
 			WantUltimate = 0;
-			if (WantUltimate == 1) IsUltimating = true;
 		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
@@ -335,11 +335,13 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
+			if (WantUltimate == 0) IsUltimating = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
 			UltimateBuffer = 0.33f;
 			WantUltimate = 1;
-			if (WantUltimate == 0) IsUltimating = true;
 		}
 		break;
+	case ERobotCharacterPositionEnum::None:
+		IsUltimating = false;
 	default: ;
 	}
 }

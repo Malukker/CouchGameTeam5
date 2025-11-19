@@ -31,5 +31,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* LoadingAnim;
 
+	UPROPERTY()
+	float LoadingTimeDefault = 2.f;
+	UPROPERTY()
 	float LoadingTime = 2.f;
 };

@@ -26,7 +26,6 @@ public:
 	ATeamManager();
 
 	UPROPERTY(EditAnywhere)
-
 	uint8 Team = 0;
 	
 	UPROPERTY(EditAnywhere)
@@ -59,25 +58,41 @@ public:
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
+	UPROPERTY()
 	float TeamLifeMax = 0;
+	UPROPERTY()
 	float TeamLife = 0;
 	
+	UPROPERTY()
 	float TeamGuardMax = 0;
+	UPROPERTY()
 	float TeamGuard = 0;
+	UPROPERTY()
 	bool CanGuard = false;
 	
+	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;
+	UPROPERTY()
 	int InvinsibilityFrames = 0;
+	UPROPERTY()
 	float DashBuffer = 0;
+	UPROPERTY()
 	bool WantInvinsibility = false;
+	UPROPERTY()
 	bool IsDashing = false;
+	UPROPERTY()
 	bool CanTakeDamage = true;
 	
+	UPROPERTY()
 	float UltimateBuffer = 0;
+	UPROPERTY()
 	bool IsUltimating = false;
+	UPROPERTY()
 	int WantUltimate = -1;
 	
+	UPROPERTY()
 	float TeamChargeMax = 0;
+	UPROPERTY()
 	float TeamCharge = 0;
 	
 	FVector GetTeamLocation();
