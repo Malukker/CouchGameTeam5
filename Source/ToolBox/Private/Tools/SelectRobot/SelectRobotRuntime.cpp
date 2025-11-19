@@ -3,6 +3,8 @@
 
 #include "Tools/SelectRobot/SelectRobotRuntime.h"
 
+#include <string>
+
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
@@ -14,9 +16,9 @@ void USelectRobotRuntime::NativeConstruct()
 	Super::NativeConstruct();
 	if ( (GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))))
 	{
-		GI->OnInputDeviceConnectionChange.AddDynamic(this,&USelectRobotRuntime::SetControllers);
+		//GI->OnInputDeviceConnectionChange.AddDynamic(this,&USelectRobotRuntime::SetControllers);
 	}
-	
+	ControllerStateChange.BindUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
 }
 
 void USelectRobotRuntime::SetControllers(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId,
@@ -51,5 +53,20 @@ void USelectRobotRuntime::ChangeRobotController(int PlayerIndex, int Controller)
 	);
 	
 }
+
+void USelectRobotRuntime::UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState,
+	FInputDeviceId InputDeviceId)
+{
+	if (NewConnectionState == EInputDeviceConnectionState::Connected)
+	{
+		ComboBox_Controller->AddOption(std::to_string(InputDeviceId.GetId()).data());
+	}
+	if (NewConnectionState == EInputDeviceConnectionState::Disconnected)
+	{
+		ComboBox_Controller->RemoveOption(std::to_string(InputDeviceId.GetId()).data());
+	}
+}
+
+
 
 

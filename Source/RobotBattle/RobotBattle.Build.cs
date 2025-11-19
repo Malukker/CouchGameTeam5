@@ -23,7 +23,7 @@ public class RobotBattle : ModuleRules
 
 	
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "EngineCameras" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "EngineCameras", "ToolBox" });
 
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
