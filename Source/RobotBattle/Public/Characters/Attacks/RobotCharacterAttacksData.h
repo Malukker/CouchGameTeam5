@@ -24,5 +24,8 @@ class ROBOTBATTLE_API URobotCharacterAttacksData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	TMap<ERobotID, FAttackFromID> ListAttacks = {};
+
+	UPROPERTY(EditAnywhere)
+	TMap<ERobotID,float> LoadingAttack;
 };
 
