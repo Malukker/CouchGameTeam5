@@ -3,50 +3,29 @@
 
 #include "Characters/States/RobotCharacterStateLoadingAttack.h"
 
+#include "Characters/RobotCharacter.h"
+#include "Characters/RobotCharacterSettings.h"
+#include "Characters/RobotCharacterStateMachine.h"
+#include "Characters/Attacks/RobotCharacterAttacksData.h"
 
-// Sets default values for this component's properties
-URobotCharacterStateLoadingAttack::URobotCharacterStateLoadingAttack()
-{
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
-}
-
-
-// Called when the game starts
-void URobotCharacterStateLoadingAttack::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-	
-}
-
-
-// Called every frame
-void URobotCharacterStateLoadingAttack::TickComponent(float DeltaTime, ELevelTick TickType,
-                                                      FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
 
 void URobotCharacterStateLoadingAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
 {
 	Super::StateInit(InStateMachine);
+	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
+	LoadingTime = AttacksData->LoadingAttack[Character->GetRobotBodyID()];
 }
 
 ERobotCharacterStateID URobotCharacterStateLoadingAttack::GetStateID()
 {
-	return Super::GetStateID();
+	return ERobotCharacterStateID::LoadingAttack;
 }
 
 void URobotCharacterStateLoadingAttack::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
+	Character->PlayAnimMontage(LoadingAnim);
+	
 }
 
 void URobotCharacterStateLoadingAttack::StateExit(ERobotCharacterStateID NextState)
@@ -57,5 +36,10 @@ void URobotCharacterStateLoadingAttack::StateExit(ERobotCharacterStateID NextSta
 void URobotCharacterStateLoadingAttack::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
+	LoadingTime-=DeltaTime;
+	if (LoadingTime<=0)
+	{
+		StateMachine->ChangeState(ERobotCharacterStateID::Attack);
+	}
 }
 

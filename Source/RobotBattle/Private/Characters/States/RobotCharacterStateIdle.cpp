@@ -60,6 +60,11 @@ void URobotCharacterStateIdle::OnInputJump() {
 
 void URobotCharacterStateIdle::OnInputAttack()
 {
+	if (Character->GetCurrentTypeAttack()==EAttackID::Ultimate)
+	{
+		StateMachine->ChangeState(ERobotCharacterStateID::LoadingAttack);
+		return;
+	}
 	StateMachine->ChangeState(ERobotCharacterStateID::Attack);
 }
 

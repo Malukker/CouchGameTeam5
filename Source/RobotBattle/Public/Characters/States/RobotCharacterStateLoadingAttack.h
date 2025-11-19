@@ -12,18 +12,10 @@ class ROBOTBATTLE_API URobotCharacterStateLoadingAttack : public URobotCharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this component's properties
-	URobotCharacterStateLoadingAttack();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	
 
 private:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 
 	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
@@ -35,4 +27,9 @@ private:
 	virtual void StateExit(ERobotCharacterStateID NextState) override;
 	
 	virtual void StateTick(float DeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* LoadingAnim;
+
+	float LoadingTime = 2.f;
 };
