@@ -12,7 +12,8 @@
 void USelectRobotRuntime::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if ( (GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))))
+	GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	if (GI)
 	{
 		GI->OnInputDeviceConnectionChange.AddDynamic(this,&USelectRobotRuntime::SetControllers);
 	}
