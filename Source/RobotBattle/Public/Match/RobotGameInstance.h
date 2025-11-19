@@ -20,6 +20,12 @@ public:
 	TArray<ERobotID> RobotID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<uint8> PlayersPos;
+	
+	UPROPERTY()
+	bool ChangeCharacter = false;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetChangeCharacter(bool value);
 
 	
 

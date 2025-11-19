@@ -15,6 +15,9 @@
 void AMenuGameMode::StartSelectionCharacter()
 {
 	CreateWidget<URobotBattleCharacterSelection>(GetWorld(), CharacterSelectWidget)->AddToViewport();
+	URobotGameInstance* GameInstance = GetWorld()->GetGameInstance<URobotGameInstance>();
+	if (GameInstance == nullptr) { return; }
+	GameInstance->SetChangeCharacter(false);
 }
 
 void AMenuGameMode::StartSelectionTeam()
@@ -34,7 +37,17 @@ void AMenuGameMode::BeginPlay()
 	CreatePlayerMenuActors();
 	BindMenuInputsToPlayers();
 	
-	CreateWidget<UUserWidget>(GetWorld(), MainMenuWidget)->AddToViewport();
+	URobotGameInstance* GameInstance = GetWorld()->GetGameInstance<URobotGameInstance>();
+	if (GameInstance == nullptr) { return; }
+	
+	if (GameInstance->ChangeCharacter)
+	{
+		StartSelectionCharacter();
+	}
+	else
+	{
+		CreateWidget<UUserWidget>(GetWorld(), MainMenuWidget)->AddToViewport();
+	}
 }
 
 void AMenuGameMode::CreatePlayerMenuActors() const

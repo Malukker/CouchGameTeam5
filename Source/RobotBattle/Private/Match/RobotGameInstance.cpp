@@ -9,6 +9,11 @@
 
 class USelectRobotRuntime;
 
+void URobotGameInstance::SetChangeCharacter(bool value)
+{
+	ChangeCharacter = value;
+}
+
 ERobotID URobotGameInstance::GetRobotID(int Number)
 {
 	return RobotID[Number];
