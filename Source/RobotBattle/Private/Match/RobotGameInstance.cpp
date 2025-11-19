@@ -46,8 +46,11 @@ void URobotGameInstance::AddControllerOnList(EInputDeviceConnectionState NewConn
 		Controllers.Remove(InputDeviceId.GetId());
 	}
 	//OnInputChange(InputDeviceId.GetId(),NewConnectionState);
-	ASelectRobotActor* Actor = Cast<ASelectRobotActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASelectRobotActor::StaticClass()));
-	 Actor->WidgetTest->ControllerStateChange.Execute(NewConnectionState,InputDeviceId);
+	if (ASelectRobotActor* Actor = Cast<ASelectRobotActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ASelectRobotActor::StaticClass())))
+	{
+		Actor->WidgetTest->ControllerStateChange.Execute(NewConnectionState,InputDeviceId);
+	}
+	
 	
 }
 
