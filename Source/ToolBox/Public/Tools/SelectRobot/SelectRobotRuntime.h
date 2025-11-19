@@ -27,15 +27,11 @@ public :
 	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UComboBoxString* ComboBox_Controller;
-
-	UFUNCTION(BlueprintCallable)
-	void SetControllers(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+	
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyActor();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInputChange(int DeviceID,EInputDeviceConnectionState State);
+	
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeRobotController(int PlayerIndex, int PlayerController);
