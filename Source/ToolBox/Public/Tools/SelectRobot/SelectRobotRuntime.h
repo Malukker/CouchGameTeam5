@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ComboBoxString.h"
 #include "Match/RobotGameInstance.h"
 #include "SelectRobotRuntime.generated.h"
 
 /**
  * 
  */
+DECLARE_DELEGATE_TwoParams(FControllerStateChange,EInputDeviceConnectionState,FInputDeviceId);
 UCLASS()
 class TOOLBOX_API USelectRobotRuntime : public UUserWidget
 {
@@ -19,22 +21,26 @@ public :
 	UPROPERTY(BlueprintReadOnly)
 	TArray<int> Controllers;
 
+	FControllerStateChange ControllerStateChange;
+
 	virtual void NativeConstruct() override;
-
-
-	UFUNCTION(BlueprintCallable)
-	void SetControllers(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UComboBoxString* ComboBox_Controller;
+	
 
 	UFUNCTION(BlueprintCallable)
 	void DestroyActor();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInputChange(int DeviceID,EInputDeviceConnectionState State);
+	
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeRobotController(int PlayerIndex, int PlayerController);
 
+	UFUNCTION()
+	void UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState, FInputDeviceId InputDeviceId);
+
 private :
+	UPROPERTY()
 	URobotGameInstance* GI = nullptr;
 	
 };
