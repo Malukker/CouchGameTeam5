@@ -28,8 +28,7 @@ public:
 	uint8 GetPlayerPos(int Number);
 	void SetPlayerPos(int Number, uint8 Pos);
 	
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnInputChange(int DeviceID,EInputDeviceConnectionState State);
+
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY(BlueprintReadOnly)
@@ -40,13 +39,8 @@ public:
 
 #if WITH_EDITOR
 	virtual void Init() override;
-
-	
-	
 	UFUNCTION()
 	void AddControllerOnList(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
-
-
 
 #endif
 };
