@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RobotBattleGameplayUI.generated.h"
 
+
 /**
  * 
  */
@@ -14,6 +15,8 @@ UCLASS()
 class ROBOTBATTLE_API URobotBattleGameplayUI : public UUserWidget, public IUIGamePlayInterface
 {
 	GENERATED_BODY()
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimeOver);
 
 public:
 	
@@ -80,6 +83,8 @@ public:
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;
+
+	FTimeOver OnTimeOver;
 
 private:
 	

@@ -32,6 +32,7 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		{
 			elapsedTime = 0.0f;
 			IsActive = false;
+			OnTimeOver.Broadcast();
 			StopTimer();
 		}
 	}
