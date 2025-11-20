@@ -61,7 +61,10 @@ void URobotCharacterStateJump::StateTick(float DeltaTime) {
 	{
 		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
 		{
-			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+			if (Character->DoHaveEnergy())
+			{
+				Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+			}
 			if (Character->IsWalkingForward())
 			{
 				if (!WalkForward)

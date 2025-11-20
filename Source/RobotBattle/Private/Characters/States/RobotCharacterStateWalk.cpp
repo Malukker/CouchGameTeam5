@@ -60,6 +60,10 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 	}
 	else
 	{
+		if (Character->DoHaveEnergy())
+		{
+			Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
+		}
 		if (Character->IsWalkingForward())
 		{
 			if (!WalkForward)
@@ -80,7 +84,6 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 			}
 			WalkForward = false;
 		}
-		Character->AddMovementInput(FVector::ForwardVector, Character->GetInputMoveX());
 	}
 }
 

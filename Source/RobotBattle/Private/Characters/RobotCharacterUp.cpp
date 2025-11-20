@@ -47,7 +47,7 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type1;
@@ -56,7 +56,7 @@ void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type2;
@@ -65,7 +65,7 @@ void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type3;
@@ -74,7 +74,7 @@ void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
 	AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion
@@ -112,10 +112,4 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 	{
 		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
-}
-
-void ARobotCharacterUp::OnInputMoveX(const FInputActionValue& InputActionValue)
-{
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	InputMoveX = InputActionValue.Get<float>();
 }

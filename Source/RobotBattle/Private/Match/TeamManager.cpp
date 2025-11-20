@@ -100,6 +100,7 @@ void ATeamManager::SpawnCharacters()
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
@@ -134,6 +135,8 @@ void ATeamManager::SpawnCharacters()
 		true
 		),
 		"Bones_Attach");
+
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 }
 
 void ATeamManager::ResetCharacters()
@@ -144,6 +147,8 @@ void ATeamManager::ResetCharacters()
 	TeamCharge = 0;
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 }
 
 void ATeamManager::InversePlayer()
@@ -244,6 +249,12 @@ void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
 		break;
 	default: ;
 	}
+}
+
+void ATeamManager::SwitchEnergy()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SwitchEnergy();
+	RobotParts[ERobotCharacterPositionEnum::Up]->SwitchEnergy();
 }
 
 void ATeamManager::GuardReset()

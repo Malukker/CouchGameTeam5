@@ -3,7 +3,6 @@
 
 #include "Characters/States/RobotCharacterStateAttack.h"
 
-#include "Camera/CameraComponent.h"
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
@@ -15,7 +14,6 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Camera/CameraShakeWorld.h"
 
 void URobotCharacterStateAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
 {
@@ -70,6 +68,10 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 		Character->ResetDamageBonus();
 	}
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	if (Character->DoWantSwitch())
+	{
+		Character->EnergyManagerEvent.Broadcast();
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)

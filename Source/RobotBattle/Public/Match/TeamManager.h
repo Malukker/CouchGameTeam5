@@ -104,6 +104,9 @@ private:
 	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
 	
 	UFUNCTION()
+	void SwitchEnergy();
+	
+	UFUNCTION()
 	void GuardReset();
 	
 	UFUNCTION()

@@ -62,6 +62,10 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnLockEvent);
 	
 	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up, false);
+	if (Character->DoWantSwitch())
+	{
+		Character->EnergyManagerEvent.Broadcast();
+	}
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)

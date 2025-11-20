@@ -78,7 +78,6 @@ void URobotCharacterStateIdle::OnStunEvent()
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
 
-
 void URobotCharacterStateIdle::OnLockEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Lock);

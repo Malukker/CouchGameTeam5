@@ -17,8 +17,6 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-
-	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	
 	void OnInputJump(const FInputActionValue& InputActionValue);
 	
