@@ -33,6 +33,9 @@ void ATeamManager::Tick(float DeltaTime)
 	
 	if (InvinsibilityFrames > 0) InvinsibilityFrames --;
 	if (InvinsibilityFrames == 0 && !CanTakeDamage) CanTakeDamage = true;
+	
+	if (UltimateBuffer > 0) UltimateBuffer -= DeltaTime;
+	if (UltimateBuffer < 0 && WantUltimate != -1) WantUltimate = -1;
 		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
@@ -141,6 +144,16 @@ void ATeamManager::ResetCharacters()
 	TeamCharge = 0;
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+}
+
+void ATeamManager::InversePlayer()
+{
+	AController* RobotPartOne = RobotParts[ERobotCharacterPositionEnum::Down]->GetController();
+	AController* RobotPartTwo = RobotParts[ERobotCharacterPositionEnum::Up]->GetController();
+	RobotPartOne->UnPossess();
+	RobotPartTwo->UnPossess();
+	RobotPartOne->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
+	RobotPartTwo->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -285,13 +298,14 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
 		if (TeamCharge == TeamChargeMax)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(true);
+			RobotParts[ERobotCharacterPositionEnum::Up]->SetCanAttackDuo(true);
+			RobotParts[ERobotCharacterPositionEnum::Down]->SetCanAttackDuo(true);
 		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
 		TeamCharge = 0;
-		RobotParts[ERobotCharacterPositionEnum::Up]->ManageChargeEvent(false);
-		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(true);
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetCanAttackDuo(false);
+		RobotParts[ERobotCharacterPositionEnum::Down]->SetCanAttackDuo(false);
 		break;
 	default: ;
 	}
@@ -303,11 +317,31 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
-		RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+		if (IsUltimating)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+		}
+		else
+		{
+			if (WantUltimate == 1) IsUltimating = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			UltimateBuffer = 0.33f;
+			WantUltimate = 0;
+		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
-		RobotParts[ERobotCharacterPositionEnum::Down]->ManageChargeEvent(false);
+		if (IsUltimating)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+		}
+		else
+		{
+			if (WantUltimate == 0) IsUltimating = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			UltimateBuffer = 0.33f;
+			WantUltimate = 1;
+		}
 		break;
+	case ERobotCharacterPositionEnum::None:
+		IsUltimating = false;
 	default: ;
 	}
 }

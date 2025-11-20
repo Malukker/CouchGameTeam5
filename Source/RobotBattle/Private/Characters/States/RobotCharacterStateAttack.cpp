@@ -44,12 +44,6 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimDeltaTime = 0.0f;
 	CurrentAnimTime = 0.0f;
 	AttackIndex = 0;
-
-	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
-	{
-		Character->ResetDamageBonus();
-		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
 
@@ -74,7 +68,6 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();
-		Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
