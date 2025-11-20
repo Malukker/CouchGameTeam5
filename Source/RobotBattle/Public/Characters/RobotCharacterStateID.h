@@ -15,5 +15,6 @@ enum class ERobotCharacterStateID : uint8 {
 	Dash,
 	Stun,
 	Lock,
-	Guard
+	Guard,
+	LoadingAttack
 };

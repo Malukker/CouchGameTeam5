@@ -20,6 +20,12 @@ public:
 	TArray<ERobotID> RobotID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<uint8> PlayersPos;
+	
+	UPROPERTY()
+	bool ChangeCharacter = false;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetChangeCharacter(bool value);
 
 	
 
@@ -29,18 +35,18 @@ public:
 	void SetPlayerPos(int Number, uint8 Pos);
 	
 
-
-#if WITH_EDITORONLY_DATA
-	UPROPERTY(BlueprintReadOnly)
-	TArray<int> Controllers;
-
-
-#endif
-
-#if WITH_EDITOR
-	virtual void Init() override;
-	UFUNCTION()
-	void AddControllerOnList(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
-
-#endif
+//
+// #if WITH_EDITORONLY_DATA
+// 	UPROPERTY(BlueprintReadOnly)
+// 	TArray<int> Controllers;
+//
+//
+// #endif
+//
+// #if WITH_EDITOR
+// 	virtual void Init() override;
+// 	UFUNCTION()
+// 	void AddControllerOnList(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+//
+// #endif
 };

@@ -253,13 +253,19 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
-void ARobotCharacter::ManageChargeEvent(bool CanAttack)
+void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
 }
 
+bool ARobotCharacter::StartAttackDuo()
+{
+	return false;
+}
+
 void ARobotCharacter::AddDamageBonus()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE UP!!"));
 	DamageBonus += 4;
 }
 
