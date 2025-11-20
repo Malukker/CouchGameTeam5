@@ -2,10 +2,10 @@
 
 
 #include "Tools/SelectRobot/SelectRobotRuntime.h"
-
+#include "GenericPlatform/GenericPlatformInputDeviceMapper.h"
 #include <string>
-
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/InputDeviceSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "Tools/ToolBoxFunctionLibrary.h"
@@ -15,7 +15,9 @@ void USelectRobotRuntime::NativeConstruct()
 {
 	Super::NativeConstruct();
 	GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	ControllerStateChange.BindUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
+	FCoreDelegates::OnControllerConnectionChange.AddUObject(this,&USelectRobotRuntime::UpdateControllerComboBoxV2);
+	GetAllConnectedControllers();
+	//ControllerStateChange.BindUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
 }
 
 
@@ -52,6 +54,30 @@ void USelectRobotRuntime::UpdateControllerComboBox(EInputDeviceConnectionState N
 		ComboBox_Controller->RemoveOption(std::to_string(InputDeviceId.GetId()).data());
 	}
 }
+
+void USelectRobotRuntime::UpdateControllerComboBoxV2(bool IsConnected, FPlatformUserId PlatformUserId, int32 Device)
+{
+	if (IsConnected)
+	{
+		ComboBox_Controller->AddOption(std::to_string(Device).data());
+	}else
+	{
+		ComboBox_Controller->RemoveOption(std::to_string(Device).data());
+	}
+}
+
+void USelectRobotRuntime::GetAllConnectedControllers() 
+{
+	TArray<FInputDeviceId> OutDevices;
+	const IPlatformInputDeviceMapper& Mapper = IPlatformInputDeviceMapper::Get();
+	Mapper.GetAllConnectedInputDevices(OutDevices);
+
+	for (auto Device : OutDevices)
+	{
+		ComboBox_Controller->AddOption(std::to_string(Device.GetId()).data());
+	}
+}
+
 
 
 

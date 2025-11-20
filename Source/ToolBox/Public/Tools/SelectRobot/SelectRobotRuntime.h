@@ -39,8 +39,17 @@ public :
 	UFUNCTION()
 	void UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState, FInputDeviceId InputDeviceId);
 
+	UFUNCTION()
+	void UpdateControllerComboBoxV2(bool IsConnected, FPlatformUserId PlatformUserId, int32 Device);
+
+	UFUNCTION()
+	void GetAllConnectedControllers();
+
 private :
 	UPROPERTY()
 	URobotGameInstance* GI = nullptr;
+
+	UPROPERTY()
+	UInputDeviceSubsystem* Subsystem = nullptr;
 	
 };

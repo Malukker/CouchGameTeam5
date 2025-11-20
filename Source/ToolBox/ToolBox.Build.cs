@@ -27,8 +27,9 @@ public class ToolBox : ModuleRules
 			"ToolMenus",
 			"LevelEditor",
 			"UMGEditor",
-			"EnhancedInput"
-			
+			"EnhancedInput",
+			"InputDevice",
+			"ApplicationCore"
 		});
 
 		
