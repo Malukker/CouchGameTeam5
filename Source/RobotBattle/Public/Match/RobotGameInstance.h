@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/RobotCharacter.h"
 #include "Engine/GameInstance.h"
 #include "RobotGameInstance.generated.h"
 
+
+enum class  ERobotID : uint8;
 /**
  * 
  */
