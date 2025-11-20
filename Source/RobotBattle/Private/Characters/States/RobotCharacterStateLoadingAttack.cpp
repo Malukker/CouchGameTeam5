@@ -36,7 +36,7 @@ void URobotCharacterStateLoadingAttack::StateEnter(ERobotCharacterStateID Previo
 void URobotCharacterStateLoadingAttack::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
-	Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::None);
+	Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::None);
 }
 
 void URobotCharacterStateLoadingAttack::StateTick(float DeltaTime)

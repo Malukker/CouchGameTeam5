@@ -81,6 +81,7 @@ void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionVal
 
 bool ARobotCharacterUp::StartAttackDuo()
 {
+	if (!CanAttackDuo) return false;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return false;
 	CurrentTypeAttack = EAttackID::Ultimate;
