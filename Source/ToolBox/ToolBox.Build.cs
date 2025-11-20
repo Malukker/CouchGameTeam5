@@ -12,7 +12,6 @@ public class ToolBox : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"UnrealEd",
 			"Blutility",
 			"UMG",
 			"AssetRegistry",
