@@ -321,8 +321,8 @@ void ARobotCharacter::ResetDamageBonus()
 	DamageBonus = 0;
 }
 
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime,FVector KnockBackVelocity)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime);
+	HurtManagerEvent.Broadcast(Damage, StunTime,KnockBackVelocity);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }

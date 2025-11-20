@@ -11,6 +11,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/UIGamePlayInterface.h"
@@ -190,15 +191,22 @@ FVector ATeamManager::GetTeamLocation()
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
 }
 
-void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity)
 {
+	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+	{
+		KnockBackVelocity.X*=-1;
+	}
 	if (CanGuard && TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
+		MovementComponent->Launch(KnockBackVelocity/2);
 		TeamGuard--;
 	}
 	else if (CanTakeDamage)
 	{
+		MovementComponent->Launch(KnockBackVelocity);
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();

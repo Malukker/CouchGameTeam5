@@ -105,7 +105,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVelocity);
 						bIsAttackTraceEnabled = false;
 
 						//Start a camera shake

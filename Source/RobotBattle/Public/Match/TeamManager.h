@@ -98,7 +98,7 @@ private:
 	FVector GetTeamLocation();
 
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime);
+	void TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity);
 	
 	UFUNCTION()
 	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
