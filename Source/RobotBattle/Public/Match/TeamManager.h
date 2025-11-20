@@ -94,6 +94,9 @@ private:
 	float TeamChargeMax = 0;
 	UPROPERTY()
 	float TeamCharge = 0;
+
+	UPROPERTY()
+	float OriginalGravityScale = 0;
 	
 	FVector GetTeamLocation();
 
@@ -101,7 +104,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity);
 	
 	UFUNCTION()
-	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
+	void TeamAirBlock(bool Lock);
 	
 	UFUNCTION()
 	void SwitchEnergy();

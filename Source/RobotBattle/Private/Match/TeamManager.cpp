@@ -100,7 +100,7 @@ void ATeamManager::SpawnCharacters()
 			return;
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
-		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
 		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
@@ -231,31 +231,18 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector KnockBackV
 	}
 }
 
-void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
+void ATeamManager::TeamAirBlock(bool Lock)
 {
-	switch (Position)
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (Lock)
 	{
-	case ERobotCharacterPositionEnum::Down:
-		if (Lock)
-		{
-			RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
-		}
-		else
-		{
-			RobotParts[ERobotCharacterPositionEnum::Down]->UnlockEvent.Broadcast();
-		}
-		break;
-	case ERobotCharacterPositionEnum::Up:
-		if (Lock)
-		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
-		}
-		else
-		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->UnlockEvent.Broadcast();
-		}
-		break;
-	default: ;
+		OriginalGravityScale = MovementComponent->GravityScale;
+		MovementComponent->GravityScale = 0;
+		MovementComponent->StopMovementImmediately();
+	}
+	else
+	{
+		MovementComponent->GravityScale = OriginalGravityScale;
 	}
 }
 

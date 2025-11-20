@@ -34,7 +34,6 @@ void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) 
 	InitJumpAccordingToParameters();
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateJump::OnLockEvent);
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -48,7 +47,6 @@ void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnLockEvent);
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {
@@ -97,11 +95,4 @@ void URobotCharacterStateJump::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
-
-
-void URobotCharacterStateJump::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
-}
-
 

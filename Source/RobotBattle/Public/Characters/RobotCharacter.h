@@ -199,7 +199,7 @@ public:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector,KnockBackVelocity);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLockManagerEvent,ERobotCharacterPositionEnum ,Position, bool, Lock);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 	
@@ -209,19 +209,11 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
-	
-	UPROPERTY()
-	FLockEvent LockEvent;
-	
-	UPROPERTY()
-	FLockEvent UnlockEvent;
-	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
 	
 	UPROPERTY()
-	FLockEvent EnergyManagerEvent;
+	FEnergyManagerEvent EnergyManagerEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;

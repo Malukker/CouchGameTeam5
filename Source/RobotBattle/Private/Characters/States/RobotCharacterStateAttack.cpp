@@ -62,7 +62,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
+	Character->LockManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();
@@ -125,7 +125,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 							}, DurationShake, false);
 						}
 						Character->GuardResetManagerEvent.Broadcast();
-						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
+						Character->LockManagerEvent.Broadcast(true);
 					}
 				}
 			}
