@@ -96,12 +96,12 @@ private:
 	float TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = 0;
+	float OriginalGravityScale = -1;
 	
 	FVector GetTeamLocation();
 
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity);
+	void TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
 	UFUNCTION()
 	void TeamAirBlock(bool Lock);
