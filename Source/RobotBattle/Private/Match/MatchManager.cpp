@@ -7,6 +7,7 @@
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -25,11 +26,12 @@ void AMatchManager::BeginPlay()
 	UIGameplay->AddToViewport();
 	
 	UIGameplay->StartTimer(RoundTime);
+	UIGameplay->OnTimeOver.AddDynamic(this, &AMatchManager::EndFightOnTimeOut);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
 	{
 		Team->UIInterface = UIInterface;
-		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFight);
+		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFightOnRobotDefeat);
 	}
 }
 
@@ -42,7 +44,23 @@ void AMatchManager::ResetFight()
 	UIGameplay->StartTimer(RoundTime);
 }
 
-void AMatchManager::EndFight(int LosingTeam)
+void AMatchManager::EndFightOnTimeOut()
+{
+	if (Teams[0]->GetLife() > Teams[1]->GetLife())
+	{
+		EndFightOnRobotDefeat(1);
+	}
+	else if (Teams[1]->GetLife() > Teams[0]->GetLife())
+	{
+		EndFightOnRobotDefeat(0);
+	}
+	else
+	{
+		ResetFight();
+	}
+}
+
+void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 {
 	if (LosingTeam == 0)
 	{
@@ -61,7 +79,15 @@ void AMatchManager::EndFight(int LosingTeam)
 			UIGameplay->RemoveFromParent();
 			UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
 			UIGameOver->AddToViewport();
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			return;
+		}
+	}
+	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->InversePlayer();
 		}
 	}
 	ResetFight();

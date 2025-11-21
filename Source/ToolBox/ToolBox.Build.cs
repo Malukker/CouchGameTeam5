@@ -12,7 +12,6 @@ public class ToolBox : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine",
-			"UnrealEd",
 			"Blutility",
 			"UMG",
 			"AssetRegistry",
@@ -28,7 +27,9 @@ public class ToolBox : ModuleRules
 			"ToolMenus",
 			"LevelEditor",
 			"UMGEditor",
-			
+			"EnhancedInput",
+			"InputDevice",
+			"ApplicationCore"
 		});
 
 		
