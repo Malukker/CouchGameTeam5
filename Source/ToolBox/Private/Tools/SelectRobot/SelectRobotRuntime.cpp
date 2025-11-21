@@ -15,11 +15,17 @@ void USelectRobotRuntime::NativeConstruct()
 {
 	Super::NativeConstruct();
 	GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	//const IPlatformInputDeviceMapper& Mapper = IPlatformInputDeviceMapper::Get();
-	//Mapper.GetOnInputDeviceConnectionChange();
-	FCoreDelegates::OnControllerConnectionChange.AddUObject(this,&USelectRobotRuntime::UpdateControllerComboBoxV2);
-	GetAllConnectedControllers();
-	//ControllerStateChange.BindUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
+	const IPlatformInputDeviceMapper& Mapper = IPlatformInputDeviceMapper::Get();
+	
+	Mapper.GetOnInputDeviceConnectionChange().AddUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
+	
+	//Put in the combobox UI all the connected devices
+	TArray<FInputDeviceId> OutDevices;
+	Mapper.GetAllConnectedInputDevices(OutDevices);
+	for (auto Device : OutDevices)
+	{
+		ComboBox_Controller->AddOption(std::to_string(Device.GetId()).data());
+	}
 }
 
 
@@ -44,7 +50,7 @@ void USelectRobotRuntime::ChangeRobotController(int PlayerIndex, int Controller)
 	
 }
 
-void USelectRobotRuntime::UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState,
+void USelectRobotRuntime::UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState,FPlatformUserId PlateformUserID,
 	FInputDeviceId InputDeviceId)
 {
 	if (NewConnectionState == EInputDeviceConnectionState::Connected)
@@ -57,28 +63,8 @@ void USelectRobotRuntime::UpdateControllerComboBox(EInputDeviceConnectionState N
 	}
 }
 
-void USelectRobotRuntime::UpdateControllerComboBoxV2(bool IsConnected, FPlatformUserId PlatformUserId, int32 Device)
-{
-	if (IsConnected)
-	{
-		ComboBox_Controller->AddOption(std::to_string(Device).data());
-	}else
-	{
-		ComboBox_Controller->RemoveOption(std::to_string(Device).data());
-	}
-}
 
-void USelectRobotRuntime::GetAllConnectedControllers() 
-{
-	TArray<FInputDeviceId> OutDevices;
-	const IPlatformInputDeviceMapper& Mapper = IPlatformInputDeviceMapper::Get();
-	Mapper.GetAllConnectedInputDevices(OutDevices);
 
-	for (auto Device : OutDevices)
-	{
-		ComboBox_Controller->AddOption(std::to_string(Device.GetId()).data());
-	}
-}
 
 
 
