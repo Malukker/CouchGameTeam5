@@ -122,7 +122,7 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime,FVector KnockBackVelocity);
+	virtual void TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity);
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -197,7 +197,7 @@ public:
 
 #pragma region Damage/Stun
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector,KnockBackVelocity);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
