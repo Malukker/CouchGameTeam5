@@ -17,7 +17,6 @@ ERobotCharacterStateID URobotCharacterStateDash::GetStateID()
 void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up, true);
 
 	Character->PlayAnimMontage(DashAnim);
 	CurrentDashTime = 0;
@@ -29,7 +28,6 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	{
 		Character->InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
 	}
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateDash::OnLockEvent);
 	
 	OriginalFriction = CharacterMovement->GroundFriction;
 	OriginalGravityScale = CharacterMovement->GravityScale;
@@ -59,9 +57,11 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 
 	CharacterMovement->StopMovementImmediately();
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnLockEvent);
 	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up, false);
+	if (Character->DoWantSwitch())
+	{
+		Character->EnergyManagerEvent.Broadcast();
+	}
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)

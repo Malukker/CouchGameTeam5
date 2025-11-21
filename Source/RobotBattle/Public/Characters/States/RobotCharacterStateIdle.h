@@ -18,6 +18,8 @@ class ROBOTBATTLE_API URobotCharacterStateIdle : public URobotCharacterState
 public:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* IdleAnim;
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* GuardAnimMontage;
 
 	virtual ERobotCharacterStateID GetStateID() override;
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
@@ -25,6 +27,9 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	UPROPERTY()
+	bool WalkForward;
+
 	UFUNCTION()
 	void OnInputJump();
 
@@ -35,8 +40,6 @@ private:
 	void OnInputDash();
 	UFUNCTION()
 	void OnStunEvent();
-	UFUNCTION()
-	void OnLockEvent();
 
 
 };
