@@ -129,13 +129,7 @@ void ATeamManager::SpawnCharacters()
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules
-		(
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,
-		true
-		),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		"Bones_Attach");
 
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
@@ -182,9 +176,9 @@ FVector ATeamManager::GetOpponentLocation()
 	return Opponent->GetTeamLocation();
 }
 
-bool ATeamManager::IsAlive()
+float ATeamManager::GetLife()
 {
-	return TeamLife > 0;
+	return TeamLife;
 }
 
 FVector ATeamManager::GetTeamLocation()

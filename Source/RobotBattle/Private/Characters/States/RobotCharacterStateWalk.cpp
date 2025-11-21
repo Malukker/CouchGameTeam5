@@ -25,14 +25,15 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 		CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
 		WalkForward = true;
 		Character->GuardManagerEvent.Broadcast(false);
+		Character->PlayAnimMontage(WalkAnimForward);
 	}
 	else
 	{
 		CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
 		WalkForward = false;
 		Character->GuardManagerEvent.Broadcast(true);
+		Character->PlayAnimMontage(WalkAnimBackward);
 	}
-	Character->PlayAnimMontage(WalkAnim);
 
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputDash);
@@ -69,6 +70,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 				CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(false);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
+				Character->PlayAnimMontage(WalkAnimForward);
 			}
 			WalkForward = true;
 		}
@@ -79,6 +81,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 				CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(true);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
+				Character->PlayAnimMontage(WalkAnimBackward);
 			}
 			WalkForward = false;
 		}
