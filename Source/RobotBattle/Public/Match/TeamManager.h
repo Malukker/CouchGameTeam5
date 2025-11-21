@@ -53,7 +53,7 @@ public:
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
-	bool IsAlive();
+	float GetLife();
 	
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;

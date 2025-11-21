@@ -10,6 +10,7 @@
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -110,9 +111,9 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
-		NewCharacter->GetCapsuleComponent()->SetCollisionObjectType(TeamCollision);
-		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
-		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(AttackChannel, ECollisionResponse::ECR_Block);
+		NewCharacter->GetCollision()->SetCollisionObjectType(TeamCollision);
+		NewCharacter->GetCollision()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
+		NewCharacter->GetCollision()->SetCollisionResponseToChannel(AttackChannel, ECollisionResponse::ECR_Block);
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
 		TeamLifeMax += NewCharacter->Life;
@@ -128,13 +129,7 @@ void ATeamManager::SpawnCharacters()
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules
-		(
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,
-		EAttachmentRule::SnapToTarget,
-		true
-		),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 		"Bones_Attach");
 
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
@@ -181,9 +176,9 @@ FVector ATeamManager::GetOpponentLocation()
 	return Opponent->GetTeamLocation();
 }
 
-bool ATeamManager::IsAlive()
+float ATeamManager::GetLife()
 {
-	return TeamLife > 0;
+	return TeamLife;
 }
 
 FVector ATeamManager::GetTeamLocation()

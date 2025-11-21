@@ -44,5 +44,5 @@ struct FAttackStruct
 	int StunTime = 0;
 
 	UPROPERTY(EditAnywhere)
-	FVector2D KnockBackVelocity = FVector2D::ZeroVector;
+	FVector2D KnockBackVector = FVector2D::ZeroVector;
 };
