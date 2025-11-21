@@ -9,6 +9,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -18,6 +19,8 @@ ARobotCharacter::ARobotCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("BoxComponent"));
+	BoxComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -53,6 +56,11 @@ void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	if (EnhancedInputComponent == nullptr) return;
 
 	BindInputAndActions(EnhancedInputComponent);
+}
+
+UBoxComponent* ARobotCharacter::GetCollision() const
+{
+	return BoxComponent;
 }
 
 float ARobotCharacter::GetOrientX() const

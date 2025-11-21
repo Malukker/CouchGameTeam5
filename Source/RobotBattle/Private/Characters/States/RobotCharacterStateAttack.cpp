@@ -105,7 +105,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVelocity);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
 						bIsAttackTraceEnabled = false;
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(true);

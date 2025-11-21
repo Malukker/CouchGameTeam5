@@ -9,6 +9,7 @@
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
+class UBoxComponent;
 class AHUDGameplay;
 enum class ERobotCharacterUpID : uint8;
 enum class ERobotCharacterPositionEnum : uint8;
@@ -39,13 +40,15 @@ protected:
 
 	UPROPERTY()
 	AHUDGameplay* HUDGameplay;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UBoxComponent* GetCollision() const;
 
 #pragma endregion Unreal Default
 
@@ -176,7 +179,10 @@ public:
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 	
-
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxComponent;
+	
+	UPROPERTY()
 	int Team;
 
 	UPROPERTY(EditAnywhere)
