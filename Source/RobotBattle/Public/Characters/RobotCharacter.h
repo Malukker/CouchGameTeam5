@@ -122,7 +122,7 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity);
+	virtual void TakeDamageFromAttack(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;

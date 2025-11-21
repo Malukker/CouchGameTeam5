@@ -96,7 +96,7 @@ private:
 	float TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = 0;
+	float OriginalGravityScale = -1;
 	
 	FVector GetTeamLocation();
 

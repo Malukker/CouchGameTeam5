@@ -241,9 +241,10 @@ void ATeamManager::TeamAirBlock(bool Lock)
 		MovementComponent->GravityScale = 0;
 		MovementComponent->StopMovementImmediately();
 	}
-	else
+	else if(OriginalGravityScale != -1)
 	{
 		MovementComponent->GravityScale = OriginalGravityScale;
+		OriginalGravityScale = -1;
 	}
 }
 
