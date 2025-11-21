@@ -37,6 +37,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
 	AHUDGameplay* HUDGameplay;
 
 public:	
@@ -113,10 +114,15 @@ public:
 	void UseDash();
 	void ResetDash();
 	
+	bool DoHaveEnergy();
+	bool DoWantSwitch();
+	void SwitchEnergy();
+	void SetEnergy(bool Value);
+	
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	virtual void TakeDamageFromAttack(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -141,6 +147,10 @@ protected:
 	UPROPERTY()
 	bool CanDash = true;
 	UPROPERTY()
+	bool HaveEnergy = false;
+	UPROPERTY()
+	bool WantSwitch = false;
+	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
 	UPROPERTY()
@@ -150,6 +160,7 @@ protected:
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue);
+	virtual void OnInputEnergy(const FInputActionValue& InputActionValue);
 	virtual void OnInputPause(const FInputActionValue& InputActionValue);
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
@@ -177,7 +188,7 @@ public:
 	
 
 	virtual FVector GetRobotLocation() override;
-	
+
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
 	
@@ -186,27 +197,23 @@ public:
 
 #pragma region Damage/Stun
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLockManagerEvent,ERobotCharacterPositionEnum ,Position, bool, Lock);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
-	
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLockEvent);
-	
-	UPROPERTY()
-	FLockEvent LockEvent;
-	
-	UPROPERTY()
-	FLockEvent UnlockEvent;
 	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
+	
+	UPROPERTY()
+	FEnergyManagerEvent EnergyManagerEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;
@@ -227,7 +234,8 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
-	virtual void ManageChargeEvent(bool CanAttack);
+	virtual void SetCanAttackDuo(bool CanAttack);
+	virtual bool StartAttackDuo();
 	
 	void AddDamageBonus();
 	int GetDamageBonus();
