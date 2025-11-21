@@ -16,7 +16,9 @@ class ROBOTBATTLE_API URobotCharacterStateWalk : public URobotCharacterState
 
 public:
 	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* WalkAnim;
+	UAnimMontage* WalkAnimForward;
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* WalkAnimBackward;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ForwardWalkSpeedMax = 250.0f;

@@ -18,7 +18,6 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 {
 	Super::StateEnter(PreviousStateID);
 
-	Character->PlayAnimMontage(DashAnim);
 	CurrentDashTime = 0;
 	if (Character->GetRobotCharacterDownChargeID()==ERobotCharacterDownChargeID::Dash)
 	{
@@ -27,6 +26,11 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetDashDirectionX()))
 	{
 		Character->InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
+		Character->PlayAnimMontage(DashAnimBackward);
+	}
+	else
+	{
+		Character->PlayAnimMontage(DashAnimForward);
 	}
 	
 	OriginalFriction = CharacterMovement->GroundFriction;
