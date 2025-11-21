@@ -80,6 +80,13 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 			return;
 		}
 	}
+	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->InversePlayer();
+		}
+	}
 	ResetFight();
 }
 

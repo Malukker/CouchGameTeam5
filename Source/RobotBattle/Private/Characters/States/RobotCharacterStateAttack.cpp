@@ -3,7 +3,6 @@
 
 #include "Characters/States/RobotCharacterStateAttack.h"
 
-#include "Camera/CameraComponent.h"
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
@@ -15,7 +14,6 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Camera/CameraShakeWorld.h"
 
 void URobotCharacterStateAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
 {
@@ -44,12 +42,6 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimDeltaTime = 0.0f;
 	CurrentAnimTime = 0.0f;
 	AttackIndex = 0;
-
-	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
-	{
-		Character->ResetDamageBonus();
-		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
 
@@ -70,13 +62,16 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
+	Character->LockManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();
-		Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	if (Character->DoWantSwitch())
+	{
+		Character->EnergyManagerEvent.Broadcast();
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -110,7 +105,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVelocity);
 						bIsAttackTraceEnabled = false;
 
 						//Start a camera shake
@@ -130,7 +125,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 							}, DurationShake, false);
 						}
 						Character->GuardResetManagerEvent.Broadcast();
-						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
+						Character->LockManagerEvent.Broadcast(true);
 					}
 				}
 			}

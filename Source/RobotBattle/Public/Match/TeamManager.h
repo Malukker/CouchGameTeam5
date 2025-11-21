@@ -26,7 +26,6 @@ public:
 	ATeamManager();
 
 	UPROPERTY(EditAnywhere)
-
 	uint8 Team = 0;
 	
 	UPROPERTY(EditAnywhere)
@@ -51,6 +50,7 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void InversePlayer();
 
 	FVector GetOpponentLocation();
 	bool IsAlive();
@@ -58,30 +58,56 @@ public:
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
+	UPROPERTY()
 	float TeamLifeMax = 0;
+	UPROPERTY()
 	float TeamLife = 0;
 	
+	UPROPERTY()
 	float TeamGuardMax = 0;
+	UPROPERTY()
 	float TeamGuard = 0;
+	UPROPERTY()
 	bool CanGuard = false;
 	
+	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;
+	UPROPERTY()
 	int InvinsibilityFrames = 0;
+	UPROPERTY()
 	float DashBuffer = 0;
+	UPROPERTY()
 	bool WantInvinsibility = false;
+	UPROPERTY()
 	bool IsDashing = false;
+	UPROPERTY()
 	bool CanTakeDamage = true;
 	
+	UPROPERTY()
+	float UltimateBuffer = 0;
+	UPROPERTY()
+	bool IsUltimating = false;
+	UPROPERTY()
+	int WantUltimate = -1;
+	
+	UPROPERTY()
 	float TeamChargeMax = 0;
+	UPROPERTY()
 	float TeamCharge = 0;
+
+	UPROPERTY()
+	float OriginalGravityScale = 0;
 	
 	FVector GetTeamLocation();
 
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime);
+	void TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity);
 	
 	UFUNCTION()
-	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
+	void TeamAirBlock(bool Lock);
+	
+	UFUNCTION()
+	void SwitchEnergy();
 	
 	UFUNCTION()
 	void GuardReset();

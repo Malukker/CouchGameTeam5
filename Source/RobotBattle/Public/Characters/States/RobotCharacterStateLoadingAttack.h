@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Characters/RobotCharacterState.h"
-#include "RobotCharacterStateGuard.generated.h"
+#include "RobotCharacterStateLoadingAttack.generated.h"
 
 
-UCLASS(ClassGroup=(RobotCharacterState), meta=(BlueprintSpawnableComponent))
-class ROBOTBATTLE_API URobotCharacterStateGuard : public URobotCharacterState
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+class ROBOTBATTLE_API URobotCharacterStateLoadingAttack : public URobotCharacterState
 {
 	GENERATED_BODY()
 
+
+	
+
+private:
+
+
+	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
+	
 	virtual ERobotCharacterStateID GetStateID() override;
 	
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
@@ -20,10 +28,11 @@ class ROBOTBATTLE_API URobotCharacterStateGuard : public URobotCharacterState
 	
 	virtual void StateTick(float DeltaTime) override;
 
-private:
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* GuardAnimMontage;
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* LoadingAnim;
 
-	UFUNCTION()
-	void OnStunEvent();
+	UPROPERTY()
+	float LoadingTimeDefault = 2.f;
+	UPROPERTY()
+	float LoadingTime = 2.f;
 };

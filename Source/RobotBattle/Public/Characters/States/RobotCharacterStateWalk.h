@@ -40,6 +40,4 @@ private:
 	void OnInputDash();
 	UFUNCTION()
 	void OnStunEvent();
-	UFUNCTION()
-	void OnLockEvent();
 };

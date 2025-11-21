@@ -16,14 +16,23 @@ ERobotCharacterStateID URobotCharacterStateIdle::GetStateID() {
 
 void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
-
-	Character->PlayAnimMontage(IdleAnim);
+	if (Character->IsWalkingForward())
+	{
+		WalkForward = true;
+		Character->PlayAnimMontage(IdleAnim);
+		Character->GuardManagerEvent.Broadcast(false);
+	}
+	else
+	{
+		WalkForward = false;
+		Character->PlayAnimMontage(GuardAnimMontage);
+		Character->GuardManagerEvent.Broadcast(true);
+	}
 
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputJump);
 	Character->InputAttackEvent.AddDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 	Character->InputDashEvent.AddDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateIdle::OnStunEvent);
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateIdle::OnLockEvent);
 }
 
 void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
@@ -33,7 +42,6 @@ void URobotCharacterStateIdle::StateExit(ERobotCharacterStateID NextState) {
 	Character->InputAttackEvent.RemoveDynamic(this,&URobotCharacterStateIdle::OnInputAttack);
 	Character->InputDashEvent.RemoveDynamic(this,  &URobotCharacterStateIdle::OnInputDash);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateIdle::OnLockEvent);
 }
 
 void URobotCharacterStateIdle::StateTick(float DeltaTime) {
@@ -46,7 +54,21 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 		}
 		else if (Character->IsWalkingForward())
 		{
-			StateMachine->ChangeState(ERobotCharacterStateID::Guard);
+			if (!WalkForward)
+			{
+				Character->PlayAnimMontage(IdleAnim);
+				Character->GuardManagerEvent.Broadcast(false);
+			}
+			WalkForward = true;
+		}
+		else
+		{
+			if (WalkForward)
+			{
+				Character->PlayAnimMontage(GuardAnimMontage);
+				Character->GuardManagerEvent.Broadcast(true);
+			}
+			WalkForward = false;
 		}
 	}
 	if (CharacterMovement->Velocity.Z < 0.f) {
@@ -60,6 +82,11 @@ void URobotCharacterStateIdle::OnInputJump() {
 
 void URobotCharacterStateIdle::OnInputAttack()
 {
+	if (Character->GetCurrentTypeAttack()==EAttackID::Ultimate)
+	{
+		StateMachine->ChangeState(ERobotCharacterStateID::LoadingAttack);
+		return;
+	}
 	StateMachine->ChangeState(ERobotCharacterStateID::Attack);
 }
 
@@ -71,11 +98,5 @@ void URobotCharacterStateIdle::OnInputDash()
 void URobotCharacterStateIdle::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
-}
-
-
-void URobotCharacterStateIdle::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
 }
 
