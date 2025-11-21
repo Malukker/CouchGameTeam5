@@ -2,12 +2,12 @@
 
 
 #include "Match/RobotGameInstance.h"
-
+#include "Characters/Attacks/AttackStruct.h"
 #include "Kismet/GameplayStatics.h"
 // #include "Tools/SelectRobot/SelectRobotActor.h"
 // #include "Tools/SelectRobot/SelectRobotRuntime.h"
 
-class USelectRobotRuntime;
+//class USelectRobotRuntime;
 
 void URobotGameInstance::SetChangeCharacter(bool value)
 {

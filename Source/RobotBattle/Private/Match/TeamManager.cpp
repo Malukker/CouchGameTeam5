@@ -11,6 +11,7 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/UIGamePlayInterface.h"
@@ -99,7 +100,8 @@ void ATeamManager::SpawnCharacters()
 			return;
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
-		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamPartLock);
+		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
@@ -134,6 +136,8 @@ void ATeamManager::SpawnCharacters()
 		true
 		),
 		"Bones_Attach");
+
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 }
 
 void ATeamManager::ResetCharacters()
@@ -144,6 +148,8 @@ void ATeamManager::ResetCharacters()
 	TeamCharge = 0;
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 }
 
 void ATeamManager::InversePlayer()
@@ -185,15 +191,23 @@ FVector ATeamManager::GetTeamLocation()
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
 }
 
-void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity)
 {
+	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
+	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+	{
+		LaunchVelocity.X*=-1;
+	}
 	if (CanGuard && TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
+		MovementComponent->Launch(LaunchVelocity/2);
 		TeamGuard--;
 	}
 	else if (CanTakeDamage)
 	{
+		MovementComponent->Launch(LaunchVelocity);
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
@@ -218,32 +232,25 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	}
 }
 
-void ATeamManager::TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock)
+void ATeamManager::TeamAirBlock(bool Lock)
 {
-	switch (Position)
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (Lock)
 	{
-	case ERobotCharacterPositionEnum::Down:
-		if (Lock)
-		{
-			RobotParts[ERobotCharacterPositionEnum::Down]->LockEvent.Broadcast();
-		}
-		else
-		{
-			RobotParts[ERobotCharacterPositionEnum::Down]->UnlockEvent.Broadcast();
-		}
-		break;
-	case ERobotCharacterPositionEnum::Up:
-		if (Lock)
-		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->LockEvent.Broadcast();
-		}
-		else
-		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->UnlockEvent.Broadcast();
-		}
-		break;
-	default: ;
+		OriginalGravityScale = MovementComponent->GravityScale;
+		MovementComponent->GravityScale = 0;
+		MovementComponent->StopMovementImmediately();
 	}
+	else
+	{
+		MovementComponent->GravityScale = OriginalGravityScale;
+	}
+}
+
+void ATeamManager::SwitchEnergy()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SwitchEnergy();
+	RobotParts[ERobotCharacterPositionEnum::Up]->SwitchEnergy();
 }
 
 void ATeamManager::GuardReset()

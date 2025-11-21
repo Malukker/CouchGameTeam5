@@ -15,6 +15,8 @@ void USelectRobotRuntime::NativeConstruct()
 {
 	Super::NativeConstruct();
 	GI = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+	//const IPlatformInputDeviceMapper& Mapper = IPlatformInputDeviceMapper::Get();
+	//Mapper.GetOnInputDeviceConnectionChange();
 	FCoreDelegates::OnControllerConnectionChange.AddUObject(this,&USelectRobotRuntime::UpdateControllerComboBoxV2);
 	GetAllConnectedControllers();
 	//ControllerStateChange.BindUObject(this,&USelectRobotRuntime::UpdateControllerComboBox);
