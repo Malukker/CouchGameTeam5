@@ -84,11 +84,11 @@ protected:
 
 #pragma region Zoom
 private:
-	UPROPERTY()
-	float CameraZoomYMin = 0.f;
+	//UPROPERTY()
+	//float CameraZoomYMin = 0.f;
 
-	UPROPERTY()
-	float CameraZoomYMax = 0.f;
+	//UPROPERTY()
+	//float CameraZoomYMax = 0.f;
 	
 	// UFUNCTION()
 	// void InitCameraZoomParameters();

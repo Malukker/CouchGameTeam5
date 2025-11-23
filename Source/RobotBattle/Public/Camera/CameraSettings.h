@@ -22,26 +22,26 @@ public:
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraMainTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	FName CameraDistanceMinTag;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//FName CameraDistanceMinTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	FName CameraDistanceMaxTag;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//FName CameraDistanceMaxTag;
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraBoundsTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float DistanceBetweenTargetsMin;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float DistanceBetweenTargetsMin;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float DistanceBetweenTargetsMax;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float DistanceBetweenTargetsMax;
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float HeightOffset;
 	
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float SizeDampingFactor;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float SizeDampingFactor;
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float PositionDampingFactor;
