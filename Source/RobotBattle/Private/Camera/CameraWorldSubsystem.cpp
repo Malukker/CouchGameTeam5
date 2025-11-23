@@ -18,7 +18,7 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//if (CameraMain == nullptr) return;
 	TickUpdateCameraPosition(DeltaTime);
-	TickUpdateCameraZoom(DeltaTime);
+	//TickUpdateCameraZoom(DeltaTime);
 }
 
 void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
@@ -165,20 +165,20 @@ float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
 	return GreatestDistance;
 }
 
-void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
-{
-	if (CameraMain == nullptr) { return; }
-	float GreatestDistanceBetweenTargets = CalculateGreatestDistanceBetweenTargets();
-	float CurrentPercent = (GreatestDistanceBetweenTargets - CameraSettings->DistanceBetweenTargetsMin) / (
-		CameraSettings->DistanceBetweenTargetsMax - CameraSettings->DistanceBetweenTargetsMin);
-	CurrentPercent = FMath::Clamp(CurrentPercent, 0.f, 1.f);
-	float ZoomDistance = FMath::Lerp(CameraZoomYMin, CameraZoomYMax, CurrentPercent);
-	FVector NewLocation(CameraMain->GetOwner()->GetActorLocation().X, ZoomDistance,
-	                    CameraMain->GetOwner()->GetActorLocation().Z);
-	NewLocation = FMath::VInterpTo(CameraMain->GetOwner()->GetActorLocation(), NewLocation, DeltaTime,
-	                               CameraSettings->SizeDampingFactor);
-	CameraMain->GetOwner()->SetActorLocation(NewLocation);
-}
+// void UCameraWorldSubsystem::TickUpdateCameraZoom(float DeltaTime)
+// {
+// 	if (CameraMain == nullptr) { return; }
+// 	float GreatestDistanceBetweenTargets = CalculateGreatestDistanceBetweenTargets();
+// 	float CurrentPercent = (GreatestDistanceBetweenTargets - CameraSettings->DistanceBetweenTargetsMin) / (
+// 		CameraSettings->DistanceBetweenTargetsMax - CameraSettings->DistanceBetweenTargetsMin);
+// 	CurrentPercent = FMath::Clamp(CurrentPercent, 0.f, 1.f);
+// 	float ZoomDistance = FMath::Lerp(CameraZoomYMin, CameraZoomYMax, CurrentPercent);
+// 	FVector NewLocation(CameraMain->GetOwner()->GetActorLocation().X, ZoomDistance,
+// 	                    CameraMain->GetOwner()->GetActorLocation().Z);
+// 	NewLocation = FMath::VInterpTo(CameraMain->GetOwner()->GetActorLocation(), NewLocation, DeltaTime,
+// 	                               CameraSettings->SizeDampingFactor);
+// 	CameraMain->GetOwner()->SetActorLocation(NewLocation);
+// }
 
 
 void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax)
@@ -221,15 +221,15 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const 
 	return WorldPosition;
 }
 
-void UCameraWorldSubsystem::InitCameraZoomParameters()
-{
-	UCameraComponent* CameraDistanceMin = FindCameraByTag(CameraSettings->CameraDistanceMinTag);
-	UCameraComponent* CameraDistanceMax = FindCameraByTag(CameraSettings->CameraDistanceMaxTag);
-
-	if (CameraDistanceMin == nullptr && CameraDistanceMax == nullptr) return;
-	CameraZoomYMin = CameraDistanceMin->GetComponentLocation().Y;
-	CameraZoomYMax = CameraDistanceMax->GetComponentLocation().Y;
-}
+// void UCameraWorldSubsystem::InitCameraZoomParameters()
+// {
+// 	UCameraComponent* CameraDistanceMin = FindCameraByTag(CameraSettings->CameraDistanceMinTag);
+// 	UCameraComponent* CameraDistanceMax = FindCameraByTag(CameraSettings->CameraDistanceMaxTag);
+//
+// 	if (CameraDistanceMin == nullptr && CameraDistanceMax == nullptr) return;
+// 	CameraZoomYMin = CameraDistanceMin->GetComponentLocation().Y;
+// 	CameraZoomYMax = CameraDistanceMax->GetComponentLocation().Y;
+// }
 
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
@@ -245,6 +245,6 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 			InitCameraBounds(CameraBoundsActor);
 		}
 
-		InitCameraZoomParameters();
+		//InitCameraZoomParameters();
 	});
 }

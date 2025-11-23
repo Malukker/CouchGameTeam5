@@ -53,7 +53,7 @@ protected:
 
 	float CalculateGreatestDistanceBetweenTargets();
 
-	void TickUpdateCameraZoom(float DeltaTime);
+	//void TickUpdateCameraZoom(float DeltaTime);
 
 	UCameraComponent* FindCameraByTag(const FName& Tag) const;
 #pragma endregion MainCamera
@@ -90,7 +90,7 @@ private:
 	UPROPERTY()
 	float CameraZoomYMax = 0.f;
 	
-	UFUNCTION()
-	void InitCameraZoomParameters();
+	// UFUNCTION()
+	// void InitCameraZoomParameters();
 #pragma endregion Zoom
 };
