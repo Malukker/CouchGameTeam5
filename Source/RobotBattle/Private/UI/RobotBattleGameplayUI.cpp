@@ -149,3 +149,23 @@ void URobotBattleGameplayUI::SetRoundPlayer(int Team, int Win)
 		}
 	}
 }
+
+void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
+{
+	if (Team == 0)
+	{
+		if (Combo1)
+		{
+			FString ComboString = FString::Printf(TEXT("x%d"));
+			Combo1->SetText(FText::FromString(ComboString));
+		}
+	}
+	if (Team == 1)
+	{
+		if (Combo2)
+		{
+			FString ComboString = FString::Printf(TEXT("x%d"));
+			Combo2->SetText(FText::FromString(ComboString));
+		}
+	}
+}

@@ -74,6 +74,8 @@ private:
 	
 	float TeamChargeMax = 0;
 	float TeamCharge = 0;
+
+	int Combo = 0;
 	
 	FVector GetTeamLocation();
 
@@ -97,6 +99,8 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
+
+	
 
 	URobotCharacterInputData* LoadInputDataFromConfig();
 

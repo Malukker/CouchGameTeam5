@@ -186,6 +186,8 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
+		Combo++;
+		
 		if (TeamLife <= 0)
 		{
 			TeamLife = 0;
@@ -202,6 +204,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 			
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+		UIInterface->SetComboHit(Team, Combo);
 	}
 }
 
