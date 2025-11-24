@@ -4,8 +4,11 @@
 #include "Camera/CameraWorldSubsystem.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/CameraSettings.h"
+#include "Camera/RobotBoundsActor.h"
 #include "Characters/Interface/Robot.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/BoxComponent.h"
+
 
 
 void UCameraWorldSubsystem::PostInitialize()
@@ -18,6 +21,7 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//if (CameraMain == nullptr) return;
 	TickUpdateCameraPosition(DeltaTime);
+	SetRobotBounds();
 	//TickUpdateCameraZoom(DeltaTime);
 }
 
@@ -82,12 +86,20 @@ UCameraComponent* UCameraWorldSubsystem::FindCameraByTag(const FName& Tag) const
 	return CameraComp;
 }
 
-AActor* UCameraWorldSubsystem::FindCameraBoundsActor()
+AActor* UCameraWorldSubsystem::FindBoundsActor(FName Tag)
 {
 	TArray<AActor*> CamerasBounds;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), CameraSettings->CameraBoundsTag, CamerasBounds);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), Tag, CamerasBounds);
 	if (CamerasBounds.Num() == 0) { return nullptr; }
 	return CamerasBounds[0];
+}
+
+ARobotBoundsActor* UCameraWorldSubsystem::FindRobotBoundsActor()
+{
+	TArray<AActor*> CamerasBounds;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), CameraSettings->RobotBoundsActorTag, CamerasBounds);
+	ARobotBoundsActor* RobotBoundsActor = Cast<ARobotBoundsActor>(CamerasBounds[0]);
+	return RobotBoundsActor;
 }
 
 void UCameraWorldSubsystem::InitCameraBounds(AActor* CameraBoundsActor)
@@ -98,6 +110,16 @@ void UCameraWorldSubsystem::InitCameraBounds(AActor* CameraBoundsActor)
 	CameraBoundsMin = FVector2D(BoundsCenter.X - BoundsExtents.X, BoundsCenter.Z - BoundsExtents.Z);
 	CameraBoundsMax = FVector2D(BoundsCenter.X + BoundsExtents.X, BoundsCenter.Z + BoundsExtents.Z);
 	CameraBoundsYProjectionCenter = BoundsCenter.Y;
+}
+
+void UCameraWorldSubsystem::InitRobotBounds(AActor* RobotBoundsActor)
+{
+	FVector BoundsCenter;
+	FVector BoundsExtents;
+	RobotBoundsActor->GetActorBounds(false, BoundsCenter, BoundsExtents);
+	RobotBoundsMin = FVector2D(BoundsCenter.X - BoundsExtents.X, BoundsCenter.Z - BoundsExtents.Z);
+	RobotBoundsMax = FVector2D(BoundsCenter.X + BoundsExtents.X, BoundsCenter.Z + BoundsExtents.Z);
+	
 }
 
 void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
@@ -139,6 +161,32 @@ void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
 	);
 
 	Position = ClampVector(Position, PositionToClampMin, PositionToClampMax);
+}
+
+void UCameraWorldSubsystem::SetRobotBounds()
+{
+	FVector2D ViewportBoundsMin, ViewportBoundsMax;
+
+	GetViewportBounds(ViewportBoundsMin, ViewportBoundsMax);
+
+	
+	FVector WorldBoundsMin = CalculateWorldPositionFromViewportPosition(ViewportBoundsMin);
+	FVector WorldBoundsMax = CalculateWorldPositionFromViewportPosition(ViewportBoundsMax);
+
+	ARobotBoundsActor* RobotBoundsActor = FindRobotBoundsActor();
+	if (!RobotBoundsActor) return;
+	UBoxComponent* BoxLeft=RobotBoundsActor->Box_Left;
+	UBoxComponent* BoxRight=RobotBoundsActor->Box_Right;
+
+	float WorldY =  RobotBoundsActor->GetActorLocation().Y;
+	float WorldZ =  RobotBoundsActor->GetActorLocation().Z;
+	
+	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X,WorldY,WorldZ));
+	BoxLeft->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
+
+	
+	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X,WorldY,WorldZ));
+	BoxRight->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
 }
 
 float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
@@ -193,6 +241,7 @@ void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, F
 	//Calculate Viewport Rect according to Camera Aspect Ratio and Viewport ViewRect
 	FIntRect ViewRect(Viewport->GetInitialPositionXY(), Viewport->GetInitialPositionXY() + Viewport->GetSizeXY());
 	FIntRect ViewportRect = Viewport->CalculateViewExtents(CameraMain->AspectRatio, ViewRect);
+	
 
 	//Fill Output parameters with ViewportRect
 	OutViewportBoundsMin.X = ViewportRect.Min.X;
@@ -200,6 +249,8 @@ void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, F
 
 	OutViewportBoundsMax.X = ViewportRect.Max.X;
 	OutViewportBoundsMax.Y = ViewportRect.Max.Y;
+
+	
 }
 
 FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const FVector2D& ViewportPosition)
@@ -208,15 +259,27 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const 
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PlayerController == nullptr) return FVector::Zero();
-
-	float YDistanceToCenter = CameraMain->GetOwner()->GetActorLocation().Y - CameraBoundsYProjectionCenter;
+	
+	//float  YDistanceToCenter = CameraMain->GetOwner()->GetActorLocation().Y - CameraBoundsYProjectionCenter;
 
 	FVector CameraWorldProjectDir;
 	FVector WorldPosition;
 
 	UGameplayStatics::DeprojectScreenToWorld(PlayerController, ViewportPosition, WorldPosition, CameraWorldProjectDir);
 
-	WorldPosition += CameraWorldProjectDir * YDistanceToCenter;
+	FVector PointOnPlane = WorldPosition;
+	PointOnPlane.Y = CameraBoundsYProjectionCenter;
+	
+	FVector PlaneNormal = FVector::YAxisVector;
+
+	float Denominator = FVector::DotProduct(CameraWorldProjectDir, PlaneNormal);
+	
+	float Numerator = FVector::DotProduct((PointOnPlane - WorldPosition), PlaneNormal);
+	float t = Numerator / Denominator;
+	
+	 WorldPosition+=CameraWorldProjectDir*t;
+	
+	//WorldPosition += CameraWorldProjectDir * YDistanceToCenter;
 
 	return WorldPosition;
 }
@@ -239,10 +302,15 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		CameraSettings = GetDefault<UCameraSettings>();
 		CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
 		if (CameraMain == nullptr) { return; }
-		AActor* CameraBoundsActor = FindCameraBoundsActor();
-		if (CameraBoundsActor != nullptr)
+		AActor* CameraBoundsActor = FindBoundsActor(CameraSettings->CameraBoundsTag);
+		if (CameraBoundsActor)
 		{
 			InitCameraBounds(CameraBoundsActor);
+		}
+		AActor* RobotBoundsActor = FindBoundsActor(CameraSettings->RobotBoundsTag);
+		if (RobotBoundsActor)
+		{
+			InitRobotBounds(RobotBoundsActor);
 		}
 
 		//InitCameraZoomParameters();
