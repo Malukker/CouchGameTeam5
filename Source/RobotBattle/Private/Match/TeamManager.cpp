@@ -145,6 +145,8 @@ void ATeamManager::ResetCharacters()
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
+	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
+	RobotParts[ERobotCharacterPositionEnum::Down]->ResetStateMachine();
 }
 
 void ATeamManager::InversePlayer()
