@@ -14,8 +14,6 @@ class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 	GENERATED_BODY()
 
 public:
-
-	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
 	
 	virtual ERobotCharacterStateID GetStateID() override;
 	
@@ -66,4 +64,6 @@ private:
 
 	UFUNCTION()
 	void OnStunEvent();
+
+	
 };

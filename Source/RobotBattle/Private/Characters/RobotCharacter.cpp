@@ -8,6 +8,8 @@
 #include "Camera/CameraWorldSubsystem.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/RobotCharacterStateID.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -17,6 +19,8 @@ ARobotCharacter::ARobotCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("BoxComponent"));
+	BoxComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -54,6 +58,11 @@ void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	BindInputAndActions(EnhancedInputComponent);
 }
 
+UBoxComponent* ARobotCharacter::GetCollision() const
+{
+	return BoxComponent;
+}
+
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;
@@ -85,6 +94,11 @@ void ARobotCharacter::TickStateMachine(float DeltaTime) const {
 	StateMachine->Tick(DeltaTime);
 }
 
+void ARobotCharacter::ResetStateMachine()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+}
+
 void ARobotCharacter::SetupMappingContextIntoController(bool bMenu) const {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
@@ -111,6 +125,7 @@ float ARobotCharacter::GetInputMoveX() const {
 
 bool ARobotCharacter::IsWalkingForward() const
 {
+	if (FMath::Abs(GetInputMoveX()) <= .3f) return true;
 	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
 }
 
@@ -140,6 +155,27 @@ void ARobotCharacter::ResetDash()
 	CanDash = true;
 }
 
+bool ARobotCharacter::DoHaveEnergy()
+{
+	return HaveEnergy;
+}
+
+bool ARobotCharacter::DoWantSwitch()
+{
+	return WantSwitch;
+}
+
+void ARobotCharacter::SwitchEnergy()
+{
+	WantSwitch = false;
+	HaveEnergy = !HaveEnergy;
+}
+
+void ARobotCharacter::SetEnergy(bool Value)
+{
+	HaveEnergy = Value;
+}
+
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
 {
 	RobotID = Robot;
@@ -158,6 +194,8 @@ int ARobotCharacter::GetDashDirectionX() const
 
 void ARobotCharacter::OnInputMoveX(const FInputActionValue& InputActionValue)
 {
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	InputMoveX = InputActionValue.Get<float>();
 }
 
 void ARobotCharacter::OnInputRightDash(const FInputActionValue& InputActionValue)
@@ -170,6 +208,20 @@ void ARobotCharacter::OnInputLeftDash(const FInputActionValue& InputActionValue)
 
 void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
+}
+
+void ARobotCharacter::OnInputEnergy(const FInputActionValue& InputActionValue)
+{
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	ERobotCharacterStateID State = StateMachine->GetCurrentStateID();
+	if (State == ERobotCharacterStateID::Attack
+		|| State == ERobotCharacterStateID::LoadingAttack
+		|| State == ERobotCharacterStateID::Dash)
+	{
+		WantSwitch = true;
+		return;
+	}
+	EnergyManagerEvent.Broadcast();
 }
 
 void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
@@ -230,6 +282,11 @@ void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInput
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
 	}
 	
+	if (InputDataGameplay->InputActionEnergy)
+	{
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionEnergy, ETriggerEvent::Started, this, &ARobotCharacter::OnInputEnergy);
+	}
+	
 	if (InputDataGameplay->InputActionPause)
 	{
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
@@ -253,9 +310,14 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
-void ARobotCharacter::ManageChargeEvent(bool CanAttack)
+void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
+}
+
+bool ARobotCharacter::StartAttackDuo()
+{
+	return false;
 }
 
 void ARobotCharacter::AddDamageBonus()
@@ -273,8 +335,8 @@ void ARobotCharacter::ResetDamageBonus()
 	DamageBonus = 0;
 }
 
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime);
+	HurtManagerEvent.Broadcast(Damage, StunTime, KnockBackVelocity);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }

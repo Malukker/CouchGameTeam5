@@ -46,15 +46,18 @@ void AMatchManager::ResetFight()
 
 void AMatchManager::EndFightOnTimeOut()
 {
-	int LosingTeam = -1;
-	for (ATeamManager* Team : Teams)
+	if (Teams[0]->GetLife() > Teams[1]->GetLife())
 	{
-		if (!Team->IsAlive())
-		{
-			LosingTeam = Team->Team;
-		}
+		EndFightOnRobotDefeat(1);
 	}
-	EndFightOnRobotDefeat(LosingTeam);
+	else if (Teams[1]->GetLife() > Teams[0]->GetLife())
+	{
+		EndFightOnRobotDefeat(0);
+	}
+	else
+	{
+		ResetFight();
+	}
 }
 
 void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
@@ -78,6 +81,13 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 			UIGameOver->AddToViewport();
 			UGameplayStatics::SetGamePaused(GetWorld(), true);
 			return;
+		}
+	}
+	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->InversePlayer();
 		}
 	}
 	ResetFight();
