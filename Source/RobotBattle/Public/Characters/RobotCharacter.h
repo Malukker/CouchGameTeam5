@@ -76,6 +76,8 @@ public:
 
 	void TickStateMachine(float DeltaTime) const;
 
+	void ResetStateMachine();
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<URobotCharacterStateMachine> StateMachine;

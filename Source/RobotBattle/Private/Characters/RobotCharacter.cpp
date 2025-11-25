@@ -94,6 +94,11 @@ void ARobotCharacter::TickStateMachine(float DeltaTime) const {
 	StateMachine->Tick(DeltaTime);
 }
 
+void ARobotCharacter::ResetStateMachine()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+}
+
 void ARobotCharacter::SetupMappingContextIntoController(bool bMenu) const {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
@@ -120,6 +125,7 @@ float ARobotCharacter::GetInputMoveX() const {
 
 bool ARobotCharacter::IsWalkingForward() const
 {
+	if (FMath::Abs(GetInputMoveX()) <= .3f) return true;
 	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
 }
 
@@ -127,7 +133,6 @@ EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
 }
-
 
 float ARobotCharacter::GetStunTimer() const
 {
