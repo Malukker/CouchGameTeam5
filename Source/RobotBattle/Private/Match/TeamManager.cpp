@@ -149,6 +149,7 @@ void ATeamManager::ResetCharacters()
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	UIInterface->SetComboHit(Team, Combo);
+	RobotParts[ERobotCharacterPositionEnum::Up]->CustomTimeDilation = 1.f;
 	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
