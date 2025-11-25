@@ -97,6 +97,9 @@ private:
 
 	UPROPERTY()
 	float OriginalGravityScale = -1;
+
+	UPROPERTY()
+	int Combo = 0;
 	
 	FVector GetTeamLocation();
 

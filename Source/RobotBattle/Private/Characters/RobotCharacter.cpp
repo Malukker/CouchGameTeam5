@@ -10,6 +10,7 @@
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
 #include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -168,11 +169,13 @@ void ARobotCharacter::SwitchEnergy()
 {
 	WantSwitch = false;
 	HaveEnergy = !HaveEnergy;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetEnergy(bool Value)
 {
 	HaveEnergy = Value;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
