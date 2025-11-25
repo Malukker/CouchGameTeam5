@@ -21,7 +21,11 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//if (CameraMain == nullptr) return;
 	TickUpdateCameraPosition(DeltaTime);
-	SetRobotBounds();
+	if (RobotBounds)
+	{
+		SetRobotBounds();
+	}
+	
 	//TickUpdateCameraZoom(DeltaTime);
 }
 
@@ -166,6 +170,8 @@ void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
 void UCameraWorldSubsystem::SetRobotBounds()
 {
 	FVector2D ViewportBoundsMin, ViewportBoundsMax;
+	UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
+	if (ViewportClient == nullptr) return;
 
 	GetViewportBounds(ViewportBoundsMin, ViewportBoundsMax);
 
@@ -307,10 +313,10 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		{
 			InitCameraBounds(CameraBoundsActor);
 		}
-		AActor* RobotBoundsActor = FindBoundsActor(CameraSettings->RobotBoundsTag);
-		if (RobotBoundsActor)
+		 RobotBounds = FindBoundsActor(CameraSettings->RobotBoundsTag);
+		if (RobotBounds)
 		{
-			InitRobotBounds(RobotBoundsActor);
+			InitRobotBounds(RobotBounds);
 		}
 
 		//InitCameraZoomParameters();
