@@ -8,6 +8,8 @@
 #include "RobotCharacterStateAttack.generated.h"
 
 
+class IRobot;
+
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 {
@@ -69,7 +71,13 @@ private:
 	
 	UFUNCTION()
 	void EndDetectionNotifyAttack(AActor* ConcernedActor);
+
+	UFUNCTION()
+	void KnockBackNotify(AActor* ConcernedActor);
+
 	
+	UPROPERTY()
+	TScriptInterface<IRobot> TouchedCharacterInterface;
 	
 #pragma endregion
 
