@@ -106,9 +106,10 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTimer,CurrentAttackStruct.KnockBackVector);
 						bIsAttackTraceEnabled = false;
 						HasTouch = true;
+						Character->HitStopEvent.Broadcast(CurrentAttackStruct.Damage + Character->GetDamageBonus());
 						Character->AttackManagerEvent.Broadcast(true);
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(true);
@@ -165,6 +166,7 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = false;
 	AttackIndex += 2;
+	Character->CustomTimeDilation = 1.f;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
 }
 
