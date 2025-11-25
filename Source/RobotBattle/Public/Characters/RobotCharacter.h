@@ -273,7 +273,7 @@ protected:
 
 #pragma region HitStop
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHitStop);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitStop,int,Damage);
 	FHitStop HitStopEvent;
 
 #pragma endregion 	
