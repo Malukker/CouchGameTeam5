@@ -270,5 +270,12 @@ protected:
 	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
 #pragma endregion
+
+#pragma region HitStop
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHitStop);
+	FHitStop HitStopEvent;
+
+#pragma endregion 	
 	
 };

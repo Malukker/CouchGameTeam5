@@ -4,6 +4,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "MathUtil.h"
+#include "Arena/ArenaSettings.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
@@ -78,6 +79,8 @@ void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue
 	InputAttackEvent.Broadcast();
 }
 
+
+
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
@@ -118,4 +121,15 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 	{
 		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
+}
+
+void ARobotCharacterUp::OnHitStop()
+{
+	const UArenaSettings* Settings = GetDefault<UArenaSettings>();
+	CustomTimeDilation = Settings->HitStopScale;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+		{
+			CustomTimeDilation = 1.f;
+		}, Settings->HitStopTimerModifier, false);
 }
