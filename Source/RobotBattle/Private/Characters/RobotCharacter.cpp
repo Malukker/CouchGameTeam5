@@ -134,7 +134,6 @@ EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 	return CurrentTypeAttack;
 }
 
-
 float ARobotCharacter::GetStunTimer() const
 {
 	return StunTimer;
