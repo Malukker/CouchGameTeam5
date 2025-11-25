@@ -41,6 +41,9 @@ public:
 	TObjectPtr<UInputAction> InputActionAttackDuo;
 
 	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputActionEnergy;
+
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionPause;
 
 

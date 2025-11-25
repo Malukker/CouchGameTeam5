@@ -15,6 +15,8 @@ public:
 	// Sets default values for this character's properties
 	ARobotCharacterUp();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 	
@@ -24,6 +26,6 @@ protected:
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
-	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
+	virtual  bool StartAttackDuo() override;
 };

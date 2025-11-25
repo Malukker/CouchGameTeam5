@@ -3,10 +3,9 @@
 
 #include "Characters/States/RobotCharacterStateAttack.h"
 
-#include "Camera/CameraComponent.h"
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
-#include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/CollisionChannel.h"
 #include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
@@ -15,13 +14,6 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Camera/CameraShakeWorld.h"
-
-void URobotCharacterStateAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
-{
-	Super::StateInit(InStateMachine);
-	ActorsToIgnore.Add(Character);
-}
 
 ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 {
@@ -44,12 +36,6 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	CurrentAnimDeltaTime = 0.0f;
 	CurrentAnimTime = 0.0f;
 	AttackIndex = 0;
-
-	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
-	{
-		Character->ResetDamageBonus();
-		Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 }
 
@@ -70,13 +56,16 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
 	}
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, false);
+	Character->LockManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();
-		Character->AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	}
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	if (Character->DoWantSwitch())
+	{
+		Character->EnergyManagerEvent.Broadcast();
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -95,8 +84,8 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
 			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
-			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
-			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4);
+			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
 			if (UKismetSystemLibrary::SphereTraceSingle
 				(
 					GetWorld(),
@@ -110,27 +99,23 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
 						bIsAttackTraceEnabled = false;
-
-						//Start a camera shake
-						{
-							
-							APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-							float ScaleShake = 1.f;
-							float DurationShake = 0.f;
-							UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
-							UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
-							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
-							//Delay for the shake
-							FTimerHandle TimerHandle;
-							GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
-							{
-								Camera->StopCameraShake(ShakeInstance, false);
-							}, DurationShake, false);
-						}
 						Character->GuardResetManagerEvent.Broadcast();
-						Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down, true);
+						Character->LockManagerEvent.Broadcast(true);
+
+						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+						float ScaleShake = 1.f;
+						float DurationShake = 0.f;
+						UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
+						UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
+						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
+						//Delay for the shake
+						FTimerHandle TimerHandle;
+						GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
+						{
+							Camera->StopCameraShake(ShakeInstance, false);
+						}, DurationShake, false);
 					}
 				}
 			}
