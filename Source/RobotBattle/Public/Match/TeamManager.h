@@ -53,7 +53,7 @@ public:
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
-	bool IsAlive();
+	float GetLife();
 	
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
@@ -96,12 +96,22 @@ private:
 	float TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = 0;
+	float OriginalGravityScale = -1;
+
+	UPROPERTY()
+	int Combo = 0;
+	UPROPERTY()
+	float ComboTimer = 0.f;
+	UPROPERTY()
+	float ComboResetTime = 5.f;
 	
 	FVector GetTeamLocation();
 
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime, FVector KnockBackVelocity);
+	void TeamDoAttack(bool HasTouch);
+	
+	UFUNCTION()
+	void TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
 	UFUNCTION()
 	void TeamAirBlock(bool Lock);
@@ -123,7 +133,7 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
-
+	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

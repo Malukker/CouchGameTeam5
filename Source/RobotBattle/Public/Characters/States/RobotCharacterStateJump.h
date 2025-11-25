@@ -35,6 +35,7 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 private:
+	UPROPERTY()
 	bool WalkForward;
 	
 	UFUNCTION()

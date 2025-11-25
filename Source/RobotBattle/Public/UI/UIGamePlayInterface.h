@@ -27,5 +27,6 @@ public:
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) = 0;
 
 	virtual void SetRoundPlayer(int Team, int Win) = 0;
-	
+
+	virtual void SetComboHit(int Team, int Combo) = 0;
 };

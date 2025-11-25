@@ -9,6 +9,8 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
+#include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -18,6 +20,8 @@ ARobotCharacter::ARobotCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("BoxComponent"));
+	BoxComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +59,11 @@ void ARobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	BindInputAndActions(EnhancedInputComponent);
 }
 
+UBoxComponent* ARobotCharacter::GetCollision() const
+{
+	return BoxComponent;
+}
+
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;
@@ -86,6 +95,11 @@ void ARobotCharacter::TickStateMachine(float DeltaTime) const {
 	StateMachine->Tick(DeltaTime);
 }
 
+void ARobotCharacter::ResetStateMachine()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+}
+
 void ARobotCharacter::SetupMappingContextIntoController(bool bMenu) const {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
@@ -112,6 +126,7 @@ float ARobotCharacter::GetInputMoveX() const {
 
 bool ARobotCharacter::IsWalkingForward() const
 {
+	if (FMath::Abs(GetInputMoveX()) <= .3f) return true;
 	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
 }
 
@@ -119,7 +134,6 @@ EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
 }
-
 
 float ARobotCharacter::GetStunTimer() const
 {
@@ -155,11 +169,13 @@ void ARobotCharacter::SwitchEnergy()
 {
 	WantSwitch = false;
 	HaveEnergy = !HaveEnergy;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetEnergy(bool Value)
 {
 	HaveEnergy = Value;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
@@ -321,8 +337,8 @@ void ARobotCharacter::ResetDamageBonus()
 	DamageBonus = 0;
 }
 
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime,FVector KnockBackVelocity)
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime,KnockBackVelocity);
+	HurtManagerEvent.Broadcast(Damage, StunTime, KnockBackVelocity);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }

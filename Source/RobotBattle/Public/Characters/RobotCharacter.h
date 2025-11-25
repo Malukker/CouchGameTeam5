@@ -9,6 +9,7 @@
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
+class UBoxComponent;
 class AHUDGameplay;
 enum class ERobotCharacterUpID : uint8;
 enum class ERobotCharacterPositionEnum : uint8;
@@ -39,13 +40,15 @@ protected:
 
 	UPROPERTY()
 	AHUDGameplay* HUDGameplay;
-
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UBoxComponent* GetCollision() const;
 
 #pragma endregion Unreal Default
 
@@ -72,6 +75,8 @@ public:
 	void InitStateMachine();
 
 	void TickStateMachine(float DeltaTime) const;
+
+	void ResetStateMachine();
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -122,7 +127,7 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime,FVector KnockBackVelocity);
+	virtual void TakeDamageFromAttack(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
@@ -176,7 +181,10 @@ public:
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
 	
-
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxComponent;
+	
+	UPROPERTY()
 	int Team;
 
 	UPROPERTY(EditAnywhere)
@@ -197,17 +205,20 @@ public:
 
 #pragma region Damage/Stun
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector,KnockBackVelocity);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
-	
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
+
 	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
@@ -226,6 +237,9 @@ public:
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
+
+	UPROPERTY()
+	FAttackManagerEvent AttackManagerEvent;
 	
 #pragma endregion
 

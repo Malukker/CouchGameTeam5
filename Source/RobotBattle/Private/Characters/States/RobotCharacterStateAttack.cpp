@@ -5,7 +5,7 @@
 
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
-#include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/CollisionChannel.h"
 #include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
 #include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
@@ -14,12 +14,6 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-
-void URobotCharacterStateAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
-{
-	Super::StateInit(InStateMachine);
-	ActorsToIgnore.Add(Character);
-}
 
 ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 {
@@ -30,6 +24,8 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 {
 	Super::StateEnter(PreviousState);
 
+	HasTouch = false;
+	
 	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
 	
 	FAttackFromID ListAttacks = AttacksData->ListAttacks[Character->GetRobotBodyID()];
@@ -72,6 +68,11 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	{
 		Character->EnergyManagerEvent.Broadcast();
 	}
+
+	if (HasTouch == false)
+	{
+		Character->AttackManagerEvent.Broadcast(false);
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -90,8 +91,8 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
 			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
-			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
-			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel4);
+			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
 			if (UKismetSystemLibrary::SphereTraceSingle
 				(
 					GetWorld(),
@@ -105,27 +106,25 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVelocity);
+						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
 						bIsAttackTraceEnabled = false;
-
-						//Start a camera shake
-						{
-							
-							APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-							float ScaleShake = 1.f;
-							float DurationShake = 0.f;
-							UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
-							UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
-							ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
-							//Delay for the shake
-							FTimerHandle TimerHandle;
-							GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
-							{
-								Camera->StopCameraShake(ShakeInstance, false);
-							}, DurationShake, false);
-						}
+						HasTouch = true;
+						Character->AttackManagerEvent.Broadcast(true);
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(true);
+
+						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+						float ScaleShake = 1.f;
+						float DurationShake = 0.f;
+						UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
+						UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
+						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
+						//Delay for the shake
+						FTimerHandle TimerHandle;
+						GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
+						{
+							Camera->StopCameraShake(ShakeInstance, false);
+						}, DurationShake, false);
 					}
 				}
 			}

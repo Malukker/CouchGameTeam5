@@ -15,6 +15,8 @@ public:
 	// Sets default values for this character's properties
 	ARobotCharacterUp();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 	

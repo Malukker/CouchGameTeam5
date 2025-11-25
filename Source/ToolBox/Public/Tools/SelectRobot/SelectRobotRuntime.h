@@ -8,6 +8,7 @@
 #include "Match/RobotGameInstance.h"
 #include "SelectRobotRuntime.generated.h"
 
+
 /**
  * 
  */
@@ -37,13 +38,11 @@ public :
 	void ChangeRobotController(int PlayerIndex, int PlayerController);
 
 	UFUNCTION()
-	void UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState, FInputDeviceId InputDeviceId);
+	void UpdateControllerComboBox(EInputDeviceConnectionState NewConnectionState,FPlatformUserId PlateformUserID,FInputDeviceId InputDeviceId);
 
-	UFUNCTION()
-	void UpdateControllerComboBoxV2(bool IsConnected, FPlatformUserId PlatformUserId, int32 Device);
+	
 
-	UFUNCTION()
-	void GetAllConnectedControllers();
+
 
 private :
 	UPROPERTY()
