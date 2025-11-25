@@ -77,6 +77,9 @@ private:
 	float CameraBoundsYProjectionCenter;
 
 	AActor* FindBoundsActor(FName Tag);
+	
+	UPROPERTY()
+	AActor* RobotBounds;
 
 	ARobotBoundsActor* FindRobotBoundsActor();
 
