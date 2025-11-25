@@ -154,18 +154,26 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 {
 	if (Team == 0)
 	{
-		if (Combo1)
+		if (Combo > 0)
 		{
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo1->SetText(FText::FromString(ComboString));
+			Combo1->SetVisibility(ESlateVisibility::Visible);
+		}else
+		{
+			Combo1->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 	if (Team == 1)
 	{
-		if (Combo2)
+		if (Combo > 0)
 		{
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo2->SetText(FText::FromString(ComboString));
+			Combo2->SetVisibility(ESlateVisibility::Visible);
+		}else
+		{
+			Combo2->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }
