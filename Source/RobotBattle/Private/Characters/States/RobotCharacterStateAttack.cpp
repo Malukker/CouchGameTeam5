@@ -166,6 +166,7 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = false;
 	AttackIndex += 2;
+	Character->CustomTimeDilation = 1.f;
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
 }
 
