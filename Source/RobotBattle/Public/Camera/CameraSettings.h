@@ -27,7 +27,7 @@ public:
 
 	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	//FName CameraDistanceMaxTag;
-
+	
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraBoundsTag;
 
@@ -45,6 +45,13 @@ public:
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float PositionDampingFactor;
+
+
+	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
+	FName RobotBoundsTag;
+
+	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
+	FName RobotBoundsActorTag;
 #pragma endregion Camera Settings
 
 	
