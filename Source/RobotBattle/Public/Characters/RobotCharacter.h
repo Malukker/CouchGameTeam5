@@ -206,16 +206,19 @@ public:
 #pragma region Damage/Stun
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
-	
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
+
 	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
@@ -234,6 +237,9 @@ public:
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
+
+	UPROPERTY()
+	FAttackManagerEvent AttackManagerEvent;
 	
 #pragma endregion
 
@@ -264,5 +270,12 @@ protected:
 	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
 #pragma endregion
+
+#pragma region HitStop
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitStop,int,Damage);
+	FHitStop HitStopEvent;
+
+#pragma endregion 	
 	
 };

@@ -19,7 +19,7 @@ public:
 
 protected:
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
-	
+	virtual void BeginPlay() override;
 	void OnInputAttack1(const FInputActionValue& InputActionValue);
 	void OnInputAttack2(const FInputActionValue& InputActionValue);
 	void OnInputAttack3(const FInputActionValue& InputActionValue);
@@ -28,4 +28,8 @@ protected:
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
 	virtual  bool StartAttackDuo() override;
+	
+	UFUNCTION()
+	void OnHitStop(int Damage);
+	
 };

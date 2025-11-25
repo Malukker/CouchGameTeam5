@@ -154,7 +154,7 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 {
 	if (Team == 0)
 	{
-		if (Combo > 0)
+		if (Combo > 1)
 		{
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo1->SetText(FText::FromString(ComboString));
@@ -166,7 +166,7 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 	}
 	if (Team == 1)
 	{
-		if (Combo > 0)
+		if (Combo > 1)
 		{
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo2->SetText(FText::FromString(ComboString));

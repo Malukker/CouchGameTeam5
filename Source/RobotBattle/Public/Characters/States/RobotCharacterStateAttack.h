@@ -28,13 +28,20 @@ public:
 private:
 	UPROPERTY()
 	FAttackStruct CurrentAttackStruct;
-	
+
+	UPROPERTY()
 	bool bIsAttackTraceEnabled;
 
+	UPROPERTY()
+	bool HasTouch = false;
+	
+	UPROPERTY()
 	int AttackIndex;
-	
+
+	UPROPERTY()
 	FVector StartPos;
-	
+
+	UPROPERTY()
 	FVector EndPos;
 
 	UPROPERTY()
@@ -42,17 +49,21 @@ private:
 
 	UPROPERTY()
 	UAnimMontage* AttackAnim;
-	
+
+	UPROPERTY()
 	float KeyframeDeltaTime;
-	
+
+	UPROPERTY()
 	float AnimDuration;
 
+	UPROPERTY()
 	float CurrentAnimDeltaTime;
-	
+
+	UPROPERTY()
 	float CurrentAnimTime;
-
+	
 	void InitAnimationNotify();
-
+	
 	UFUNCTION()
 	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
