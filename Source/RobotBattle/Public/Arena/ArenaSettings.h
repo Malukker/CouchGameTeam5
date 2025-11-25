@@ -28,8 +28,8 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category="SlowMotion",meta=(ClampMin="0.1", ClampMax="1.0", UIMin="0.1", UIMax="1.0"))
 	float SlowMotionScale = 0.5f;
 
-	UPROPERTY(Config, EditAnywhere, Category="HitStop",meta=(ClampMin="0.1", UIMin="0.1"))
-	float HitStopTimerModifier = 1.f;
+	UPROPERTY(Config, EditAnywhere, Category="HitStop",meta=(ClampMin="0.001", ClampMax="0.1", UIMin="0.001", UIMax="0.1"))
+	float HitStopTimerModifier = .01f;
 
 	UPROPERTY(Config, EditAnywhere, Category="HitStop",meta=(ClampMin="0.1", ClampMax="1.0", UIMin="0.1", UIMax="1.0"))
 	float HitStopScale = 0.8f;

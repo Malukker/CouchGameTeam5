@@ -75,7 +75,6 @@ private:
 	UFUNCTION()
 	void KnockBackNotify(AActor* ConcernedActor);
 
-	
 	UPROPERTY()
 	TScriptInterface<IRobot> TouchedCharacterInterface;
 	

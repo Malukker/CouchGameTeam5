@@ -324,7 +324,7 @@ bool ARobotCharacter::StartAttackDuo()
 
 void ARobotCharacter::AddDamageBonus()
 {
-	DamageBonus += 4;
+	DamageBonus ++;
 }
 
 int ARobotCharacter::GetDamageBonus()

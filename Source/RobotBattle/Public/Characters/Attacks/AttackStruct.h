@@ -39,6 +39,9 @@ struct FAttackStruct
 
 	UPROPERTY(EditAnywhere)
 	int Damage = 0;
+
+	UPROPERTY(EditAnywhere)
+	int DamageBonusMultiplier = 0;
 	
 	UPROPERTY(EditAnywhere)
 	float StunTimer = 0;

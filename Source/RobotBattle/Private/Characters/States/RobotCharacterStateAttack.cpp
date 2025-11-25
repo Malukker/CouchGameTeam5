@@ -58,6 +58,11 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 		{
 			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
 		}
+
+		if (UKnockBackAnimNotify* KnockBackAnimNotify = Cast<UKnockBackAnimNotify>(NotifyEvent.Notify))
+		{
+			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
+		}
 	}
 	Character->LockManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
@@ -107,8 +112,8 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 				{
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
-						TouchedCharacterInterface= TScriptInterface<IRobot>(OutHit.GetActor());
-						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTimer);
+						TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
+						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.DamageBonusMultiplier), CurrentAttackStruct.StunTimer);
 						bIsAttackTraceEnabled = false;
 						HasTouch = true;
 						Character->HitStopEvent.Broadcast(CurrentAttackStruct.Damage + Character->GetDamageBonus());
@@ -119,7 +124,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 						float ScaleShake = 1.f;
 						float DurationShake = 0.f;
-						UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
+						UCameraShakeBase* TempShake = Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
 						UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
 						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
 						//Delay for the shake
@@ -172,7 +177,7 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor
 {
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = false;
-	if (AttackIndex+2 <= CurrentAttackStruct.ConcernedBones.Num())
+	if (AttackIndex + 2 < CurrentAttackStruct.ConcernedBones.Num())
 	{
 		AttackIndex += 2;
 	}
@@ -184,7 +189,7 @@ void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor
 void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor)
 {
 	if (ConcernedActor != GetOwner()) return;
-	if (!HasTouch) return;
+	if (!HasTouch && TouchedCharacterInterface == nullptr) return;
 	TouchedCharacterInterface->KnockBackFromNotify(CurrentAttackStruct.KnockBackVector);
 
 	TouchedCharacterInterface = nullptr;
