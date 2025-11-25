@@ -112,6 +112,7 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
 		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
+		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
@@ -208,8 +209,7 @@ void ATeamManager::TeamDoAttack(bool HasTouch)
 	UIInterface->SetComboHit(Team, Combo);
 }
 
-
-void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity)
+void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 {
 	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
 	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
@@ -219,13 +219,21 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBac
 	}
 	if (CanGuard && TeamGuard > 0)
 	{
-		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
 		MovementComponent->Launch(LaunchVelocity/2);
+	}
+	else if (CanTakeDamage) MovementComponent->Launch(LaunchVelocity);
+}
+
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+{
+	
+	if (CanGuard && TeamGuard > 0)
+	{
+		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
 		TeamGuard--;
 	}
 	else if (CanTakeDamage)
 	{
-		MovementComponent->Launch(LaunchVelocity);
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
@@ -374,6 +382,7 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	default: ;
 	}
 }
+
 
 URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {
 	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();

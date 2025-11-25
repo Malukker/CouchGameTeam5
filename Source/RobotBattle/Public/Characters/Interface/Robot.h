@@ -21,8 +21,9 @@ class ROBOTBATTLE_API IRobot
 	GENERATED_BODY()
 
 public:
-	virtual void TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity) = 0;
-	
+	virtual void TakeDamageFromAttack(int Damage, float StunTime) = 0;
+
+	virtual void KnockBackFromNotify(FVector2D Velocity) = 0;
 	virtual FVector GetRobotLocation() = 0;
  
 };
