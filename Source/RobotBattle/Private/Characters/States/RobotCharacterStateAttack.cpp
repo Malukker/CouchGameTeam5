@@ -24,6 +24,8 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 {
 	Super::StateEnter(PreviousState);
 
+	HasTouch = false;
+	
 	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
 	
 	FAttackFromID ListAttacks = AttacksData->ListAttacks[Character->GetRobotBodyID()];
@@ -66,6 +68,11 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	{
 		Character->EnergyManagerEvent.Broadcast();
 	}
+
+	if (HasTouch == false)
+	{
+		Character->AttackManagerEvent.Broadcast(false);
+	}
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -101,6 +108,8 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					{
 						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
 						bIsAttackTraceEnabled = false;
+						HasTouch = true;
+						Character->AttackManagerEvent.Broadcast(true);
 						Character->GuardResetManagerEvent.Broadcast();
 						Character->LockManagerEvent.Broadcast(true);
 

@@ -111,6 +111,7 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
 		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
+		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
