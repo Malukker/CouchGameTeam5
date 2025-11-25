@@ -97,9 +97,19 @@ private:
 
 	UPROPERTY()
 	float OriginalGravityScale = -1;
+
+	UPROPERTY()
+	int Combo = 0;
+	UPROPERTY()
+	float ComboTimer = 0.f;
+	UPROPERTY()
+	float ComboResetTime = 5.f;
 	
 	FVector GetTeamLocation();
 
+	UFUNCTION()
+	void TeamDoAttack(bool HasTouch);
+	
 	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity);
 	
@@ -123,7 +133,7 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
-
+	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

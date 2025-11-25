@@ -38,6 +38,9 @@ void ATeamManager::Tick(float DeltaTime)
 	
 	if (UltimateBuffer > 0) UltimateBuffer -= DeltaTime;
 	if (UltimateBuffer < 0 && WantUltimate != -1) WantUltimate = -1;
+
+	if (ComboTimer > 0) ComboTimer -= DeltaTime;
+	if (ComboTimer <= 0 && Combo > 0) {Combo = 0; UIInterface->SetComboHit(Team, Combo);}
 		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
@@ -108,6 +111,7 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
 		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
+		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
@@ -141,10 +145,14 @@ void ATeamManager::ResetCharacters()
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
+	Combo = 0;
 	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
+	UIInterface->SetComboHit(Team, Combo);
 	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
+	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
+	RobotParts[ERobotCharacterPositionEnum::Down]->ResetStateMachine();
 }
 
 void ATeamManager::InversePlayer()
@@ -186,6 +194,20 @@ FVector ATeamManager::GetTeamLocation()
 	return RobotParts[ERobotCharacterPositionEnum::Down]->GetActorLocation();
 }
 
+void ATeamManager::TeamDoAttack(bool HasTouch)
+{
+	if (HasTouch)
+	{
+		Combo++;
+		ComboTimer = ComboResetTime;
+	}else
+	{
+		Combo = 0;
+	}
+	UIInterface->SetComboHit(Team, Combo);
+}
+
+
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity)
 {
 	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
@@ -208,6 +230,8 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBac
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
 		TeamLife -= Damage;
+		Combo = 0;
+		
 		if (TeamLife <= 0)
 		{
 			TeamLife = 0;
@@ -224,6 +248,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBac
 			
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+		UIInterface->SetComboHit(Team, Combo);
 	}
 }
 

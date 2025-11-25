@@ -10,6 +10,7 @@
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
 #include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -94,6 +95,11 @@ void ARobotCharacter::TickStateMachine(float DeltaTime) const {
 	StateMachine->Tick(DeltaTime);
 }
 
+void ARobotCharacter::ResetStateMachine()
+{
+	StateMachine->ChangeState(ERobotCharacterStateID::Idle);
+}
+
 void ARobotCharacter::SetupMappingContextIntoController(bool bMenu) const {
 	APlayerController* PlayerController = Cast<APlayerController>(Controller);
 	if (PlayerController == nullptr) return;
@@ -120,6 +126,7 @@ float ARobotCharacter::GetInputMoveX() const {
 
 bool ARobotCharacter::IsWalkingForward() const
 {
+	if (FMath::Abs(GetInputMoveX()) <= .3f) return true;
 	return FMath::Sign(GetOrientX()) == FMath::Sign(GetInputMoveX());
 }
 
@@ -127,7 +134,6 @@ EAttackID ARobotCharacter::GetCurrentTypeAttack() const
 {
 	return CurrentTypeAttack;
 }
-
 
 float ARobotCharacter::GetStunTimer() const
 {
@@ -163,11 +169,13 @@ void ARobotCharacter::SwitchEnergy()
 {
 	WantSwitch = false;
 	HaveEnergy = !HaveEnergy;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetEnergy(bool Value)
 {
 	HaveEnergy = Value;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)

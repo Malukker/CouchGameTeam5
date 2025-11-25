@@ -48,7 +48,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
 
 	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
-		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
+		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down && Character->DoHaveEnergy())
 		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Walk);
 		}
