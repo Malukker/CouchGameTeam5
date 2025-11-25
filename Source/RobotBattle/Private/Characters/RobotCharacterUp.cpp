@@ -51,6 +51,12 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 #pragma endregion
 }
 
+void ARobotCharacterUp::BeginPlay()
+{
+	Super::BeginPlay();
+	HitStopEvent.AddDynamic(this,&ARobotCharacterUp::OnHitStop);
+}
+
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
@@ -123,7 +129,7 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 	}
 }
 
-void ARobotCharacterUp::OnHitStop()
+void ARobotCharacterUp::OnHitStop(int Damage)
 {
 	const UArenaSettings* Settings = GetDefault<UArenaSettings>();
 	CustomTimeDilation = Settings->HitStopScale;
@@ -131,5 +137,5 @@ void ARobotCharacterUp::OnHitStop()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 		{
 			CustomTimeDilation = 1.f;
-		}, Settings->HitStopTimerModifier, false);
+		}, Settings->HitStopTimerModifier*Damage, false);
 }
