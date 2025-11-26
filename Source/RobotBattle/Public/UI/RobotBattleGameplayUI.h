@@ -53,7 +53,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UCheckBox* CheckBoxRound4;
-	
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Combo1;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Combo2;
 #pragma endregion
 
 #pragma region VariableWidget
@@ -83,6 +88,7 @@ public:
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;
+	virtual void SetComboHit(int Team, int Combo) override;
 
 	FTimeOver OnTimeOver;
 

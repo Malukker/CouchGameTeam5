@@ -8,6 +8,8 @@
 #include "RobotCharacterStateAttack.generated.h"
 
 
+class IRobot;
+
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 {
@@ -28,13 +30,20 @@ public:
 private:
 	UPROPERTY()
 	FAttackStruct CurrentAttackStruct;
-	
+
+	UPROPERTY()
 	bool bIsAttackTraceEnabled;
 
+	UPROPERTY()
+	bool HasTouch = false;
+	
+	UPROPERTY()
 	int AttackIndex;
-	
+
+	UPROPERTY()
 	FVector StartPos;
-	
+
+	UPROPERTY()
 	FVector EndPos;
 
 	UPROPERTY()
@@ -42,23 +51,32 @@ private:
 
 	UPROPERTY()
 	UAnimMontage* AttackAnim;
-	
+
+	UPROPERTY()
 	float KeyframeDeltaTime;
-	
+
+	UPROPERTY()
 	float AnimDuration;
 
+	UPROPERTY()
 	float CurrentAnimDeltaTime;
-	
+
+	UPROPERTY()
 	float CurrentAnimTime;
-
+	
 	void InitAnimationNotify();
-
+	
 	UFUNCTION()
 	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
 	UFUNCTION()
 	void EndDetectionNotifyAttack(AActor* ConcernedActor);
-	
+
+	UFUNCTION()
+	void KnockBackNotify(AActor* ConcernedActor);
+
+	UPROPERTY()
+	TScriptInterface<IRobot> TouchedCharacterInterface;
 	
 #pragma endregion
 

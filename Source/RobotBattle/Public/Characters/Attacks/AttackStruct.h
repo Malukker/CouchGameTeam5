@@ -39,9 +39,12 @@ struct FAttackStruct
 
 	UPROPERTY(EditAnywhere)
 	int Damage = 0;
+
+	UPROPERTY(EditAnywhere)
+	int DamageBonusMultiplier = 0;
 	
 	UPROPERTY(EditAnywhere)
-	int StunTime = 0;
+	float StunTimer = 0;
 
 	UPROPERTY(EditAnywhere)
 	FVector2D KnockBackVector = FVector2D::ZeroVector;

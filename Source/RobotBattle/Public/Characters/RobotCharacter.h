@@ -127,8 +127,9 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime, FVector2D KnockBackVelocity);
-	
+	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	void KnockBackFromNotify(FVector2D Velocity);
+
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
 
@@ -193,9 +194,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Guard = 2;
 
-	
+	UPROPERTY(EditAnywhere)
+	bool IsFollowable = false;
 
 	virtual FVector GetRobotLocation() override;
+
+	virtual bool IsTargetFollowable() override;
 
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
@@ -205,17 +209,20 @@ public:
 
 #pragma region Damage/Stun
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
-	
+
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
+
 	
 	UPROPERTY()
 	FLockManagerEvent LockManagerEvent;
@@ -234,6 +241,9 @@ public:
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
+
+	UPROPERTY()
+	FAttackManagerEvent AttackManagerEvent;
 	
 #pragma endregion
 
@@ -263,6 +273,16 @@ protected:
 	UPROPERTY()
 	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
+#pragma endregion
+
+#pragma region HitStop
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitStop,int,Damage);
+	FHitStop HitStopEvent;
+#pragma endregion
+
+#pragma region KnockBack
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FKnockBack,FVector2D,KnockBackVelocity);
+	FKnockBack KnockBackEvent;
 #pragma endregion
 	
 };

@@ -10,6 +10,7 @@
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
 #include "Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/HUDGameplay.h"
 
@@ -168,11 +169,13 @@ void ARobotCharacter::SwitchEnergy()
 {
 	WantSwitch = false;
 	HaveEnergy = !HaveEnergy;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetEnergy(bool Value)
 {
 	HaveEnergy = Value;
+	GetMesh()->SetRenderCustomDepth(HaveEnergy);
 }
 
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
@@ -309,6 +312,11 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
+bool ARobotCharacter::IsTargetFollowable()
+{
+	return IsFollowable;
+}
+
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
@@ -321,7 +329,7 @@ bool ARobotCharacter::StartAttackDuo()
 
 void ARobotCharacter::AddDamageBonus()
 {
-	DamageBonus += 4;
+	DamageBonus ++;
 }
 
 int ARobotCharacter::GetDamageBonus()
@@ -334,8 +342,13 @@ void ARobotCharacter::ResetDamageBonus()
 	DamageBonus = 0;
 }
 
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime,FVector2D KnockBackVelocity)
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime, KnockBackVelocity);
+	HurtManagerEvent.Broadcast(Damage, StunTime);
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+}
+
+void ARobotCharacter::KnockBackFromNotify(FVector2D Velocity)
+{
+	KnockBackEvent.Broadcast(Velocity);
 }
