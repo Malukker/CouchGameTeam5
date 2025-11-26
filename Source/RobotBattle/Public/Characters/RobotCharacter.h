@@ -194,9 +194,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Guard = 2;
 
-	
+	UPROPERTY(EditAnywhere)
+	bool IsFollowable = false;
 
 	virtual FVector GetRobotLocation() override;
+
+	virtual bool IsTargetFollowable() override;
 
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
