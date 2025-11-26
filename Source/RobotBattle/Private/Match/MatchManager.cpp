@@ -15,7 +15,6 @@ AMatchManager::AMatchManager()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	TeamsWin.Init(0,2);
 }
 
 // Called when the game starts or when spawned
@@ -33,6 +32,7 @@ void AMatchManager::BeginPlay()
 		Team->UIInterface = UIInterface;
 		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFightOnRobotDefeat);
 	}
+	TeamsWin.Init(0,2);
 }
 
 void AMatchManager::ResetFight()
