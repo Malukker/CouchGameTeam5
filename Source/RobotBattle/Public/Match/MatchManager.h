@@ -27,10 +27,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIGameOverClass;
 
+	UPROPERTY()
 	URobotBattleGameplayUI* UIGameplay;
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<ATeamManager>> Teams;
+	UPROPERTY()
 	TArray<int> TeamsWin;
 
 protected:

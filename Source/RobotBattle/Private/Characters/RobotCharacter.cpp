@@ -312,6 +312,11 @@ FVector ARobotCharacter::GetRobotLocation()
 	return GetActorLocation();
 }
 
+bool ARobotCharacter::IsTargetFollowable()
+{
+	return IsFollowable;
+}
+
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
