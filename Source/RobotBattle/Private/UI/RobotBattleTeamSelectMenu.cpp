@@ -52,7 +52,7 @@ void URobotBattleTeamSelectMenu::AddPlayer(int32 PlayerID)
 		return;
 	}
 	
-	NewCard->SetPlayerName(FString::Printf(TEXT("Player %d"), PlayerID + 1));
+	NewCard->SetPlayerImage(PlayerID);
 	UVerticalBoxSlot* CardCenter;
 
 	if (PlayerID < 2)
