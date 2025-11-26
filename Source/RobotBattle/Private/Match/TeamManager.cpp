@@ -116,8 +116,8 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
-		NewCharacter->GetCollision()->SetCollisionObjectType(TeamCollision);
-		NewCharacter->GetCollision()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
+		NewCharacter->GetCapsuleComponent()->SetCollisionObjectType(TeamCollision);
+		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
 		NewCharacter->GetCollision()->SetCollisionResponseToChannel(AttackChannel, ECollisionResponse::ECR_Block);
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
 
@@ -226,7 +226,7 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	
+	if (GetLife() <= 0) return;	
 	if (CanGuard && TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::None) TeamCharge++;
