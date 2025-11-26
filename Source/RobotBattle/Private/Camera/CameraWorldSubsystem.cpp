@@ -56,14 +56,18 @@ void UCameraWorldSubsystem::TickUpdateCameraPosition(float DeltaTime)
 FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 {
 	FVector NewLocation = FVector::ZeroVector;
+	uint8 NumOfTargets = 0;
 	for (UObject* FollowTarget : FollowTargets)
 	{
 		TScriptInterface<IRobot> ICameraTarget = FollowTarget;
-
-		FVector TargetPosition = ICameraTarget->GetRobotLocation();
-		NewLocation += TargetPosition;
+		if (ICameraTarget->IsTargetFollowable())
+		{
+			FVector TargetPosition = ICameraTarget->GetRobotLocation();
+			NewLocation += TargetPosition;
+			NumOfTargets++;
+		}
 	}
-	NewLocation /= FollowTargets.Num();
+	NewLocation /= NumOfTargets;
 	//NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z);
 	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, GreatestHeightBetweenTargets()-CameraSettings->HeightOffset);
 	return NewLocation;
