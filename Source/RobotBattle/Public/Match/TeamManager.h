@@ -59,14 +59,14 @@ private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
 	UPROPERTY()
-	float TeamLifeMax = 0;
+	int TeamLifeMax = 0;
 	UPROPERTY()
-	float TeamLife = 0;
+	int TeamLife = 0;
 	
 	UPROPERTY()
-	float TeamGuardMax = 0;
+	int TeamGuardMax = 0;
 	UPROPERTY()
-	float TeamGuard = 0;
+	int TeamGuard = 0;
 	UPROPERTY()
 	bool CanGuard = false;
 	
@@ -91,9 +91,9 @@ private:
 	int WantUltimate = -1;
 	
 	UPROPERTY()
-	float TeamChargeMax = 0;
+	int TeamChargeMax = 0;
 	UPROPERTY()
-	float TeamCharge = 0;
+	int TeamCharge = 0;
 
 	UPROPERTY()
 	float OriginalGravityScale = -1;
