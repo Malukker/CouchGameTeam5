@@ -111,7 +111,7 @@ private:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity);
+	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
 	void TeamAirBlock(bool Lock);
@@ -133,6 +133,9 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
+
+	UFUNCTION()
+	void KnockBack(FVector2D KnockBackVelocity);
 	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
