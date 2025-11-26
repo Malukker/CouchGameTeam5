@@ -25,5 +25,6 @@ public:
 
 	virtual void KnockBackFromNotify(FVector2D Velocity) = 0;
 	virtual FVector GetRobotLocation() = 0;
+	virtual bool IsTargetFollowable() = 0;
  
 };
