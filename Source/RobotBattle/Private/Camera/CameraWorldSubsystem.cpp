@@ -171,11 +171,11 @@ void UCameraWorldSubsystem::SetRobotBounds()
 	
 	WorldBoundsMin.X = FMath::Clamp(WorldBoundsMin.X,RobotBoundsMin.X, RobotBoundsMax.X);
 	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X,CameraBoundsYProjectionCenter,WorldZ));
-	BoxLeft->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
+	BoxLeft->SetBoxExtent(FVector(1.f,1000.f , RobotBoundsMax.Y));
 
 	WorldBoundsMax.X = FMath::Clamp(WorldBoundsMax.X,RobotBoundsMin.X, RobotBoundsMax.X);
 	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X,CameraBoundsYProjectionCenter,WorldZ));
-	BoxRight->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
+	BoxRight->SetBoxExtent(FVector(1.f,1000.f , RobotBoundsMax.Y));
 }
 
 float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
