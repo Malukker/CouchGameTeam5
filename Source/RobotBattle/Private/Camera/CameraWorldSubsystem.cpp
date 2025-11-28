@@ -69,7 +69,7 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 	}
 	NewLocation /= NumOfTargets;
 	//NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, GreatestHeightBetweenTargets()-CameraSettings->HeightOffset);
-	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z);
+	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z+CameraSettings->HeightOffset);
 	return NewLocation;
 }
 
