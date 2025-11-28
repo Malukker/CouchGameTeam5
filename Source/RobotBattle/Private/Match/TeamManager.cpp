@@ -104,15 +104,15 @@ void ATeamManager::SpawnCharacters()
 			return;
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
+		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
-		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
-		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
-		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
@@ -270,7 +270,7 @@ void ATeamManager::TeamAirBlock(bool Lock)
 		MovementComponent->GravityScale = 0;
 		MovementComponent->StopMovementImmediately();
 	}
-	else if(OriginalGravityScale != -1)
+	else if(OriginalGravityScale > 0)
 	{
 		MovementComponent->GravityScale = OriginalGravityScale;
 		OriginalGravityScale = -1;
