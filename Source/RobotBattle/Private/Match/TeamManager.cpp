@@ -126,18 +126,17 @@ void ATeamManager::SpawnCharacters()
 		TeamChargeMax += NewCharacter->Charge;
 		InvinsibilityFramesOrigin += NewCharacter->InvinsibilityFrames;
 	}
-	TeamGuard = TeamGuardMax;
-	TeamLife = TeamLifeMax;
-	TeamCharge = 0;
-	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
-	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false),
 		"Bones_Attach");
 
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
+	ResetCharacters();
 }
 
 void ATeamManager::ResetCharacters()

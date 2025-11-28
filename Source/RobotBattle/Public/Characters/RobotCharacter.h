@@ -196,6 +196,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
+	
+	UPROPERTY(EditAnywhere)
+	bool MeshMirror = false;
 
 	virtual FVector GetRobotLocation() override;
 
