@@ -60,7 +60,7 @@ void ARobotCharacterUp::BeginPlay()
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type1;
@@ -69,7 +69,7 @@ void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type2;
@@ -78,7 +78,7 @@ void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
 		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type3;
@@ -89,7 +89,7 @@ void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue
 
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion

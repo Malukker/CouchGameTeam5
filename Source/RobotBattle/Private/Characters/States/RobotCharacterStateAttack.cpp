@@ -113,7 +113,7 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
 						TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.DamageBonusMultiplier), CurrentAttackStruct.StunTimer);
+						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.AttackDuoBonusMultiplier), CurrentAttackStruct.StunTimer);
 						bIsAttackTraceEnabled = false;
 						HasTouch = true;
 						Character->HitStopEvent.Broadcast(CurrentAttackStruct.Damage + Character->GetDamageBonus());

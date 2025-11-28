@@ -23,7 +23,7 @@ void ARobotCharacterDown::BeginPlay()
 
 void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	InputJumpEvent.Broadcast();
 }
 
@@ -35,7 +35,7 @@ void ARobotCharacterDown::OnInputAttackDuo(const FInputActionValue& InputActionV
 
 void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (!CanDash) return;
 	DashDirectionX = 1;
 	InputDashEvent.Broadcast();
@@ -43,7 +43,7 @@ void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionV
 
 void ARobotCharacterDown::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
 	if (!CanDash) return;
 	DashDirectionX = -1;
 	InputDashEvent.Broadcast();
