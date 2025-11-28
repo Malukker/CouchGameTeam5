@@ -53,7 +53,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
 
-	if (FMath::Abs(Character->GetInputMoveX()) < CharacterSettings->InputMoveXThreshold || !Character->DoHaveEnergy())
+	if (FMath::Abs(Character->GetInputMoveX()) < CharacterSettings->InputMoveXThreshold)
 	{
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
 	}
