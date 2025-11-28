@@ -144,15 +144,7 @@ void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
 	
 	FVector WorldArenaBoundsMin = FVector(CameraBoundsMin.X+Width,0,0);
 	FVector WorldArenaBoundsMax = FVector(CameraBoundsMax.X-Width,0,0);
-	
-	if ( WorldArenaBoundsMin.X > WorldArenaBoundsMax.X)
-	{
-		Position.X = (CameraBoundsMin.X + CameraBoundsMax.X) * 0.5f;
-	}
-	else 
-	{
-		Position.X = FMath::Clamp(Position.X, WorldArenaBoundsMin.X, WorldArenaBoundsMax.X);
-	}
+	Position.X = FMath::Clamp(Position.X, WorldArenaBoundsMin.X, WorldArenaBoundsMax.X);
 }
 
 void UCameraWorldSubsystem::SetRobotBounds()
@@ -171,17 +163,16 @@ void UCameraWorldSubsystem::SetRobotBounds()
 	if (!RobotBoundsActor) return;
 	UBoxComponent* BoxLeft=RobotBoundsActor->Box_Left;
 	UBoxComponent* BoxRight=RobotBoundsActor->Box_Right;
-
-	float WorldY =  RobotBoundsActor->GetActorLocation().Y;
+	
 	float WorldZ =  RobotBoundsActor->GetActorLocation().Z;
 	
 	
 	WorldBoundsMin.X = FMath::Clamp(WorldBoundsMin.X,RobotBoundsMin.X, RobotBoundsMax.X);
-	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X,WorldY,WorldZ));
+	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X,CameraBoundsYProjectionCenter,WorldZ));
 	BoxLeft->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
 
 	WorldBoundsMax.X = FMath::Clamp(WorldBoundsMax.X,RobotBoundsMin.X, RobotBoundsMax.X);
-	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X,WorldY,WorldZ));
+	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X,CameraBoundsYProjectionCenter,WorldZ));
 	BoxRight->SetBoxExtent(FVector(1.f,1.f , RobotBoundsMax.Y));
 }
 
