@@ -68,7 +68,8 @@ FVector UCameraWorldSubsystem::CalculateAveragePositionBetweenTargets()
 		}
 	}
 	NewLocation /= NumOfTargets;
-	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, GreatestHeightBetweenTargets()-CameraSettings->HeightOffset);
+	//NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, GreatestHeightBetweenTargets()-CameraSettings->HeightOffset);
+	NewLocation = FVector(NewLocation.X, CameraMain->GetOwner()->GetActorLocation().Y, NewLocation.Z);
 	return NewLocation;
 }
 
@@ -142,9 +143,10 @@ void UCameraWorldSubsystem::ClampPositionIntoCameraBounds(FVector& Position)
     float Height = FMath::Abs((WorldBoundsMax.Z-WorldBoundsMin.Z)/2);
 
 	
-	FVector WorldArenaBoundsMin = FVector(CameraBoundsMin.X+Width,0,0);
-	FVector WorldArenaBoundsMax = FVector(CameraBoundsMax.X-Width,0,0);
+	FVector WorldArenaBoundsMin = FVector(CameraBoundsMin.X+Width,0,CameraBoundsMin.Y+Height);
+	FVector WorldArenaBoundsMax = FVector(CameraBoundsMax.X-Width,0,CameraBoundsMax.Y-Height);
 	Position.X = FMath::Clamp(Position.X, WorldArenaBoundsMin.X, WorldArenaBoundsMax.X);
+	Position.Z = FMath::Clamp(Position.Z, WorldArenaBoundsMin.Z, WorldArenaBoundsMax.Z);
 }
 
 void UCameraWorldSubsystem::SetRobotBounds()
