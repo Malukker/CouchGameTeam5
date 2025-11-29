@@ -77,7 +77,8 @@ void ARobotCharacter::SetOrientX(float NewOrientX)
 void ARobotCharacter::RotateMeshUsingOrientX() const
 {
 	FRotator Rotation = GetMesh()->GetRelativeRotation();
-	Rotation.Yaw = -90.f * OrientX;
+	if (MeshMirror) Rotation.Yaw = 90.f * OrientX;
+	else Rotation.Yaw = -90.f * OrientX;
 	GetMesh()->SetRelativeRotation(Rotation);
 }
 

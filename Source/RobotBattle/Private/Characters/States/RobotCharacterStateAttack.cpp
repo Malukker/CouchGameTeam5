@@ -64,7 +64,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	Character->LockManagerEvent.Broadcast(false);
+	Character->AirStopManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();
@@ -113,13 +113,13 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
 						TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.DamageBonusMultiplier), CurrentAttackStruct.StunTimer);
+						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.AttackDuoBonusMultiplier), CurrentAttackStruct.StunTimer);
 						bIsAttackTraceEnabled = false;
 						HasTouch = true;
 						Character->HitStopEvent.Broadcast(CurrentAttackStruct.Damage + Character->GetDamageBonus());
 						Character->AttackManagerEvent.Broadcast(true);
 						Character->GuardResetManagerEvent.Broadcast();
-						Character->LockManagerEvent.Broadcast(true);
+						Character->AirStopManagerEvent.Broadcast(true);
 
 						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 						float ScaleShake = 1.f;

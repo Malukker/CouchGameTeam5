@@ -2,13 +2,35 @@
 
 
 #include "UI/RobotBattlePlayerCardWidget.h"
-#include "Components/TextBlock.h"
+#include "Components/Image.h"
 
-void URobotBattlePlayerCardWidget::SetPlayerName(const FString& NewName)
+void URobotBattlePlayerCardWidget::SetPlayerImage(int32 PlayerID)
 {
-	if (Text_PlayerName)
+	if (!Image_Player) return;
+
+	UTexture2D*  TextureToUse = nullptr;
+
+	switch (PlayerID)
 	{
-		Text_PlayerName->SetText(FText::FromString(NewName));
+	case 0:
+		TextureToUse = PlayerImage1;
+		break;
+	case 1:
+		TextureToUse = PlayerImage2;
+		break;
+	case 2:
+		TextureToUse = PlayerImage3;
+		break;
+	case 3:
+		TextureToUse = PlayerImage4;
+		break;
+	default:
+		break;
+	}
+	
+	if (TextureToUse)
+	{
+		Image_Player->SetBrushFromTexture(TextureToUse);
 	}
 }
 

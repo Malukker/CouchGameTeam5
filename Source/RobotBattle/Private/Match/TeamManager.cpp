@@ -104,15 +104,15 @@ void ATeamManager::SpawnCharacters()
 			return;
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
-		NewCharacter->LockManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
+		NewCharacter->AirStopManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
-		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
-		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
-		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->Team = Team;
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
@@ -126,18 +126,17 @@ void ATeamManager::SpawnCharacters()
 		TeamChargeMax += NewCharacter->Charge;
 		InvinsibilityFramesOrigin += NewCharacter->InvinsibilityFrames;
 	}
-	TeamGuard = TeamGuardMax;
-	TeamLife = TeamLifeMax;
-	TeamCharge = 0;
-	UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
-	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false),
 		"Bones_Attach");
 
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
+	ResetCharacters();
 }
 
 void ATeamManager::ResetCharacters()
@@ -261,16 +260,16 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	}
 }
 
-void ATeamManager::TeamAirBlock(bool Lock)
+void ATeamManager::TeamAirBlock(bool AirBlock)
 {
 	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	if (Lock)
+	if (AirBlock && MovementComponent->GravityScale != 0)
 	{
 		OriginalGravityScale = MovementComponent->GravityScale;
 		MovementComponent->GravityScale = 0;
 		MovementComponent->StopMovementImmediately();
 	}
-	else if(OriginalGravityScale != -1)
+	else if(!AirBlock && OriginalGravityScale != 0)
 	{
 		MovementComponent->GravityScale = OriginalGravityScale;
 		OriginalGravityScale = -1;
