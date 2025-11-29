@@ -64,7 +64,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	Character->AirStopManagerEvent.Broadcast(false);
+	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
 	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
 	{
 		Character->ResetDamageBonus();

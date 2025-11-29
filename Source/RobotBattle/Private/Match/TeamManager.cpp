@@ -277,7 +277,7 @@ void ATeamManager::TeamAirBlock(bool AirBlock)
 	else if(!AirBlock && OriginalGravityScale != 0)
 	{
 		MovementComponent->GravityScale = OriginalGravityScale;
-		OriginalGravityScale = -1;
+		OriginalGravityScale = 0;
 	}
 }
 
