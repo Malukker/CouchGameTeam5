@@ -71,6 +71,12 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 			WalkForward = false;
 		}
 	}
+	else if (!WalkForward)
+	{
+		Character->PlayAnimMontage(IdleAnim);
+		Character->GuardManagerEvent.Broadcast(false);
+		WalkForward = true;
+	}
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
 	}
