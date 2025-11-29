@@ -48,7 +48,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	Super::StateTick(DeltaTime);
 
 	if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold) {
-		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down && Character->DoHaveEnergy())
+		if (Character->GetPositionEnum() == ERobotCharacterPositionEnum::Down)
 		{
 			StateMachine->ChangeState(ERobotCharacterStateID::Walk);
 		}
@@ -70,6 +70,12 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 			}
 			WalkForward = false;
 		}
+	}
+	else if (!WalkForward)
+	{
+		Character->PlayAnimMontage(IdleAnim);
+		Character->GuardManagerEvent.Broadcast(false);
+		WalkForward = true;
 	}
 	if (CharacterMovement->Velocity.Z < 0.f) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Fall);

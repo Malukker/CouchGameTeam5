@@ -3,7 +3,7 @@
 
 #include "Camera/RobotBoundsActor.h"
 
-#include "MovieSceneSequenceID.h"
+
 #include "Components/BoxComponent.h"
 
 
@@ -20,6 +20,7 @@ ARobotBoundsActor::ARobotBoundsActor()
 	
 	Box_Left = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxLeft"));
 	Box_Left->SetupAttachment(Root);
+	
 	
 }
 

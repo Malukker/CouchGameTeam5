@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "RobotBoundsActor.generated.h"
 
-// class UBoxComponent;
+
 
 UCLASS()
 class ROBOTBATTLE_API ARobotBoundsActor : public AActor
@@ -35,6 +35,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<class USceneComponent> Root;
-	
+
+
+
 
 };
