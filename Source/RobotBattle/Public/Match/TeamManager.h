@@ -69,6 +69,8 @@ private:
 	int TeamGuard = 0;
 	UPROPERTY()
 	bool CanGuard = false;
+	UPROPERTY()
+	float KnockBackMultiplier = 1;
 	
 	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;

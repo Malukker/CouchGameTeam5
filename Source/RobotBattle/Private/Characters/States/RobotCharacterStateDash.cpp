@@ -39,7 +39,15 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	CharacterMovement->GroundFriction = 0;
 	CharacterMovement->GravityScale = 0;
 	
-	const FVector Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
+	FVector Dash;
+	if (Character->DoHaveEnergy())
+	{
+		Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
+	}
+	else
+	{
+		Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX() * Character->GetNerfStatsMultiplier();
+	}
 	Character->LaunchCharacter(Dash, true, true);
 	Character->UseDash();
 }

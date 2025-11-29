@@ -97,8 +97,8 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
 			FHitResult OutHit;
 			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
-			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
-			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
+			if (Character->GetTeam() == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+			else if (Character->GetTeam() == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
 			if (UKismetSystemLibrary::SphereTraceSingle
 				(
 					GetWorld(),
@@ -113,7 +113,18 @@ void URobotCharacterStateAttack::StateTick(float DeltaTime)
 					if (OutHit.GetActor()->Implements<URobot>())
 					{
 						TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-						TouchedCharacterInterface->TakeDamageFromAttack(CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.AttackDuoBonusMultiplier), CurrentAttackStruct.StunTimer);
+						if (Character->DoHaveEnergy())
+						{
+							TouchedCharacterInterface->TakeDamageFromAttack(
+								CurrentAttackStruct.Damage + (Character->GetDamageBonus() * CurrentAttackStruct.AttackDuoBonusMultiplier),
+								CurrentAttackStruct.StunTimer);
+						}
+						else
+						{
+							TouchedCharacterInterface->TakeDamageFromAttack(
+								(CurrentAttackStruct.Damage * Character->GetNerfStatsMultiplier()) + (Character->GetDamageBonus() * CurrentAttackStruct.AttackDuoBonusMultiplier),
+								CurrentAttackStruct.StunTimer * Character->GetNerfStatsMultiplier());
+						}
 						bIsAttackTraceEnabled = false;
 						HasTouch = true;
 						Character->HitStopEvent.Broadcast(CurrentAttackStruct.Damage + Character->GetDamageBonus());
