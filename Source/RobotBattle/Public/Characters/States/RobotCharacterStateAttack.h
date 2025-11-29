@@ -26,19 +26,24 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 #pragma region Attack
-	
-private:
-	UPROPERTY()
-	FAttackStruct CurrentAttackStruct;
 
-	UPROPERTY()
-	bool bIsAttackTraceEnabled;
+private:
+	
+	UPROPERTY(EditAnywhere)
+	TMap<EAttackID,UAnimMontage*> Attacks = {};
+	
+	UPROPERTY(EditAnywhere)
+	float AttackDuoBonusMultiplier = 0;
 
 	UPROPERTY()
 	bool HasTouch = false;
-	
 	UPROPERTY()
-	int AttackIndex;
+	bool bIsAttackTraceEnabled = false;
+
+	UPROPERTY()
+	float AnimDuration = 0;
+	UPROPERTY()
+	float CurrentAnimTime = 0;
 
 	UPROPERTY()
 	FVector StartPos;
@@ -48,32 +53,15 @@ private:
 
 	UPROPERTY()
 	TArray<AActor*> ActorsToIgnore;
-
-	UPROPERTY()
-	UAnimMontage* AttackAnim;
-
-	UPROPERTY()
-	float KeyframeDeltaTime;
-
-	UPROPERTY()
-	float AnimDuration;
-
-	UPROPERTY()
-	float CurrentAnimDeltaTime;
-
-	UPROPERTY()
-	float CurrentAnimTime;
 	
-	void InitAnimationNotify();
+	UFUNCTION()
+	void DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data);
 	
 	UFUNCTION()
 	void StartDetectionNotifyAttack(AActor* ConcernedActor);
-	
-	UFUNCTION()
-	void EndDetectionNotifyAttack(AActor* ConcernedActor);
 
 	UFUNCTION()
-	void KnockBackNotify(AActor* ConcernedActor);
+	void KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack);
 
 	UPROPERTY()
 	TScriptInterface<IRobot> TouchedCharacterInterface;

@@ -17,9 +17,6 @@ class ROBOTBATTLE_API URobotCharacterStateLoadingAttack : public URobotCharacter
 
 private:
 
-
-	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
-	
 	virtual ERobotCharacterStateID GetStateID() override;
 	
 	virtual void StateEnter(ERobotCharacterStateID PreviousStateID) override;
@@ -31,7 +28,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* LoadingAnim;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	float LoadingTimeDefault = 2.f;
 	UPROPERTY()
 	float LoadingTime = 2.f;
