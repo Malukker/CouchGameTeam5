@@ -216,7 +216,7 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAirStopManagerEvent, bool, AirStop);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 
@@ -228,7 +228,7 @@ public:
 
 	
 	UPROPERTY()
-	FLockManagerEvent LockManagerEvent;
+	FAirStopManagerEvent AirStopManagerEvent;
 	
 	UPROPERTY()
 	FEnergyManagerEvent EnergyManagerEvent;

@@ -114,7 +114,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamAirBlock(bool Lock);
+	void TeamAirBlock(bool AirBlock);
 	
 	UFUNCTION()
 	void SwitchEnergy();
