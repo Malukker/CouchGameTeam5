@@ -48,8 +48,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UBoxComponent* GetCollision() const;
-
 #pragma endregion Unreal Default
 
 #pragma region Orient
@@ -181,7 +179,21 @@ public:
 
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
+
+	virtual FVector GetRobotLocation() override;
+
+	virtual bool IsTargetFollowable() override;
+
+	UBoxComponent* GetCollision() const;
+
+	int GetTeam();
+	void SetTeam(int NewTeam);
+	int GetLife();
+	int GetGuard();
+	int GetInvinsibilityFrames();
+	float GetNerfStatsMultiplier();
 	
+protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
 	
@@ -200,12 +212,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool MeshMirror = false;
 
-	virtual FVector GetRobotLocation() override;
-
-	virtual bool IsTargetFollowable() override;
-
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
+	
+	UPROPERTY(EditAnywhere)
+	float NerfStatsMultiplier = 0.5f;
 	
 
 #pragma endregion
@@ -224,6 +235,8 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyEvent);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 
 	
@@ -232,6 +245,9 @@ public:
 	
 	UPROPERTY()
 	FEnergyManagerEvent EnergyManagerEvent;
+	
+	UPROPERTY()
+	FEnergyEvent EnergyEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;
@@ -251,7 +267,7 @@ public:
 #pragma endregion
 
 #pragma region Charge
-
+public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
@@ -262,14 +278,16 @@ public:
 	int GetDamageBonus();
 	void ResetDamageBonus();
 
+	int GetCharge();
+	
+protected:
 	UPROPERTY(EditAnywhere)
 	int Charge = 0;
 	
-protected:
 	int DamageBonus = 0;
 	bool CanAttackDuo = false;
 
-	public:
+public:
 	UPROPERTY()
 	FChargeManagerEvent ChargeManagerEvent;
 	

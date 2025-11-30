@@ -7,7 +7,7 @@
 #include "KnockBackAnimNotify.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FKnockBackAnimNotify,AActor*,ConcernedActor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FKnockBackAnimNotify,AActor*,ConcernedActor, FVector2D, KnockBack);
 UCLASS()
 class ROBOTBATTLE_API UKnockBackAnimNotify : public UAnimNotify
 {
@@ -16,5 +16,8 @@ class ROBOTBATTLE_API UKnockBackAnimNotify : public UAnimNotify
 public:
 	FKnockBackAnimNotify OnKnockBackEvent;
 
+	UPROPERTY(EditAnywhere)
+	FVector2D KnockBack = {0,0};
+	
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 };

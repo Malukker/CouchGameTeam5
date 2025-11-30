@@ -5,17 +5,8 @@
 
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
-#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
-#include "Characters/Attacks/RobotCharacterAttacksData.h"
 
-
-void URobotCharacterStateLoadingAttack::StateInit(URobotCharacterStateMachine* InStateMachine)
-{
-	Super::StateInit(InStateMachine);
-	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
-	LoadingTimeDefault = AttacksData->LoadingAttack[Character->GetRobotBodyID()];
-}
 
 ERobotCharacterStateID URobotCharacterStateLoadingAttack::GetStateID()
 {
