@@ -21,7 +21,17 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* StunMontage;
-	
-	bool TimeOn = false;
-	float Timer;
+	UPROPERTY()
+	float StunTimer;
+	UPROPERTY()
+	float AnimTimer;
+
+	UFUNCTION()
+	void OnInputJump();
+	UFUNCTION()
+	void OnInputAttack();
+	UFUNCTION()
+	void OnInputDash();
+	UFUNCTION()
+	void OnStunEvent();
 };
