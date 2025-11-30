@@ -112,6 +112,7 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	PlayAnimMontage(DashAnimMontage);
 	DashDirectionX = 1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{
@@ -122,6 +123,7 @@ void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionVal
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	PlayAnimMontage(DashAnimMontage);
 	DashDirectionX = -1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{

@@ -62,20 +62,14 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
-	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
-	{
-		Character->ResetDamageBonus();
-	}
+	Character->ResetDamageBonus();
 	if (Character->DoWantSwitch())
 	{
 		Character->EnergyManagerEvent.Broadcast();
 	}
 
-	if (HasTouch == false)
-	{
-		Character->AttackManagerEvent.Broadcast(false);
-	}
+	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
+	else Character->AttackManagerEvent.Broadcast(false);
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)

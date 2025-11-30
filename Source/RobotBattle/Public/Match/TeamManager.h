@@ -88,7 +88,7 @@ private:
 	UPROPERTY()
 	float UltimateBuffer = 0;
 	UPROPERTY()
-	bool IsUltimating = false;
+	bool IsLoadingUltimate = false;
 	UPROPERTY()
 	int WantUltimate = -1;
 	
