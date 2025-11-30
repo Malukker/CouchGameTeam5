@@ -7,5 +7,5 @@ void UKnockBackAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenc
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
-	OnKnockBackEvent.Broadcast(MeshComp->GetOwner());
+	OnKnockBackEvent.Broadcast(MeshComp->GetOwner(), KnockBack);
 }
