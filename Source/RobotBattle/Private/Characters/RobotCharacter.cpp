@@ -9,6 +9,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -22,6 +23,9 @@ ARobotCharacter::ARobotCharacter()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("BoxComponent"));
 	BoxComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(FName("Audio"));
+	AudioComponent->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +68,36 @@ UBoxComponent* ARobotCharacter::GetCollision() const
 	return BoxComponent;
 }
 
+int ARobotCharacter::GetTeam()
+{
+	return Team;
+}
+
+void ARobotCharacter::SetTeam(int NewTeam)
+{
+	Team = NewTeam;
+}
+
+int ARobotCharacter::GetLife()
+{
+	return  Life;
+}
+
+int ARobotCharacter::GetGuard()
+{
+	return Guard;
+}
+
+int ARobotCharacter::GetInvinsibilityFrames()
+{
+	return InvinsibilityFrames;
+}
+
+float ARobotCharacter::GetNerfStatsMultiplier()
+{
+	return NerfStatsMultiplier;
+}
+
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;
@@ -77,7 +111,8 @@ void ARobotCharacter::SetOrientX(float NewOrientX)
 void ARobotCharacter::RotateMeshUsingOrientX() const
 {
 	FRotator Rotation = GetMesh()->GetRelativeRotation();
-	Rotation.Yaw = -90.f * OrientX;
+	if (MeshMirror) Rotation.Yaw = 90.f * OrientX;
+	else Rotation.Yaw = -90.f * OrientX;
 	GetMesh()->SetRelativeRotation(Rotation);
 }
 
@@ -170,12 +205,14 @@ void ARobotCharacter::SwitchEnergy()
 	WantSwitch = false;
 	HaveEnergy = !HaveEnergy;
 	GetMesh()->SetRenderCustomDepth(HaveEnergy);
+	EnergyEvent.Broadcast();
 }
 
 void ARobotCharacter::SetEnergy(bool Value)
 {
 	HaveEnergy = Value;
 	GetMesh()->SetRenderCustomDepth(HaveEnergy);
+	EnergyEvent.Broadcast();
 }
 
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
@@ -340,6 +377,11 @@ int ARobotCharacter::GetDamageBonus()
 void ARobotCharacter::ResetDamageBonus()
 {
 	DamageBonus = 0;
+}
+
+int ARobotCharacter::GetCharge()
+{
+	return Charge;
 }
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)

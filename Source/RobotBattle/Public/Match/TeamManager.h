@@ -69,6 +69,8 @@ private:
 	int TeamGuard = 0;
 	UPROPERTY()
 	bool CanGuard = false;
+	UPROPERTY()
+	float KnockBackMultiplier = 1;
 	
 	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;
@@ -86,7 +88,7 @@ private:
 	UPROPERTY()
 	float UltimateBuffer = 0;
 	UPROPERTY()
-	bool IsUltimating = false;
+	bool IsLoadingUltimate = false;
 	UPROPERTY()
 	int WantUltimate = -1;
 	
@@ -96,7 +98,7 @@ private:
 	int TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = -1;
+	float OriginalGravityScale = 0;
 
 	UPROPERTY()
 	int Combo = 0;
@@ -114,7 +116,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamAirBlock(bool Lock);
+	void TeamAirBlock(bool AirBlock);
 	
 	UFUNCTION()
 	void SwitchEnergy();
