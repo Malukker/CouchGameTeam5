@@ -150,7 +150,8 @@ void ATeamManager::ResetCharacters()
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	UIInterface->SetComboHit(Team, Combo);
 	RobotParts[ERobotCharacterPositionEnum::Up]->CustomTimeDilation = 1.f;
-	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
+	if (!UseEnergy) RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(true);
+	else RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
 	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
 	RobotParts[ERobotCharacterPositionEnum::Down]->ResetStateMachine();
@@ -283,6 +284,7 @@ void ATeamManager::TeamAirBlock(bool AirBlock)
 
 void ATeamManager::SwitchEnergy()
 {
+	if (!UseEnergy) return;
 	RobotParts[ERobotCharacterPositionEnum::Down]->SwitchEnergy();
 	RobotParts[ERobotCharacterPositionEnum::Up]->SwitchEnergy();
 }

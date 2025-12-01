@@ -31,6 +31,10 @@ void URobotBattleTeamSelectMenu::CustomConstruct()
 		TempActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
 		TempActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
 	}
+
+	
+	Box_CenterUpSlot = Cast<UVerticalBoxSlot>(Box_CenterUp->Slot);
+	Box_CenterDownSlot = Cast<UVerticalBoxSlot>(Box_CenterDown->Slot);
 }
 
 void URobotBattleTeamSelectMenu::NativeConstruct()
@@ -106,13 +110,27 @@ void URobotBattleTeamSelectMenu::MovePlayerToZone(int32 PlayerID, const FString&
 	if (ZoneName.Contains("Center"))
 	{
 		UVerticalBox* TargetZone = nullptr;
-		if (ZoneName.Equals("CenterUp", ESearchCase::IgnoreCase)) TargetZone = Box_CenterUp;
-		if (ZoneName.Equals("CenterDown", ESearchCase::IgnoreCase)) TargetZone = Box_CenterDown;
+		if (ZoneName.Equals("CenterUp", ESearchCase::IgnoreCase))
+		{
+			TargetZone = Box_CenterUp;
+		}
+		if (ZoneName.Equals("CenterDown", ESearchCase::IgnoreCase))
+		{
+			TargetZone = Box_CenterDown;
+		}
 		if (!TargetZone) return;
 
 		Card->RemoveFromParent();
 		UVerticalBoxSlot* CardSlot = TargetZone->AddChildToVerticalBox(Card);
 
+
+		FSlateChildSize SizeCenter;
+		SizeCenter.SizeRule = ESlateSizeRule::Fill;
+		SizeCenter.Value = Box_CenterUp->GetChildrenCount();
+		Box_CenterUpSlot->SetSize(SizeCenter);
+		SizeCenter.Value = Box_CenterDown->GetChildrenCount();
+		Box_CenterDownSlot->SetSize(SizeCenter);
+		
 		FSlateChildSize Size;
 		CardSlot->SetSize(Size);
 	}

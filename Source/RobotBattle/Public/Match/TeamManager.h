@@ -58,6 +58,9 @@ public:
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
+	UPROPERTY(EditAnywhere)
+	bool UseEnergy = true;
+	
 	UPROPERTY()
 	int TeamLifeMax = 0;
 	UPROPERTY()
