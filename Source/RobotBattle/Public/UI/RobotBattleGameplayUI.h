@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UIGamePlayInterface.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/EditableTextBox.h"
 #include "RobotBattleGameplayUI.generated.h"
 
 
@@ -55,10 +56,10 @@ public:
 	class UCheckBox* CheckBoxRound4;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Combo1;
+	class UEditableTextBox* Combo1;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Combo2;
+	class UEditableTextBox* Combo2;
 #pragma endregion
 
 #pragma region VariableWidget
@@ -78,8 +79,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopTimer();
 
-	
-
 #pragma endregion
 
 	virtual void NativeConstruct() override;
@@ -97,4 +96,7 @@ private:
 	UFUNCTION()
 	void UpdateTimer();
 	void PauseTimer();
+
+	FVector2D Combo1BaseScale = FVector2D(1.0f, 1.0f);
+	FVector2D Combo2BaseScale = FVector2D(1.0f, 1.0f);
 };
