@@ -11,6 +11,7 @@ class AMainMenuHUD;
 class UHorizontalBox;
 class UVerticalBox;
 class UPlayerCardWidget;
+class UVerticalBoxSlot;
 
 UENUM(BlueprintType)
 enum class ETeamBox : uint8
@@ -70,9 +71,13 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* Box_CenterUp;
+	UPROPERTY()
+	UVerticalBoxSlot* Box_CenterUpSlot;
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* Box_CenterDown;
+	UPROPERTY()                        
+	UVerticalBoxSlot* Box_CenterDownSlot;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* IMG_WaitingPlayer1;
