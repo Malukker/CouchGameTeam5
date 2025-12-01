@@ -48,7 +48,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UBoxComponent* GetCollision() const;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAudioComponent> AudioComponent;
 
 #pragma endregion Unreal Default
 
@@ -127,8 +128,9 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime, FVector2D KnockBackVelocity);
-	
+	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	void KnockBackFromNotify(FVector2D Velocity);
+
 	UPROPERTY()
 	FInputJumpEvent InputJumpEvent;
 
@@ -180,7 +182,21 @@ public:
 
 	UFUNCTION()
 	virtual ERobotCharacterDownChargeID GetRobotCharacterDownChargeID();
+
+	virtual FVector GetRobotLocation() override;
+
+	virtual bool IsTargetFollowable() override;
+
+	UBoxComponent* GetCollision() const;
+
+	int GetTeam();
+	void SetTeam(int NewTeam);
+	int GetLife();
+	int GetGuard();
+	int GetInvinsibilityFrames();
+	float GetNerfStatsMultiplier();
 	
+protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
 	
@@ -193,23 +209,28 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Guard = 2;
 
+	UPROPERTY(EditAnywhere)
+	bool IsFollowable = false;
 	
-
-	virtual FVector GetRobotLocation() override;
+	UPROPERTY(EditAnywhere)
+	bool MeshMirror = false;
 
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
+	
+	UPROPERTY(EditAnywhere)
+	float NerfStatsMultiplier = 0.5f;
 	
 
 #pragma endregion
 
 #pragma region Damage/Stun
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FHurtManagerEvent, int, Damage, float, StunTimer,FVector2D,KnockBackVelocity);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLockManagerEvent, bool, Lock);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAirStopManagerEvent, bool, AirStop);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 
@@ -217,14 +238,19 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyEvent);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 
 	
 	UPROPERTY()
-	FLockManagerEvent LockManagerEvent;
+	FAirStopManagerEvent AirStopManagerEvent;
 	
 	UPROPERTY()
 	FEnergyManagerEvent EnergyManagerEvent;
+	
+	UPROPERTY()
+	FEnergyEvent EnergyEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;
@@ -244,7 +270,7 @@ public:
 #pragma endregion
 
 #pragma region Charge
-
+public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChargeManagerEvent,ERobotCharacterPositionEnum ,Position);
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackDuoManagerEvent,ERobotCharacterPositionEnum ,Position);
 	
@@ -255,20 +281,32 @@ public:
 	int GetDamageBonus();
 	void ResetDamageBonus();
 
+	int GetCharge();
+	
+protected:
 	UPROPERTY(EditAnywhere)
 	int Charge = 0;
 	
-protected:
 	int DamageBonus = 0;
 	bool CanAttackDuo = false;
 
-	public:
+public:
 	UPROPERTY()
 	FChargeManagerEvent ChargeManagerEvent;
 	
 	UPROPERTY()
 	FAttackDuoManagerEvent AttackDuoManagerEvent;
 	
+#pragma endregion
+
+#pragma region HitStop
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHitStop,int,Damage);
+	FHitStop HitStopEvent;
+#pragma endregion
+
+#pragma region KnockBack
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FKnockBack,FVector2D,KnockBackVelocity);
+	FKnockBack KnockBackEvent;
 #pragma endregion
 	
 };

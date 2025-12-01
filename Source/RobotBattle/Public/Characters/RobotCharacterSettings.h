@@ -33,7 +33,4 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	float InputMoveXThreshold = 0.1f;
-	
-	UPROPERTY(Config, EditAnywhere, Category = "Attacks")
-	TSoftObjectPtr<URobotCharacterAttacksData> AttackData;
 };

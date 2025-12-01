@@ -2,15 +2,12 @@
 
 
 #include "Characters/States/RobotCharacterStateAttack.h"
-
 #include "Camera/CameraShakeWorld.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/CollisionChannel.h"
-#include "Characters/RobotCharacterSettings.h"
 #include "Characters/RobotCharacterStateMachine.h"
-#include "Characters/Animations/AnimNotify/EndAttackDetectionAnimNotify.h"
-#include "Characters/Animations/AnimNotify/StartAttackDetectionAnimNotify.h"
-#include "Characters/Attacks/RobotCharacterAttacksData.h"
+#include "Characters/Animations/AnimNotify/KnockBackAnimNotify.h"
+#include "Characters/Animations/AnimNotify/AttackDetectionAnimNotify.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -26,130 +23,62 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 
 	HasTouch = false;
 	
-	URobotCharacterAttacksData* AttacksData = CharacterSettings->AttackData.LoadSynchronous();
-	
-	FAttackFromID ListAttacks = AttacksData->ListAttacks[Character->GetRobotBodyID()];
-	CurrentAttackStruct = ListAttacks.AttacksFromID[Character->GetCurrentTypeAttack()];
-	
-	AttackAnim = CurrentAttackStruct.AnimMontage;
-	InitAnimationNotify();
-	AnimDuration = Character->PlayAnimMontage(AttackAnim);
-	KeyframeDeltaTime = AnimDuration / AttackAnim->GetNumberOfSampledKeys();
-	CurrentAnimDeltaTime = 0.0f;
+	AnimDuration = Character->PlayAnimMontage(Attacks[Character->GetCurrentTypeAttack()]);
 	CurrentAnimTime = 0.0f;
-	AttackIndex = 0;
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	
+	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
+	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
+	{
+		if (UAttackDetectionAnimNotify* AttackNotify = Cast<UAttackDetectionAnimNotify>(NotifyEvent.NotifyStateClass))
+		{
+			AttackNotify->OnNotifiedAttackStart.AddDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			AttackNotify->OnNotifiedAttack.AddDynamic(this, &URobotCharacterStateAttack::DetectionNotifyAttack);
+		}
+
+		if (UKnockBackAnimNotify* KnockBackAnimNotify = Cast<UKnockBackAnimNotify>(NotifyEvent.Notify))
+		{
+			KnockBackAnimNotify->OnKnockBackEvent.AddDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
+		}
+	}
 }
 
 void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
+	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 
-	TArray<FAnimNotifyEvent> NotifyEvents = AttackAnim->Notifies;
+	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
 	{
-		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
+		if (UAttackDetectionAnimNotify* StartNotify = Cast<UAttackDetectionAnimNotify>(NotifyEvent.NotifyStateClass))
 		{
-			StartNotify->OnNotifiedStartAttack.RemoveDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartNotify->OnNotifiedAttackStart.RemoveDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
+			StartNotify->OnNotifiedAttack.RemoveDynamic(this, &URobotCharacterStateAttack::DetectionNotifyAttack);
 		}
 
-		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
+		if (UKnockBackAnimNotify* KnockBackAnimNotify = Cast<UKnockBackAnimNotify>(NotifyEvent.Notify))
 		{
-			EndNotify->OnNotifiedEndAttack.RemoveDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
+			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	Character->LockManagerEvent.Broadcast(false);
-	if (Character->GetCurrentTypeAttack() == EAttackID::Ultimate)
-	{
-		Character->ResetDamageBonus();
-	}
-	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	Character->ResetDamageBonus();
 	if (Character->DoWantSwitch())
 	{
 		Character->EnergyManagerEvent.Broadcast();
 	}
 
-	if (HasTouch == false)
-	{
-		Character->AttackManagerEvent.Broadcast(false);
-	}
+	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
+	else Character->AttackManagerEvent.Broadcast(false);
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
 {
 	Super::StateTick(DeltaTime);
-
-	CurrentAnimDeltaTime += DeltaTime;
 	CurrentAnimTime += DeltaTime;
-
-	if (bIsAttackTraceEnabled)
-	{
-		if (CurrentAnimDeltaTime >= KeyframeDeltaTime)
-		{
-			CurrentAnimDeltaTime -= KeyframeDeltaTime;
-			StartPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex])->GetSocketLocation(Character->GetMesh());
-			EndPos = Character->GetMesh()->GetSocketByName(CurrentAttackStruct.ConcernedBones[AttackIndex + 1])->GetSocketLocation(Character->GetMesh());
-			FHitResult OutHit;
-			ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
-			if (Character->Team == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
-			else if (Character->Team == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
-			if (UKismetSystemLibrary::SphereTraceSingle
-				(
-					GetWorld(),
-					StartPos, EndPos, CurrentAttackStruct.TraceRadius,
-					TraceTypeQuery, false, ActorsToIgnore,
-					EDrawDebugTrace::ForDuration,
-					OutHit, true
-				))
-			{
-				if (OutHit.GetActor())
-				{
-					if (OutHit.GetActor()->Implements<URobot>())
-					{
-						Cast<IRobot>(OutHit.GetActor())->TakeDamageFromAttack(CurrentAttackStruct.Damage + Character->GetDamageBonus(), CurrentAttackStruct.StunTime,CurrentAttackStruct.KnockBackVector);
-						bIsAttackTraceEnabled = false;
-						HasTouch = true;
-						Character->AttackManagerEvent.Broadcast(true);
-						Character->GuardResetManagerEvent.Broadcast();
-						Character->LockManagerEvent.Broadcast(true);
-
-						APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-						float ScaleShake = 1.f;
-						float DurationShake = 0.f;
-						UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
-						UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
-						ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
-						//Delay for the shake
-						FTimerHandle TimerHandle;
-						GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
-						{
-							Camera->StopCameraShake(ShakeInstance, false);
-						}, DurationShake, false);
-					}
-				}
-			}
-		}
-	}
 	if (CurrentAnimTime >= AnimDuration)
 	{
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
-	}
-}
-
-void URobotCharacterStateAttack::InitAnimationNotify()
-{
-	TArray<FAnimNotifyEvent> NotifyEvents = AttackAnim->Notifies;
-	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
-	{
-		if (UStartAttackDetectionAnimNotify* StartNotify = Cast<UStartAttackDetectionAnimNotify>(NotifyEvent.Notify))
-		{
-			StartNotify->OnNotifiedStartAttack.AddDynamic(this, &URobotCharacterStateAttack::StartDetectionNotifyAttack);
-		}
-
-		if (UEndAttackDetectionAnimNotify* EndNotify = Cast<UEndAttackDetectionAnimNotify>(NotifyEvent.Notify))
-		{
-			EndNotify->OnNotifiedEndAttack.AddDynamic(this, &URobotCharacterStateAttack::EndDetectionNotifyAttack);
-		}
 	}
 }
 
@@ -157,15 +86,79 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack(AActor* ConcernedAct
 {
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = true;
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Start Detection Notify"));
 }
 
-void URobotCharacterStateAttack::EndDetectionNotifyAttack(AActor* ConcernedActor)
+void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data)
 {
 	if (ConcernedActor != GetOwner()) return;
-	bIsAttackTraceEnabled = false;
-	AttackIndex += 2;
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("End Detection Notify"));
+	
+	if (bIsAttackTraceEnabled)
+	{
+		StartPos = Character->GetMesh()->GetSocketByName(Data.StartSocket)->GetSocketLocation(Character->GetMesh());
+		EndPos = Character->GetMesh()->GetSocketByName(Data.EndSocket)->GetSocketLocation(Character->GetMesh());
+		FHitResult OutHit;
+		ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
+		if (Character->GetTeam() == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+		else if (Character->GetTeam() == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
+		if (UKismetSystemLibrary::SphereTraceSingle
+			(
+				GetWorld(),
+				StartPos, EndPos, Data.TraceRadius,
+				TraceTypeQuery, false, ActorsToIgnore,
+				EDrawDebugTrace::ForDuration,
+				OutHit, true
+			))
+		{
+			if (OutHit.GetActor())
+			{
+				if (OutHit.GetActor()->Implements<URobot>())
+				{
+					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
+					if (Character->DoHaveEnergy())
+					{
+						TouchedCharacterInterface->TakeDamageFromAttack(
+							Data.Damage + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
+							Data.StunTimer);
+					}
+					else
+					{
+						TouchedCharacterInterface->TakeDamageFromAttack(
+							(Data.Damage * Character->GetNerfStatsMultiplier()) + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
+							Data.StunTimer * Character->GetNerfStatsMultiplier());
+					}
+					bIsAttackTraceEnabled = false;
+					HasTouch = true;
+					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetDamageBonus());
+					Character->AttackManagerEvent.Broadcast(true);
+					Character->GuardResetManagerEvent.Broadcast();
+					Character->AirStopManagerEvent.Broadcast(true);
+
+					APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
+					float ScaleShake = 1.f;
+					float DurationShake = 0.f;
+					UCameraShakeBase* TempShake = Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),ScaleShake);
+					UCameraShakeWorld* ShakeInstance = Cast<UCameraShakeWorld>(TempShake);
+					ShakeInstance->SetupShakeParametersOnAttackID(Character->GetCurrentTypeAttack(),Character->GetRobotBodyID(),ScaleShake,DurationShake);
+					//Delay for the shake
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Camera, ShakeInstance]()
+					{
+						Camera->StopCameraShake(ShakeInstance, false);
+					}, DurationShake, false);
+				}
+			}
+		}
+	}
+	
+}
+
+void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack)
+{
+	if (ConcernedActor != GetOwner()) return;
+	if (!HasTouch && TouchedCharacterInterface == nullptr) return;
+	TouchedCharacterInterface->KnockBackFromNotify(KnockBack);
+
+	TouchedCharacterInterface = nullptr;
 }
 
 

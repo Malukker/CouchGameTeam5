@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RobotBattlePlayerCardWidget.generated.h"
 
-class UTextBlock;
+class UImage;
 
 UCLASS()
 class ROBOTBATTLE_API URobotBattlePlayerCardWidget : public UUserWidget
@@ -15,9 +15,22 @@ class ROBOTBATTLE_API URobotBattlePlayerCardWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerName(const FString& NewName);
+	void SetPlayerImage(int32 PlayerID);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Text_PlayerName;
+	UImage* Image_Player;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Player Image")
+	UTexture2D* PlayerImage1;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Image")
+	UTexture2D* PlayerImage2;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Image")
+	UTexture2D* PlayerImage3;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Image")
+	UTexture2D* PlayerImage4;
+
 };

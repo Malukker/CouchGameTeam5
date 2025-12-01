@@ -59,16 +59,18 @@ private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
 	UPROPERTY()
-	float TeamLifeMax = 0;
+	int TeamLifeMax = 0;
 	UPROPERTY()
-	float TeamLife = 0;
+	int TeamLife = 0;
 	
 	UPROPERTY()
-	float TeamGuardMax = 0;
+	int TeamGuardMax = 0;
 	UPROPERTY()
-	float TeamGuard = 0;
+	int TeamGuard = 0;
 	UPROPERTY()
 	bool CanGuard = false;
+	UPROPERTY()
+	float KnockBackMultiplier = 1;
 	
 	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;
@@ -86,17 +88,17 @@ private:
 	UPROPERTY()
 	float UltimateBuffer = 0;
 	UPROPERTY()
-	bool IsUltimating = false;
+	bool IsLoadingUltimate = false;
 	UPROPERTY()
 	int WantUltimate = -1;
 	
 	UPROPERTY()
-	float TeamChargeMax = 0;
+	int TeamChargeMax = 0;
 	UPROPERTY()
-	float TeamCharge = 0;
+	int TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = -1;
+	float OriginalGravityScale = 0;
 
 	UPROPERTY()
 	int Combo = 0;
@@ -111,10 +113,10 @@ private:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
-	void TeamTakeDamage(int Damage, float StunTime, FVector2D KnockBackVelocity);
+	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamAirBlock(bool Lock);
+	void TeamAirBlock(bool AirBlock);
 	
 	UFUNCTION()
 	void SwitchEnergy();
@@ -133,6 +135,9 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
+
+	UFUNCTION()
+	void KnockBack(FVector2D KnockBackVelocity);
 	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
