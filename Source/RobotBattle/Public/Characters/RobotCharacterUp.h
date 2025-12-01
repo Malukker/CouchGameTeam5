@@ -18,6 +18,10 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 protected:
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DashAnimMontage;
+
+	
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
 	virtual void BeginPlay() override;
 	void OnInputAttack1(const FInputActionValue& InputActionValue);
