@@ -9,6 +9,7 @@
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -22,6 +23,9 @@ ARobotCharacter::ARobotCharacter()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(FName("BoxComponent"));
 	BoxComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(FName("Audio"));
+	AudioComponent->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
