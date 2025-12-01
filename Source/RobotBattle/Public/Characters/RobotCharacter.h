@@ -48,6 +48,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UAudioComponent> AudioComponent;
 
 #pragma endregion Unreal Default
