@@ -119,10 +119,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamAirBlock(bool AirBlock);
-	
-	UFUNCTION()
-	void SwitchEnergy();
+	void TeamAirBlock();
 	
 	UFUNCTION()
 	void GuardReset();

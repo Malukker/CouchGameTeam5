@@ -35,8 +35,6 @@ public:
 	
 	UFUNCTION()
 	void OnStunEvent();
-	UFUNCTION()
-	void OnLockEvent();
 
 private:
 	float CurrentDashTime;

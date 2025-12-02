@@ -22,16 +22,14 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 
 	if (Character->IsWalkingForward())
 	{
-		if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
-		else  CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
+		CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
 		WalkForward = true;
 		Character->GuardManagerEvent.Broadcast(false);
 		Character->PlayAnimMontage(WalkAnimForward);
 	}
 	else
 	{
-		if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
-		else  CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
+		CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
 		WalkForward = false;
 		Character->GuardManagerEvent.Broadcast(true);
 		Character->PlayAnimMontage(WalkAnimBackward);
@@ -40,9 +38,6 @@ void URobotCharacterStateWalk::StateEnter(ERobotCharacterStateID PreviousState)
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateWalk::OnInputDash);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
-	Character->EnergyEvent.AddDynamic(this, &URobotCharacterStateWalk::OnEnergyEvent);
-
-	OnEnergyEvent();
 }
 
 void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
@@ -52,7 +47,6 @@ void URobotCharacterStateWalk::StateExit(ERobotCharacterStateID NextState)
 	Character->InputJumpEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputJump);
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnInputDash);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnStunEvent);
-	Character->EnergyEvent.RemoveDynamic(this, &URobotCharacterStateWalk::OnEnergyEvent);
 }
 
 void URobotCharacterStateWalk::StateTick(float DeltaTime)
@@ -70,8 +64,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 		{
 			if (!WalkForward)
 			{
-				if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
-				else  CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
+				CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(false);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
 				Character->PlayAnimMontage(WalkAnimForward);
@@ -82,8 +75,7 @@ void URobotCharacterStateWalk::StateTick(float DeltaTime)
 		{
 			if (WalkForward)
 			{
-				if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
-				else  CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
+				CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
 				Character->GuardManagerEvent.Broadcast(true);
 				//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
 				Character->PlayAnimMontage(WalkAnimBackward);
@@ -106,18 +98,4 @@ void URobotCharacterStateWalk::OnInputDash()
 void URobotCharacterStateWalk::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
-}
-
-void URobotCharacterStateWalk::OnEnergyEvent()
-{
-	if (Character->IsWalkingForward())
-	{
-		if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax;
-		else  CharacterMovement->MaxWalkSpeed = ForwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
-	}
-	else
-	{
-		if (Character->DoHaveEnergy()) CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax;
-		else  CharacterMovement->MaxWalkSpeed = BackwardWalkSpeedMax * Character->GetNerfStatsMultiplier();
-	}
 }

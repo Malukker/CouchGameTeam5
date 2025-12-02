@@ -39,15 +39,7 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	CharacterMovement->GroundFriction = 0;
 	CharacterMovement->GravityScale = 0;
 	
-	FVector Dash;
-	if (Character->DoHaveEnergy())
-	{
-		Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
-	}
-	else
-	{
-		Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX() * Character->GetNerfStatsMultiplier();
-	}
+	FVector Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
 	Character->LaunchCharacter(Dash, true, true);
 	Character->UseDash();
 }
@@ -69,11 +61,6 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 
 	CharacterMovement->StopMovementImmediately();
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnStunEvent);
-	
-	if (Character->DoWantSwitch())
-	{
-		Character->EnergyManagerEvent.Broadcast();
-	}
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)
@@ -106,10 +93,3 @@ void URobotCharacterStateDash::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
-
-
-void URobotCharacterStateDash::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
-}
-
