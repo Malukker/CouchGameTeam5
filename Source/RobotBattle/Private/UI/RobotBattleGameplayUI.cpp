@@ -6,6 +6,7 @@
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
 #include "Kismet/GameplayStatics.h"
 
 #pragma region Timer
@@ -159,6 +160,16 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo1->SetText(FText::FromString(ComboString));
 			Combo1->SetVisibility(ESlateVisibility::Visible);
+
+			if (Combo >= 3)
+			{
+				float ScaleFactor = 1.0f + (Combo - 2) * 0.1f;
+				Combo1->SetRenderScale(Combo1BaseScale * ScaleFactor);
+			}
+			else
+			{
+				Combo1->SetRenderScale(Combo1BaseScale);
+			}
 		}else
 		{
 			Combo1->SetVisibility(ESlateVisibility::Hidden);
@@ -169,8 +180,18 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 		if (Combo > 1)
 		{
 			FString ComboString = FString::Printf(TEXT("x%d"));
+			
 			Combo2->SetText(FText::FromString(ComboString));
 			Combo2->SetVisibility(ESlateVisibility::Visible);
+			if (Combo >= 3)
+			{
+				float ScaleFactor = 1.0f + (Combo - 2) * 0.1f;
+				Combo2->SetRenderScale(Combo2BaseScale * ScaleFactor);
+			}
+			else
+			{
+				Combo2->SetRenderScale(Combo2BaseScale);
+			}
 		}else
 		{
 			Combo2->SetVisibility(ESlateVisibility::Hidden);
