@@ -233,6 +233,8 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAirStopManagerEvent, bool, AirStop);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardEvent, int, GuardLeft);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
@@ -255,10 +257,13 @@ public:
 	UPROPERTY()
 	FHurtEvent HurtEvent;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
+	FGuardEvent GuardEvent;
+	
+	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
 	FGuardManagerEvent GuardManagerEvent;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
 	FGuardResetManagerEvent GuardResetManagerEvent;
 	
 	UPROPERTY()
