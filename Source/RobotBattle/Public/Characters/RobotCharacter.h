@@ -119,12 +119,6 @@ public:
 	int GetDashDirectionX() const;
 	void UseDash();
 	void ResetDash();
-	
-	bool DoHaveEnergy();
-	bool DoWantSwitch();
-	void SwitchEnergy();
-	void SetEnergy(bool Value);
-	
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
@@ -154,8 +148,6 @@ protected:
 	UPROPERTY()
 	bool CanDash = true;
 	UPROPERTY()
-	bool HaveEnergy = false;
-	UPROPERTY()
 	bool WantSwitch = false;
 	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
@@ -167,7 +159,6 @@ protected:
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue);
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue);
-	virtual void OnInputEnergy(const FInputActionValue& InputActionValue);
 	virtual void OnInputPause(const FInputActionValue& InputActionValue);
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent);
 
@@ -194,7 +185,6 @@ public:
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
-	float GetNerfStatsMultiplier();
 	
 protected:
 	UPROPERTY(EditAnywhere)
@@ -230,7 +220,7 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAirStopManagerEvent, bool, AirStop);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAirStopManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 	
@@ -238,21 +228,10 @@ public:
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyManagerEvent);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEnergyEvent);
-	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 
-	
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
-	
-	UPROPERTY()
-	FEnergyManagerEvent EnergyManagerEvent;
-	
-	UPROPERTY()
-	FEnergyEvent EnergyEvent;
 	
 	UPROPERTY()
 	FHurtEvent HurtEvent;
