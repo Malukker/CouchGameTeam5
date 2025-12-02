@@ -102,9 +102,14 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* IMG_ReadyPlayer4;
+
+	
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* HorizontalBox_Controls;
 	
 	UPROPERTY()
 	TMap<int32, bool> PlayerReadyState;
+	
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;

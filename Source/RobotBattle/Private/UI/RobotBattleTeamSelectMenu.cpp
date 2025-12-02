@@ -50,6 +50,7 @@ void URobotBattleTeamSelectMenu::NativeConstruct()
 	if (IMG_ReadyPlayer2) IMG_ReadyPlayer2->SetVisibility(ESlateVisibility::Hidden);
 	if (IMG_ReadyPlayer3) IMG_ReadyPlayer3->SetVisibility(ESlateVisibility::Hidden);
 	if (IMG_ReadyPlayer4) IMG_ReadyPlayer4->SetVisibility(ESlateVisibility::Hidden);
+	if (HorizontalBox_Controls) HorizontalBox_Controls->SetVisibility(ESlateVisibility::Hidden);
 
 	if (IMG_WaitingPlayer1) IMG_WaitingPlayer1->SetVisibility(ESlateVisibility::Visible);
 	if (IMG_WaitingPlayer2) IMG_WaitingPlayer2->SetVisibility(ESlateVisibility::Visible);
