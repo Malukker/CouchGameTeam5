@@ -108,7 +108,6 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->AirStopManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
 		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
-		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
@@ -126,7 +125,12 @@ void ATeamManager::SpawnCharacters()
 		TeamChargeMax += NewCharacter->GetCharge();
 		InvinsibilityFramesOrigin += NewCharacter->GetInvinsibilityFrames();
 	}
-	
+	ResetCharacters();
+}
+
+void ATeamManager::ResetCharacters()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
 		FAttachmentTransformRules(
@@ -136,12 +140,6 @@ void ATeamManager::SpawnCharacters()
 			false),
 		"Bones_Attach");
 
-	ResetCharacters();
-}
-
-void ATeamManager::ResetCharacters()
-{
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
@@ -150,8 +148,6 @@ void ATeamManager::ResetCharacters()
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	UIInterface->SetComboHit(Team, Combo);
 	RobotParts[ERobotCharacterPositionEnum::Up]->CustomTimeDilation = 1.f;
-	RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
 	RobotParts[ERobotCharacterPositionEnum::Down]->ResetStateMachine();
 }
@@ -265,26 +261,9 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	}
 }
 
-void ATeamManager::TeamAirBlock(bool AirBlock)
+void ATeamManager::TeamAirBlock()
 {
-	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	if (AirBlock && MovementComponent->GravityScale != 0)
-	{
-		OriginalGravityScale = MovementComponent->GravityScale;
-		MovementComponent->GravityScale = 0;
-		MovementComponent->StopMovementImmediately();
-	}
-	else if(!AirBlock && OriginalGravityScale != 0)
-	{
-		MovementComponent->GravityScale = OriginalGravityScale;
-		OriginalGravityScale = 0;
-	}
-}
-
-void ATeamManager::SwitchEnergy()
-{
-	RobotParts[ERobotCharacterPositionEnum::Down]->SwitchEnergy();
-	RobotParts[ERobotCharacterPositionEnum::Up]->SwitchEnergy();
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->StopMovementImmediately();
 }
 
 void ATeamManager::GuardReset()

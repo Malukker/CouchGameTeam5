@@ -58,6 +58,9 @@ public:
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 
+	UPROPERTY(EditAnywhere)
+	bool UseEnergy = true;
+	
 	UPROPERTY()
 	int TeamLifeMax = 0;
 	UPROPERTY()
@@ -116,10 +119,7 @@ private:
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamAirBlock(bool AirBlock);
-	
-	UFUNCTION()
-	void SwitchEnergy();
+	void TeamAirBlock();
 	
 	UFUNCTION()
 	void GuardReset();

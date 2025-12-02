@@ -63,13 +63,6 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 		}
 	}
 	Character->ResetDamageBonus();
-	if (Character->DoWantSwitch())
-	{
-		Character->EnergyManagerEvent.Broadcast();
-	}
-
-	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
-	else Character->AttackManagerEvent.Broadcast(false);
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -114,24 +107,15 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 				if (OutHit.GetActor()->Implements<URobot>())
 				{
 					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-					if (Character->DoHaveEnergy())
-					{
-						TouchedCharacterInterface->TakeDamageFromAttack(
-							Data.Damage + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
-							Data.StunTimer);
-					}
-					else
-					{
-						TouchedCharacterInterface->TakeDamageFromAttack(
-							(Data.Damage * Character->GetNerfStatsMultiplier()) + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
-							Data.StunTimer * Character->GetNerfStatsMultiplier());
-					}
+					TouchedCharacterInterface->TakeDamageFromAttack(
+						Data.Damage + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
+						Data.StunTimer);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
 					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetDamageBonus());
 					Character->AttackManagerEvent.Broadcast(true);
 					Character->GuardResetManagerEvent.Broadcast();
-					Character->AirStopManagerEvent.Broadcast(true);
+					Character->AirStopManagerEvent.Broadcast();
 
 					APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 					float ScaleShake = 1.f;
