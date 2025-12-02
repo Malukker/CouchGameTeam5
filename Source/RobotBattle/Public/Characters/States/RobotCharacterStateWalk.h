@@ -43,7 +43,4 @@ private:
 	
 	UFUNCTION()
 	void OnStunEvent();
-	
-	UFUNCTION()
-	void OnEnergyEvent();
 };
