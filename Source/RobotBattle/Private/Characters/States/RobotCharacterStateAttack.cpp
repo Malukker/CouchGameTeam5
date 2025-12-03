@@ -114,15 +114,6 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 				if (OutHit.GetActor()->Implements<URobot>())
 				{
 					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-					if (UseBoost)
-					{
-						GEngine->AddOnScreenDebugMessage(
-						-1,
-						3.f,
-						FColor::Cyan,
-						TEXT("UseBoost")
-					);
-					}
 					TouchedCharacterInterface->TakeDamageFromAttack(
 						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
 						Data.StunTimer);

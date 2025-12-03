@@ -41,6 +41,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
+	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
 
 	FDeathEvent DeathEvent;
@@ -50,13 +51,18 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void SetInput(bool Value);
+	void PlayIntro();
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
 	float GetLife();
 	
 private:
+	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	UPROPERTY()
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
 	UPROPERTY()
 	int TeamLifeMax = 0;

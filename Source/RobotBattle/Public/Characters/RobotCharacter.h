@@ -185,10 +185,18 @@ public:
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
+	void PlayIntro();
 	
 protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
+	
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* Intro;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* EndWin;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* EndDefeat;
 	
 	UPROPERTY()
 	int Team;
