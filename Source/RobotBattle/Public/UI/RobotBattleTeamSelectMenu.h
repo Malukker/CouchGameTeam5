@@ -136,8 +136,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UImage* IMG_Player4;
 
-	UPROPERTY(meta = (BindWidget))
-	UTexture2D* IMG_Valid;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Pressed;
 
 #pragma endregion
 	UPROPERTY()
