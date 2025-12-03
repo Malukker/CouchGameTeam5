@@ -50,6 +50,12 @@ void ARobotCharacterDown::OnInputLeftDash(const FInputActionValue& InputActionVa
 	InputDashEvent.Broadcast();
 }
 
+void ARobotCharacterDown::OnInputBoost(const FInputActionValue& InputActionValue)
+{
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	BoostManagerEvent.Broadcast();
+}
+
 void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
 	Super::BindInputAndActions(EnhancedInputComponent);
@@ -58,6 +64,11 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 	if (InputDataGameplay->InputActionJump)
 	{
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
+	}
+
+	if (InputDataGameplay->InputActionBoost)
+	{
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionBoost,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputBoost);
 	}
 }
 
