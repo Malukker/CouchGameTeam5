@@ -198,7 +198,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* EndDefeat;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int Team;
 
 	UPROPERTY(EditAnywhere)
