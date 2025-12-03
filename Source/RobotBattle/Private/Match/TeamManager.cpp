@@ -263,7 +263,19 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 
 void ATeamManager::TeamAirBlock()
 {
-	RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->StopMovementImmediately();
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	MovementComponent->StopMovementImmediately();
+	OriginalGravityScale = MovementComponent->GravityScale;
+	MovementComponent->GravityScale = 0;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		if ( RobotParts[ERobotCharacterPositionEnum::Down] != nullptr)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GravityScale = OriginalGravityScale;
+		}
+	}, .1f, false);
+			
 }
 
 void ATeamManager::GuardReset()
