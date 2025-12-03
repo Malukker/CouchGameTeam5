@@ -27,6 +27,10 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	AnimDuration = Character->PlayAnimMontage(Attacks[Character->GetCurrentTypeAttack()]);
 	CurrentAnimTime = 0.0f;
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	Character->BoostEvent.AddDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
+
+	if (Character->GetBoost()) UseBoost = true;
+	else UseBoost = false;
 	
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -48,6 +52,8 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	Character->BoostEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
+	UseBoost = false;
 
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -63,7 +69,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	Character->ResetDamageBonus();
+	Character->ResetAttackDuoBonus();
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -109,11 +115,11 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 				{
 					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
 					TouchedCharacterInterface->TakeDamageFromAttack(
-						Data.Damage + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
+						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
 						Data.StunTimer);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
-					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetDamageBonus());
+					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetAttackDuoBonus());
 					Character->AttackManagerEvent.Broadcast(true);
 					Character->GuardResetManagerEvent.Broadcast();
 					Character->AirStopManagerEvent.Broadcast();
@@ -150,4 +156,11 @@ void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor, FVector
 void URobotCharacterStateAttack::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
+}
+
+
+void URobotCharacterStateAttack::OnBoostEvent()
+{
+	if (CurrentAnimTime > 0.25f) return;
+	UseBoost = true;
 }
