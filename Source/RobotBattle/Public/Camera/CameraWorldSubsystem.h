@@ -91,9 +91,10 @@ private:
 
 	void SetRobotBounds();
 	
-	
+	UFUNCTION(BlueprintCallable)
 	void GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax);
 
+	UFUNCTION(BlueprintCallable)
 	FVector CalculateWorldPositionFromViewportPosition(const FVector2D& ViewportPosition);
 #pragma endregion Bounds
 
