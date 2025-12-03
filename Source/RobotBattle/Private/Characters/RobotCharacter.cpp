@@ -93,11 +93,6 @@ int ARobotCharacter::GetInvinsibilityFrames()
 	return InvinsibilityFrames;
 }
 
-float ARobotCharacter::GetNerfStatsMultiplier()
-{
-	return NerfStatsMultiplier;
-}
-
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;
@@ -190,31 +185,6 @@ void ARobotCharacter::ResetDash()
 	CanDash = true;
 }
 
-bool ARobotCharacter::DoHaveEnergy()
-{
-	return HaveEnergy;
-}
-
-bool ARobotCharacter::DoWantSwitch()
-{
-	return WantSwitch;
-}
-
-void ARobotCharacter::SwitchEnergy()
-{
-	WantSwitch = false;
-	HaveEnergy = !HaveEnergy;
-	GetMesh()->SetRenderCustomDepth(HaveEnergy);
-	EnergyEvent.Broadcast();
-}
-
-void ARobotCharacter::SetEnergy(bool Value)
-{
-	HaveEnergy = Value;
-	GetMesh()->SetRenderCustomDepth(HaveEnergy);
-	EnergyEvent.Broadcast();
-}
-
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
 {
 	RobotID = Robot;
@@ -249,19 +219,6 @@ void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue
 {
 }
 
-void ARobotCharacter::OnInputEnergy(const FInputActionValue& InputActionValue)
-{
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
-	ERobotCharacterStateID State = StateMachine->GetCurrentStateID();
-	if (State == ERobotCharacterStateID::Attack
-		|| State == ERobotCharacterStateID::LoadingAttack
-		|| State == ERobotCharacterStateID::Dash)
-	{
-		WantSwitch = true;
-		return;
-	}
-	EnergyManagerEvent.Broadcast();
-}
 
 void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 {
@@ -321,11 +278,6 @@ void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInput
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
 	}
 	
-	if (InputDataGameplay->InputActionEnergy)
-	{
-		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionEnergy, ETriggerEvent::Started, this, &ARobotCharacter::OnInputEnergy);
-	}
-	
 	if (InputDataGameplay->InputActionPause)
 	{
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
@@ -341,8 +293,6 @@ ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
 {
 	return  ERobotCharacterDownChargeID::None;
 }
-
-
 
 FVector ARobotCharacter::GetRobotLocation()
 {
