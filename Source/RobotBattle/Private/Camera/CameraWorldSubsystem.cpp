@@ -213,11 +213,15 @@ void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, F
 	FViewport* Viewport = ViewportClient->Viewport;
 	if (Viewport == nullptr) return;
 
+	if (CameraMain == nullptr)
+	{
+		return;
+	}
+
 	//Calculate Viewport Rect according to Camera Aspect Ratio and Viewport ViewRect
 	FIntRect ViewRect(Viewport->GetInitialPositionXY(), Viewport->GetInitialPositionXY() + Viewport->GetSizeXY());
 	FIntRect ViewportRect = Viewport->CalculateViewExtents(CameraMain->AspectRatio, ViewRect);
 	
-
 	//Fill Output parameters with ViewportRect
 	OutViewportBoundsMin.X = ViewportRect.Min.X;
 	OutViewportBoundsMin.Y = ViewportRect.Min.Y;
