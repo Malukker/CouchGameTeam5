@@ -68,7 +68,7 @@ void AMatchManager::ResetFight()
 			Team->SetInput(true);
 		}
 		UIGameplay->StartTimer(RoundTime);
-	}, 7.5f, false);
+	}, 7.f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()

@@ -7,6 +7,8 @@
 #include "RobotBattlePlayerCardWidget.h"
 #include "RobotBattleTeamSelectMenu.generated.h"
 
+class AMenuGameMode;
+class UCanvasPanel;
 class AMainMenuHUD;
 class UHorizontalBox;
 class UVerticalBox;
@@ -28,6 +30,12 @@ class ROBOTBATTLE_API URobotBattleTeamSelectMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, int, ControllerID);
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectionValidation ValidateEvent;
+	
 	
 	UFUNCTION(BlueprintCallable)
 	void CustomConstruct();
@@ -102,9 +110,39 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* IMG_ReadyPlayer4;
+
 	
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* CanvasPanel_TeamSelection;
+
+#pragma region ControlsBindWidget
+
+	bool TeamSelectionDone = false;
+
+	TArray<bool> PlayerChangedImg;
+	
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* CanvasPanel_Controls;
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player1;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player2;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player3;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player4;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Pressed;
+
+#pragma endregion
 	UPROPERTY()
 	TMap<int32, bool> PlayerReadyState;
+	
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;
@@ -123,5 +161,13 @@ private:
 
 	bool IsZoneOccupied(const FString& ZoneName) const;
 	
-	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
+	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;
+
+	UPROPERTY()
+	AMenuGameMode* GM ;
+	
+	UFUNCTION()
+	void ChangeImageWhenReady(APlayerController* controller);
+
+	void CheckAllBoolAndGoToNextLevel();
 };

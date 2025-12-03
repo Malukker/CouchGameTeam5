@@ -98,6 +98,11 @@ void ARobotCharacter::PlayIntro()
 	PlayAnimMontage(Intro);
 }
 
+void ARobotCharacter::PlayEnd(bool Win)
+{
+	PlayAnimMontage((Win ? EndWin : EndDefeat));
+}
+
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;

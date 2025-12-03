@@ -33,7 +33,7 @@ public:
 	FOnPlayerMenuMoveInput InputMoveEvent;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuValidateInput, APlayerController*, Controller);
-	UPROPERTY()
+	UPROPERTY(Blueprintable)
 	FOnPlayerMenuValidateInput InputValidateEvent;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuCancelInput, APlayerController*, Controller);

@@ -186,6 +186,7 @@ public:
 	int GetGuard();
 	int GetInvinsibilityFrames();
 	void PlayIntro();
+	void PlayEnd(bool Win);
 	
 protected:
 	UPROPERTY(EditAnywhere)
@@ -198,7 +199,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* EndDefeat;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	int Team;
 
 	UPROPERTY(EditAnywhere)
