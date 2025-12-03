@@ -160,8 +160,8 @@ void ATeamManager::SetInput(bool Value)
 {
 	if (Value)
 	{
-		PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
-		PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
+		PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
+		PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
 	}
 	else
 	{
