@@ -41,6 +41,9 @@ void ATeamManager::Tick(float DeltaTime)
 
 	if (ComboTimer > 0) ComboTimer -= DeltaTime;
 	if (ComboTimer <= 0 && Combo > 0) {Combo = 0; UIInterface->SetComboHit(Team, Combo);}
+
+	if (BoostTimer > 0) BoostTimer -= DeltaTime;
+	if (BoostTimer <= 0 && WantBoost) {WantBoost = false; RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(false);}
 		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
@@ -105,8 +108,9 @@ void ATeamManager::SpawnCharacters()
 		}
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
-		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->AirStopManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
+		NewCharacter->BoostManagerEvent.AddDynamic(this, &ATeamManager::Boost);
 		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
 		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
@@ -264,9 +268,9 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 void ATeamManager::TeamAirBlock()
 {
 	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	MovementComponent->StopMovementImmediately();
 	OriginalGravityScale = MovementComponent->GravityScale;
 	MovementComponent->GravityScale = 0;
+	MovementComponent->StopMovementImmediately();
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
@@ -351,7 +355,7 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	case ERobotCharacterPositionEnum::Down:
 		if (IsLoadingUltimate)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddAttackDuoBonus();
 		}
 		else
 		{
@@ -363,7 +367,7 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	case ERobotCharacterPositionEnum::Up:
 		if (IsLoadingUltimate)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddAttackDuoBonus();
 		}
 		else
 		{
@@ -376,6 +380,13 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		IsLoadingUltimate = false;
 	default: ;
 	}
+}
+
+void ATeamManager::Boost()
+{
+	RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(true);
+	BoostTimer = .25f;
+	WantBoost = true;
 }
 
 

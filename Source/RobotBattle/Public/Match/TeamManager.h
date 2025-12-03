@@ -57,9 +57,6 @@ public:
 	
 private:
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
-
-	UPROPERTY(EditAnywhere)
-	bool UseEnergy = true;
 	
 	UPROPERTY()
 	int TeamLifeMax = 0;
@@ -109,6 +106,11 @@ private:
 	float ComboTimer = 0.f;
 	UPROPERTY()
 	float ComboResetTime = 5.f;
+
+	UPROPERTY()
+	float BoostTimer = 0;
+	UPROPERTY()
+	float WantBoost = false;
 	
 	FVector GetTeamLocation();
 
@@ -135,6 +137,9 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
+
+	UFUNCTION()
+	void Boost();
 
 	UFUNCTION()
 	void KnockBack(FVector2D KnockBackVelocity);
