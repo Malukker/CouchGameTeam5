@@ -20,10 +20,12 @@ protected:
 	
 	void OnInputJump(const FInputActionValue& InputActionValue);
 	
+	void OnInputBoost(const FInputActionValue& InputActionValue);
+	
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue) override;
 
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
-	
+
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;

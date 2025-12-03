@@ -17,7 +17,7 @@ void URobotCharacterStateLoadingAttack::StateEnter(ERobotCharacterStateID Previo
 {
 	Super::StateEnter(PreviousStateID);
 	Character->PlayAnimMontage(LoadingAnim);
-	Character->ResetDamageBonus();
+	Character->ResetAttackDuoBonus();
 
 	Character->ChargeManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 	
