@@ -304,6 +304,17 @@ bool ARobotCharacter::IsTargetFollowable()
 	return IsFollowable;
 }
 
+void ARobotCharacter::SetBoost(bool Value)
+{
+	BoostEvent.Broadcast();
+	UseBoost = Value;
+}
+
+bool ARobotCharacter::GetBoost()
+{
+	return UseBoost;
+}
+
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
@@ -314,19 +325,19 @@ bool ARobotCharacter::StartAttackDuo()
 	return false;
 }
 
-void ARobotCharacter::AddDamageBonus()
+void ARobotCharacter::AddAttackDuoBonus()
 {
-	DamageBonus ++;
+	AttackDuoBonus ++;
 }
 
-int ARobotCharacter::GetDamageBonus()
+int ARobotCharacter::GetAttackDuoBonus()
 {
-	return DamageBonus;
+	return AttackDuoBonus;
 }
 
-void ARobotCharacter::ResetDamageBonus()
+void ARobotCharacter::ResetAttackDuoBonus()
 {
-	DamageBonus = 0;
+	AttackDuoBonus = 0;
 }
 
 int ARobotCharacter::GetCharge()
