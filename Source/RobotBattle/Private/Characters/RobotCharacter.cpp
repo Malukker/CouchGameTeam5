@@ -93,6 +93,11 @@ int ARobotCharacter::GetInvinsibilityFrames()
 	return InvinsibilityFrames;
 }
 
+void ARobotCharacter::PlayIntro()
+{
+	PlayAnimMontage(Intro);
+}
+
 float ARobotCharacter::GetOrientX() const
 {
 	return OrientX;
