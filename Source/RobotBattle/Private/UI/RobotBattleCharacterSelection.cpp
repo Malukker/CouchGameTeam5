@@ -7,6 +7,8 @@
 #include "Match/RobotGameInstance.h"
 #include "UI/MenuGameMode.h"
 
+
+
 void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InController)
 {
 	ValidationByController[InController] = true;
