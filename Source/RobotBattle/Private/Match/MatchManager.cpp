@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
-#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -23,8 +22,9 @@ void AMatchManager::BeginPlay()
 	Super::BeginPlay();
 	UIGameplay = CreateWidget<URobotBattleGameplayUI>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
+	UUserWidget* UIRound = CreateWidget<UUserWidget>(GetWorld(), UIRoundClass);
+	UIRound->AddToViewport();
 	
-	UIGameplay->StartTimer(RoundTime);
 	UIGameplay->OnTimeOver.AddDynamic(this, &AMatchManager::EndFightOnTimeOut);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
@@ -33,15 +33,42 @@ void AMatchManager::BeginPlay()
 		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFightOnRobotDefeat);
 	}
 	TeamsWin.Init(0,2);
+	Round = 0;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(false);
+		}
+		ResetFight();
+	}, .1f, false);
 }
 
 void AMatchManager::ResetFight()
 {
+	RoundEvent.Broadcast(Round);
 	for (ATeamManager* Team : Teams)
 	{
 		Team->ResetCharacters();
 	}
-	UIGameplay->StartTimer(RoundTime);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->PlayIntro();
+		}
+	}, 2.5f, false);
+	FTimerHandle TimerHandleSecond;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandleSecond, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(true);
+		}
+		UIGameplay->StartTimer(RoundTime);
+	}, 7.f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()
@@ -62,6 +89,7 @@ void AMatchManager::EndFightOnTimeOut()
 
 void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 {
+	Round++;
 	if (LosingTeam == 0)
 	{
 		TeamsWin[1]++;

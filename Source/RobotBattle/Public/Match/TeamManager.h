@@ -41,6 +41,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
+	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
 
 	FDeathEvent DeathEvent;
@@ -50,16 +51,18 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void SetInput(bool Value);
+	void PlayIntro();
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
 	float GetLife();
 	
 private:
+	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
-
-	UPROPERTY(EditAnywhere)
-	bool UseEnergy = true;
+	UPROPERTY()
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
 	UPROPERTY()
 	int TeamLifeMax = 0;
@@ -109,6 +112,11 @@ private:
 	float ComboTimer = 0.f;
 	UPROPERTY()
 	float ComboResetTime = 5.f;
+
+	UPROPERTY()
+	float BoostTimer = 0;
+	UPROPERTY()
+	float WantBoost = false;
 	
 	FVector GetTeamLocation();
 
@@ -135,6 +143,9 @@ private:
 	
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
+
+	UFUNCTION()
+	void Boost();
 
 	UFUNCTION()
 	void KnockBack(FVector2D KnockBackVelocity);
