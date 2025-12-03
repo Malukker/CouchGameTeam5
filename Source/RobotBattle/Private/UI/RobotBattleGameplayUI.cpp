@@ -38,7 +38,36 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		}
 	}
 	UpdateTimer();
+
+	if (Goal1 && Combo1BaseScale.X < ScaleGoal1 + .3f)
+	{
+		Combo1BaseScale += InDeltaTime * FVector2D{5.f,5.f};
+		Combo1->SetRenderScale(Combo1BaseScale);
+	}
+	else if (Goal1)
+	{
+		Goal1 = false;
+	}
+	if (!Goal1 && Combo1BaseScale.X > ScaleGoal1)
+	{
+		Combo1BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
+		Combo1->SetRenderScale(Combo1BaseScale);
+	}
 	
+	if (Goal2 && Combo2BaseScale.X < ScaleGoal2 + .3f)
+	{
+		Combo2BaseScale += InDeltaTime * FVector2D{5.f,5.f};
+		Combo2->SetRenderScale(Combo2BaseScale);
+	}
+	else if (Goal2)
+	{
+		Goal2 = false;
+	}
+	if (!Goal2 && Combo2BaseScale.X > ScaleGoal2)
+	{
+		Combo2BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
+		Combo2->SetRenderScale(Combo2BaseScale);
+	}
 }
 void URobotBattleGameplayUI::UpdateTimer()
 {
@@ -160,18 +189,17 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 			FString ComboString = FString::Printf(TEXT("x%d"));
 			Combo1->SetText(FText::FromString(ComboString));
 			Combo1->SetVisibility(ESlateVisibility::Visible);
-
+			Goal1 = true;
 			if (Combo >= 3)
 			{
-				float ScaleFactor = 1.0f + (Combo - 2) * 0.1f;
-				Combo1->SetRenderScale(Combo1BaseScale * ScaleFactor);
-			}
-			else
-			{
-				Combo1->SetRenderScale(Combo1BaseScale);
+				float ScaleFactor = (Combo - 2) * 0.01f;
+				ScaleGoal1 += ScaleFactor;
 			}
 		}else
 		{
+			ScaleGoal1 = 1.0f;
+			Combo1BaseScale = FVector2D(.5f, .5f);
+			Combo1->SetRenderScale(Combo1BaseScale);
 			Combo1->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
@@ -183,17 +211,17 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 			
 			Combo2->SetText(FText::FromString(ComboString));
 			Combo2->SetVisibility(ESlateVisibility::Visible);
+			Goal2 = true;
 			if (Combo >= 3)
 			{
-				float ScaleFactor = 1.0f + (Combo - 2) * 0.1f;
-				Combo2->SetRenderScale(Combo2BaseScale * ScaleFactor);
-			}
-			else
-			{
-				Combo2->SetRenderScale(Combo2BaseScale);
+				float ScaleFactor = (Combo - 2) * 0.01f;
+				ScaleGoal2 += ScaleFactor;
 			}
 		}else
 		{
+			ScaleGoal2 = 1.0f;
+			Combo2BaseScale = FVector2D(.5f, .5f);
+			Combo2->SetRenderScale(Combo2BaseScale);
 			Combo2->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}

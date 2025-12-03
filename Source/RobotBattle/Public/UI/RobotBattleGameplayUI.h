@@ -97,6 +97,15 @@ private:
 	void UpdateTimer();
 	void PauseTimer();
 
-	FVector2D Combo1BaseScale = FVector2D(1.0f, 1.0f);
-	FVector2D Combo2BaseScale = FVector2D(1.0f, 1.0f);
+	FVector2D Combo1BaseScale = FVector2D(.5f, .5f);
+	FVector2D Combo2BaseScale = FVector2D(.5f, .5f);
+	
+	UPROPERTY()
+	float ScaleGoal1 = .5f;
+	UPROPERTY()
+	float ScaleGoal2 = .5f;
+	UPROPERTY()
+	bool Goal1 = false;
+	UPROPERTY()
+	bool Goal2 = false;
 };
