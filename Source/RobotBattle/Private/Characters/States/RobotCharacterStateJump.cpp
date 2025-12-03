@@ -22,36 +22,27 @@ void URobotCharacterStateJump::InitJumpAccordingToParameters()
 	
 	float Gravity = -CharacterMovement->GetGravityZ();
 	float GravityJump;
-	if (Character->DoHaveEnergy()) GravityJump = (8*JumpMaxHeight)/(JumpDuration*JumpDuration);
-	else GravityJump = (8 * (JumpMaxHeight * Character->GetNerfStatsMultiplier()))/(JumpDuration*JumpDuration);
+	GravityJump = (8*JumpMaxHeight)/(JumpDuration*JumpDuration);
 	float VelocityJump = (GravityJump*JumpDuration)/2;
 	CharacterMovement->JumpZVelocity = VelocityJump;
 	CharacterMovement->GravityScale = GravityJump/Gravity;
-	if (Character->DoHaveEnergy())
-	{
-		CharacterMovement->AirControl = JumpAirControl;
-		CharacterMovement->Velocity = FVector(
-			JumpWalkSpeed * Character->GetInputMoveX(),
-			CharacterMovement->Velocity.Y,
-			CharacterMovement->Velocity.Z);
-	}
-	else
-	{
-		CharacterMovement->AirControl = JumpAirControl * Character->GetNerfStatsMultiplier();
-		CharacterMovement->Velocity = FVector(
-			JumpWalkSpeed * Character->GetNerfStatsMultiplier() * Character->GetInputMoveX(),
-			CharacterMovement->Velocity.Y,
-			CharacterMovement->Velocity.Z);
-	}
+	CharacterMovement->AirControl = JumpAirControl;
+	CharacterMovement->Velocity = FVector(
+		JumpWalkSpeed * Character->GetInputMoveX(),
+		CharacterMovement->Velocity.Y,
+		CharacterMovement->Velocity.Z);
 	Character->Jump();
 }
 
 void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
-	InitJumpAccordingToParameters();
+	
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->EnergyEvent.AddDynamic(this, &URobotCharacterStateJump::OnEnergyEvent);
+	if (CharacterMovement->GravityScale == 0) {
+		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
+	}
+	else InitJumpAccordingToParameters();
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -65,7 +56,6 @@ void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->EnergyEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnEnergyEvent);
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {
@@ -110,16 +100,4 @@ void URobotCharacterStateJump::OnDashEvent()
 void URobotCharacterStateJump::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
-}
-
-void URobotCharacterStateJump::OnEnergyEvent()
-{
-	if (Character->DoHaveEnergy())
-	{
-		CharacterMovement->AirControl = JumpAirControl;
-	}
-	else
-	{
-		CharacterMovement->AirControl = JumpAirControl * Character->GetNerfStatsMultiplier();
-	}
 }
