@@ -33,4 +33,8 @@ public:
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	float InputMoveXThreshold = 0.1f;
+
+	UPROPERTY(Config,EditAnywhere, Category = "Sounds")
+	TSoftObjectPtr<USoundBase> GuardBreak;
+	
 };
