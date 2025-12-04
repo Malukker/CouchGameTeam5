@@ -59,7 +59,7 @@ void AMatchManager::ResetFight()
 		{
 			Team->PlayIntro();
 		}
-	}, 2.5f, false);
+	}, 1.5f, false);
 	FTimerHandle TimerHandleSecond;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandleSecond, [&]()
 	{
@@ -68,7 +68,7 @@ void AMatchManager::ResetFight()
 			Team->SetInput(true);
 		}
 		UIGameplay->StartTimer(RoundTime);
-	}, 7.f, false);
+	}, 5.5f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()
