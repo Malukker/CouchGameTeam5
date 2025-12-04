@@ -74,9 +74,9 @@ void URobotBattleGameplayUI::UpdateTimer()
 	if (TimerText)
 	{
 		int32 Minutes = FMath::FloorToInt(elapsedTime / 60.0f);
-		int32 Seconds = FMath::FloorToInt(FMath::Fmod(elapsedTime, 60.0f));
+		int32 Seconds = FMath::FloorToInt(elapsedTime);
 
-		FString TextTimer = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+		FString TextTimer = FString::Printf(TEXT("%02d"), Seconds);
 		TimerText->SetText(FText::FromString(TextTimer));
 	}
 	
