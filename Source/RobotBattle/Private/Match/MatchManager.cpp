@@ -37,16 +37,16 @@ void AMatchManager::BeginPlay()
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		for (ATeamManager* Team : Teams)
-		{
-			Team->SetInput(false);
-		}
 		ResetFight();
 	}, .1f, false);
 }
 
 void AMatchManager::ResetFight()
 {
+	for (ATeamManager* Team : Teams)
+	{
+		Team->SetInput(false);
+	}
 	RoundEvent.Broadcast(Round);
 	for (ATeamManager* Team : Teams)
 	{
@@ -68,7 +68,7 @@ void AMatchManager::ResetFight()
 			Team->SetInput(true);
 		}
 		UIGameplay->StartTimer(RoundTime);
-	}, 5.5f, false);
+	}, 5.f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()
