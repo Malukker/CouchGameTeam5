@@ -21,7 +21,9 @@ public:
 	float DashDuration = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly)
-	UAnimMontage* DashAnim;
+	UAnimMontage* DashAnimForward;
+	UPROPERTY(EditDefaultsOnly)
+	UAnimMontage* DashAnimBackward;
 
 	virtual ERobotCharacterStateID GetStateID() override;
 	
@@ -33,8 +35,6 @@ public:
 	
 	UFUNCTION()
 	void OnStunEvent();
-	UFUNCTION()
-	void OnLockEvent();
 
 private:
 	float CurrentDashTime;

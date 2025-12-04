@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterSettings.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -19,13 +20,6 @@ ARobotCharacterDown::ARobotCharacterDown()
 void ARobotCharacterDown::BeginPlay()
 {
 	Super::BeginPlay();
-	
-}
-
-void ARobotCharacterDown::OnInputMoveX(const FInputActionValue& InputActionValue)
-{
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	InputMoveX = InputActionValue.Get<float>();
 }
 
 void ARobotCharacterDown::OnInputJump(const FInputActionValue& InputActionValue)
@@ -42,7 +36,7 @@ void ARobotCharacterDown::OnInputAttackDuo(const FInputActionValue& InputActionV
 
 void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || GetCharacterMovement()->GravityScale == 0) return;
 	if (!CanDash) return;
 	DashDirectionX = 1;
 	InputDashEvent.Broadcast();
@@ -50,10 +44,16 @@ void ARobotCharacterDown::OnInputRightDash(const FInputActionValue& InputActionV
 
 void ARobotCharacterDown::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	if (UGameplayStatics::IsGamePaused(GetWorld()) || GetCharacterMovement()->GravityScale == 0) return;
 	if (!CanDash) return;
 	DashDirectionX = -1;
 	InputDashEvent.Broadcast();
+}
+
+void ARobotCharacterDown::OnInputBoost(const FInputActionValue& InputActionValue)
+{
+	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	BoostManagerEvent.Broadcast();
 }
 
 void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent)
@@ -64,6 +64,11 @@ void ARobotCharacterDown::BindInputAndActions(UEnhancedInputComponent* EnhancedI
 	if (InputDataGameplay->InputActionJump)
 	{
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionJump,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputJump);
+	}
+
+	if (InputDataGameplay->InputActionBoost)
+	{
+		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionBoost,ETriggerEvent::Started,this,&ARobotCharacterDown::OnInputBoost);
 	}
 }
 

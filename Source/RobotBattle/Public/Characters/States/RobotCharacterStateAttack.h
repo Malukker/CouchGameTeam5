@@ -8,14 +8,14 @@
 #include "RobotCharacterStateAttack.generated.h"
 
 
+class IRobot;
+
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
 class ROBOTBATTLE_API URobotCharacterStateAttack : public URobotCharacterState
 {
 	GENERATED_BODY()
 
 public:
-
-	virtual void StateInit(URobotCharacterStateMachine* InStateMachine) override;
 	
 	virtual ERobotCharacterStateID GetStateID() override;
 	
@@ -26,42 +26,53 @@ public:
 	virtual void StateTick(float DeltaTime) override;
 
 #pragma region Attack
-	
-private:
-	UPROPERTY()
-	FAttackStruct CurrentAttackStruct;
-	
-	bool bIsAttackTraceEnabled;
 
-	int AttackIndex;
+private:
 	
+	UPROPERTY(EditAnywhere)
+	TMap<EAttackID,UAnimMontage*> Attacks = {};
+	
+	UPROPERTY(EditAnywhere)
+	float AttackDuoBonusMultiplier = 0;
+
+	UPROPERTY()
+	bool HasTouch = false;
+	UPROPERTY()
+	bool bIsAttackTraceEnabled = false;
+
+	UPROPERTY()
+	float AnimDuration = 0;
+	UPROPERTY()
+	float CurrentAnimTime = 0;
+	
+	UPROPERTY()
+	bool UseBoost = false;
+
+	UPROPERTY()
 	FVector StartPos;
-	
+
+	UPROPERTY()
 	FVector EndPos;
 
 	UPROPERTY()
 	TArray<AActor*> ActorsToIgnore;
-
-	UPROPERTY()
-	UAnimMontage* AttackAnim;
 	
-	float KeyframeDeltaTime;
+	UFUNCTION()
+	void DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data);
 	
-	float AnimDuration;
-
-	float CurrentAnimDeltaTime;
-	
-	float CurrentAnimTime;
-
-	void InitAnimationNotify();
-
 	UFUNCTION()
 	void StartDetectionNotifyAttack(AActor* ConcernedActor);
-	
+
 	UFUNCTION()
-	void EndDetectionNotifyAttack(AActor* ConcernedActor);
-	
+	void KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack);
+
+	UPROPERTY()
+	TScriptInterface<IRobot> TouchedCharacterInterface;
 	
 #pragma endregion
-	
+
+	UFUNCTION()
+	void OnStunEvent();
+	UFUNCTION()
+	void OnBoostEvent();
 };

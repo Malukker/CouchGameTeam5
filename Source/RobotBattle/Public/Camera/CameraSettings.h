@@ -22,26 +22,36 @@ public:
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraMainTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	FName CameraDistanceMinTag;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//FName CameraDistanceMinTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	FName CameraDistanceMaxTag;
-
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//FName CameraDistanceMaxTag;
+	
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	FName CameraBoundsTag;
 
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float DistanceBetweenTargetsMin;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float DistanceBetweenTargetsMin;
+
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float DistanceBetweenTargetsMax;
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float DistanceBetweenTargetsMax;
+	float HeightOffset;
 	
-	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
-	float SizeDampingFactor;
+	//UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
+	//float SizeDampingFactor;
 
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float PositionDampingFactor;
+
+
+	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
+	FName RobotBoundsTag;
+
+	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
+	FName RobotBoundsActorTag;
 #pragma endregion Camera Settings
 
 	

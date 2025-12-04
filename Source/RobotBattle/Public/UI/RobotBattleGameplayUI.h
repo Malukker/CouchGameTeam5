@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "UIGamePlayInterface.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/EditableTextBox.h"
 #include "RobotBattleGameplayUI.generated.h"
+
 
 /**
  * 
@@ -14,6 +16,8 @@ UCLASS()
 class ROBOTBATTLE_API URobotBattleGameplayUI : public UUserWidget, public IUIGamePlayInterface
 {
 	GENERATED_BODY()
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTimeOver);
 
 public:
 	
@@ -50,7 +54,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UCheckBox* CheckBoxRound4;
-	
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UEditableTextBox* Combo1;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UEditableTextBox* Combo2;
 #pragma endregion
 
 #pragma region VariableWidget
@@ -70,8 +79,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopTimer();
 
-	
-
 #pragma endregion
 
 	virtual void NativeConstruct() override;
@@ -80,10 +87,25 @@ public:
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;
+	virtual void SetComboHit(int Team, int Combo) override;
+
+	FTimeOver OnTimeOver;
 
 private:
 	
 	UFUNCTION()
 	void UpdateTimer();
+	void PauseTimer();
+
+	FVector2D Combo1BaseScale = FVector2D(.5f, .5f);
+	FVector2D Combo2BaseScale = FVector2D(.5f, .5f);
 	
+	UPROPERTY()
+	float ScaleGoal1 = .5f;
+	UPROPERTY()
+	float ScaleGoal2 = .5f;
+	UPROPERTY()
+	bool Goal1 = false;
+	UPROPERTY()
+	bool Goal2 = false;
 };

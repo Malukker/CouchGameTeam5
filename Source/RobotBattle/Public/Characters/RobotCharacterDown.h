@@ -17,15 +17,15 @@ public:
 	virtual void BeginPlay() override;
 
 protected:
-
-	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	
 	void OnInputJump(const FInputActionValue& InputActionValue);
+	
+	void OnInputBoost(const FInputActionValue& InputActionValue);
 	
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue) override;
 
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
-	
+
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;

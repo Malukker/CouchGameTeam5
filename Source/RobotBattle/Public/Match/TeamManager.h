@@ -26,7 +26,6 @@ public:
 	ATeamManager();
 
 	UPROPERTY(EditAnywhere)
-
 	uint8 Team = 0;
 	
 	UPROPERTY(EditAnywhere)
@@ -42,6 +41,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
+	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
 
 	FDeathEvent DeathEvent;
@@ -51,36 +51,83 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void SetInput(bool Value);
+	void PlayIntro();
+	void InversePlayer();
 
 	FVector GetOpponentLocation();
+	float GetLife();
 	
 private:
+	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
-
-	float TeamLifeMax = 0;
-	float TeamLife = 0;
+	UPROPERTY()
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
-	float TeamGuardMax = 0;
-	float TeamGuard = 0;
+	UPROPERTY()
+	int TeamLifeMax = 0;
+	UPROPERTY()
+	int TeamLife = 0;
+	
+	UPROPERTY()
+	int TeamGuardMax = 0;
+	UPROPERTY()
+	int TeamGuard = 0;
+	UPROPERTY()
 	bool CanGuard = false;
+	UPROPERTY()
+	float KnockBackMultiplier = 1;
 	
+	UPROPERTY()
 	int InvinsibilityFramesOrigin = 0;
+	UPROPERTY()
 	int InvinsibilityFrames = 0;
+	UPROPERTY()
 	float DashBuffer = 0;
+	UPROPERTY()
 	bool WantInvinsibility = false;
+	UPROPERTY()
 	bool IsDashing = false;
+	UPROPERTY()
 	bool CanTakeDamage = true;
 	
-	float TeamChargeMax = 0;
-	float TeamCharge = 0;
+	UPROPERTY()
+	float UltimateBuffer = 0;
+	UPROPERTY()
+	bool IsLoadingUltimate = false;
+	UPROPERTY()
+	int WantUltimate = -1;
+	
+	UPROPERTY()
+	int TeamChargeMax = 0;
+	UPROPERTY()
+	int TeamCharge = 0;
+
+	UPROPERTY()
+	float OriginalGravityScale = 0;
+
+	UPROPERTY()
+	int Combo = 0;
+	UPROPERTY()
+	float ComboTimer = 0.f;
+	UPROPERTY()
+	float ComboResetTime = 5.f;
+
+	UPROPERTY()
+	float BoostTimer = 0;
+	UPROPERTY()
+	float WantBoost = false;
 	
 	FVector GetTeamLocation();
 
 	UFUNCTION()
+	void TeamDoAttack(bool HasTouch);
+	
+	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
-	void TeamPartLock(ERobotCharacterPositionEnum Position, bool Lock);
+	void TeamAirBlock();
 	
 	UFUNCTION()
 	void GuardReset();
@@ -97,6 +144,12 @@ private:
 	UFUNCTION()
 	void AttackDuo(ERobotCharacterPositionEnum Position);
 
+	UFUNCTION()
+	void Boost();
+
+	UFUNCTION()
+	void KnockBack(FVector2D KnockBackVelocity);
+	
 	URobotCharacterInputData* LoadInputDataFromConfig();
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);

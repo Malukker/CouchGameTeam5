@@ -16,20 +16,18 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 
 	Character->PlayAnimMontage(FallAnim);
 
-	CharacterMovement->AirControl = FallAirControl;
 	CharacterMovement->GravityScale = FallGravityScale;
-	CharacterMovement->Velocity.X= FallHorizontalMoveSpeed * Character->GetInputMoveX();
+	CharacterMovement->AirControl = FallAirControl;
+	CharacterMovement->Velocity.X = FallHorizontalMoveSpeed * Character->GetInputMoveX();
 
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateFall::OnStunEvent);
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateFall::OnLockEvent);
 }
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnLockEvent);
 	CharacterMovement->GravityScale = 1;
 	Character->ResetDash();
 	/*GEngine->AddOnScreenDebugMessage(
@@ -45,7 +43,6 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 
 	if (CharacterMovement->IsMovingOnGround()) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
-		
 	}
 	else {
 		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
@@ -74,21 +71,12 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 
 }
 
-
 void URobotCharacterStateFall::OnDashEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Dash);
 }
 
-
 void URobotCharacterStateFall::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
-
-
-void URobotCharacterStateFall::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
-}
-

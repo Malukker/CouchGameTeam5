@@ -6,6 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "CameraWorldSubsystem.generated.h"
 
+class ARobotBoundsActor;
 class UCameraSettings;
 class UCameraComponent;
 /**
@@ -36,12 +37,14 @@ public:
 
 	void RemoveFollowTarget(UObject* FollowTarget);
 
-protected:UPROPERTY()
+protected:
+	UPROPERTY()
 	TArray<UObject*> FollowTargets;
 
 	void TickUpdateCameraPosition(float DeltaTime);
 
 	FVector CalculateAveragePositionBetweenTargets();
+	float GreatestHeightBetweenTargets();
 #pragma endregion Follow Targets
 
 #pragma region MainCamera
@@ -51,44 +54,59 @@ protected:
 
 	float CalculateGreatestDistanceBetweenTargets();
 
-	void TickUpdateCameraZoom(float DeltaTime);
+	//void TickUpdateCameraZoom(float DeltaTime);
 
 	UCameraComponent* FindCameraByTag(const FName& Tag) const;
 #pragma endregion MainCamera
 	
 #pragma region Bounds
-protected:
+private:
 	UPROPERTY()
 	FVector2D CameraBoundsMin;
 
 	UPROPERTY()
 	FVector2D CameraBoundsMax;
-	
+
+	UPROPERTY()
+	FVector2D RobotBoundsMin;
+
+	UPROPERTY()
+	FVector2D RobotBoundsMax;
 
 	UPROPERTY()
 	float CameraBoundsYProjectionCenter;
 
-	AActor* FindCameraBoundsActor();
+	AActor* FindBoundsActor(FName Tag);
+	
+	UPROPERTY()
+	AActor* RobotBounds;
+
+	ARobotBoundsActor* FindRobotBoundsActor();
 
 	void InitCameraBounds(AActor* CameraBoundsActor);
 
-	void ClampPositionIntoCameraBounds(FVector& Position);
-	
+	void InitRobotBounds(AActor* RobotBoundsActor);
 
+	void ClampPositionIntoCameraBounds(FVector& Position);
+
+	void SetRobotBounds();
+	
+	UFUNCTION(BlueprintCallable)
 	void GetViewportBounds(FVector2D& OutViewportBoundsMin, FVector2D& OutViewportBoundsMax);
 
+	UFUNCTION(BlueprintCallable)
 	FVector CalculateWorldPositionFromViewportPosition(const FVector2D& ViewportPosition);
 #pragma endregion Bounds
 
 #pragma region Zoom
 private:
-	UPROPERTY()
-	float CameraZoomYMin = 0.f;
+	//UPROPERTY()
+	//float CameraZoomYMin = 0.f;
 
-	UPROPERTY()
-	float CameraZoomYMax = 0.f;
+	//UPROPERTY()
+	//float CameraZoomYMax = 0.f;
 	
-	UFUNCTION()
-	void InitCameraZoomParameters();
+	// UFUNCTION()
+	// void InitCameraZoomParameters();
 #pragma endregion Zoom
 };

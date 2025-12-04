@@ -4,6 +4,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "MathUtil.h"
+#include "Arena/ArenaSettings.h"
 #include "Characters/RobotCharacterInputData.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "Characters/RobotCharacterStateID.h"
@@ -15,6 +16,12 @@ ARobotCharacterUp::ARobotCharacterUp()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ARobotCharacterUp::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	SetActorRotation(FQuat::Identity);
 }
 
 // Called when the game starts or when spawn
@@ -44,11 +51,18 @@ void ARobotCharacterUp::BindInputAndActions(UEnhancedInputComponent* EnhancedInp
 #pragma endregion
 }
 
+void ARobotCharacterUp::BeginPlay()
+{
+	Super::BeginPlay();
+	HitStopEvent.AddDynamic(this,&ARobotCharacterUp::OnHitStop);
+}
+
 #pragma region Attacks
 void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type1;
 	InputAttackEvent.Broadcast();
 }
@@ -56,7 +70,8 @@ void ARobotCharacterUp::OnInputAttack1(const FInputActionValue& InputActionValue
 void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type2;
 	InputAttackEvent.Broadcast();
 }
@@ -64,20 +79,30 @@ void ARobotCharacterUp::OnInputAttack2(const FInputActionValue& InputActionValue
 void ARobotCharacterUp::OnInputAttack3(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return;
 	CurrentTypeAttack = EAttackID::Type3;
 	InputAttackEvent.Broadcast();
 }
 
+
+
 void ARobotCharacterUp::OnInputAttackDuo(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack) return;
-	if (CanAttackDuo == false) return;
-	CurrentTypeAttack = EAttackID::Ultimate;
-	InputAttackEvent.Broadcast();
+	AttackDuoManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 #pragma endregion
+
+bool ARobotCharacterUp::StartAttackDuo()
+{
+	if (!CanAttackDuo) return false;
+	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return false;
+	CurrentTypeAttack = EAttackID::Ultimate;
+	InputAttackEvent.Broadcast();
+	return true;
+}
 
 ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 {
@@ -87,6 +112,7 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	PlayAnimMontage(DashAnimMontage);
 	DashDirectionX = 1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{
@@ -97,6 +123,7 @@ void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionVal
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
+	PlayAnimMontage(DashAnimMontage);
 	DashDirectionX = -1;
 	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
 	{
@@ -104,8 +131,13 @@ void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValu
 	}
 }
 
-void ARobotCharacterUp::OnInputMoveX(const FInputActionValue& InputActionValue)
+void ARobotCharacterUp::OnHitStop(int Damage)
 {
-	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	InputMoveX = InputActionValue.Get<float>();
+	const UArenaSettings* Settings = GetDefault<UArenaSettings>();
+	CustomTimeDilation = Settings->HitStopScale;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+		{
+			CustomTimeDilation = 1.f;
+		}, Settings->HitStopTimerModifier*Damage, false);
 }

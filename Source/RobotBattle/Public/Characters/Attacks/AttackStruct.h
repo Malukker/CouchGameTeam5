@@ -9,8 +9,7 @@ enum class ERobotID	: uint8
 {
 	None = 0,
 	Robot1 = 1,
-	Robot2 = 2,
-	Robot3 = 3,
+	Robot2 = 2
 };
 
 UENUM(BlueprintType)
@@ -29,10 +28,10 @@ struct FAttackStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* AnimMontage = nullptr;
+	FName StartSocket;
 
 	UPROPERTY(EditAnywhere)
-	TArray<FName> ConcernedBones = {};
+	FName EndSocket;
 
 	UPROPERTY(EditAnywhere)
 	float TraceRadius = 0.f;
@@ -41,5 +40,8 @@ struct FAttackStruct
 	int Damage = 0;
 	
 	UPROPERTY(EditAnywhere)
-	int StunTime = 0;
+	float StunTimer = 0;
+	
+	UPROPERTY(EditAnywhere)
+	float BoostMultiplier = 1.f;
 };

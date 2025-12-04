@@ -19,22 +19,30 @@ void URobotCharacterStateJump::InitJumpAccordingToParameters()
 		return;
 	}
 	Character->PlayAnimMontage(JumpAnim);
-	CharacterMovement->AirControl = JumpAirControl;
+	
 	float Gravity = -CharacterMovement->GetGravityZ();
-	float GravityJump = (8*JumpMaxHeight)/(JumpDuration*JumpDuration);
+	float GravityJump;
+	GravityJump = (8*JumpMaxHeight)/(JumpDuration*JumpDuration);
 	float VelocityJump = (GravityJump*JumpDuration)/2;
 	CharacterMovement->JumpZVelocity = VelocityJump;
 	CharacterMovement->GravityScale = GravityJump/Gravity;
-	CharacterMovement->Velocity = FVector(JumpWalkSpeed * Character->GetInputMoveX(),CharacterMovement->Velocity.Y,CharacterMovement->Velocity.Z);
+	CharacterMovement->AirControl = JumpAirControl;
+	CharacterMovement->Velocity = FVector(
+		JumpWalkSpeed * Character->GetInputMoveX(),
+		CharacterMovement->Velocity.Y,
+		CharacterMovement->Velocity.Z);
 	Character->Jump();
 }
 
 void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) {
 	Super::StateEnter(PreviousState);
-	InitJumpAccordingToParameters();
+	
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateJump::OnLockEvent);
+	if (CharacterMovement->GravityScale == 0) {
+		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
+	}
+	else InitJumpAccordingToParameters();
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -48,7 +56,6 @@ void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnLockEvent);
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {
@@ -94,11 +101,3 @@ void URobotCharacterStateJump::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
-
-
-void URobotCharacterStateJump::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
-}
-
-

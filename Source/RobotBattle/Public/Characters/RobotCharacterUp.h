@@ -15,15 +15,25 @@ public:
 	// Sets default values for this character's properties
 	ARobotCharacterUp();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
-	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DashAnimMontage;
+
 	
+	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
+	virtual void BeginPlay() override;
 	void OnInputAttack1(const FInputActionValue& InputActionValue);
 	void OnInputAttack2(const FInputActionValue& InputActionValue);
 	void OnInputAttack3(const FInputActionValue& InputActionValue);
 	virtual void OnInputAttackDuo(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
-	virtual void OnInputMoveX(const FInputActionValue& InputActionValue) override;
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
+	virtual  bool StartAttackDuo() override;
+	
+	UFUNCTION()
+	void OnHitStop(int Damage);
+	
 };

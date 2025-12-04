@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/RobotCharacter.h"
 #include "Engine/GameInstance.h"
 #include "RobotGameInstance.generated.h"
 
+
+enum class  ERobotID : uint8;
 /**
  * 
  */
@@ -20,9 +21,33 @@ public:
 	TArray<ERobotID> RobotID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<uint8> PlayersPos;
+	
+	UPROPERTY()
+	bool ChangeCharacter = false;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetChangeCharacter(bool value);
+
+	
 
 	ERobotID GetRobotID(int Number);
 	void SetRobotID(int Number, ERobotID ID);
 	uint8 GetPlayerPos(int Number);
 	void SetPlayerPos(int Number, uint8 Pos);
+	
+
+//
+// #if WITH_EDITORONLY_DATA
+// 	UPROPERTY(BlueprintReadOnly)
+// 	TArray<int> Controllers;
+//
+//
+// #endif
+//
+// #if WITH_EDITOR
+// 	virtual void Init() override;
+// 	UFUNCTION()
+// 	void AddControllerOnList(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+//
+// #endif
 };

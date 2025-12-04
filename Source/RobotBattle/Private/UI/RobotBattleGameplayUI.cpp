@@ -6,6 +6,8 @@
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
+#include "Kismet/GameplayStatics.h"
 
 #pragma region Timer
 
@@ -20,6 +22,9 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if (UGameplayStatics::IsGamePaused(GetWorld()))
+		return;
+	
 	if (IsActive && elapsedTime > 0.0f)
 	{
 		elapsedTime -= InDeltaTime;
@@ -28,11 +33,41 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		{
 			elapsedTime = 0.0f;
 			IsActive = false;
+			OnTimeOver.Broadcast();
 			StopTimer();
 		}
 	}
 	UpdateTimer();
+
+	if (Goal1 && Combo1BaseScale.X < ScaleGoal1 + .3f)
+	{
+		Combo1BaseScale += InDeltaTime * FVector2D{5.f,5.f};
+		Combo1->SetRenderScale(Combo1BaseScale);
+	}
+	else if (Goal1)
+	{
+		Goal1 = false;
+	}
+	if (!Goal1 && Combo1BaseScale.X > ScaleGoal1)
+	{
+		Combo1BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
+		Combo1->SetRenderScale(Combo1BaseScale);
+	}
 	
+	if (Goal2 && Combo2BaseScale.X < ScaleGoal2 + .3f)
+	{
+		Combo2BaseScale += InDeltaTime * FVector2D{5.f,5.f};
+		Combo2->SetRenderScale(Combo2BaseScale);
+	}
+	else if (Goal2)
+	{
+		Goal2 = false;
+	}
+	if (!Goal2 && Combo2BaseScale.X > ScaleGoal2)
+	{
+		Combo2BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
+		Combo2->SetRenderScale(Combo2BaseScale);
+	}
 }
 void URobotBattleGameplayUI::UpdateTimer()
 {
@@ -44,6 +79,7 @@ void URobotBattleGameplayUI::UpdateTimer()
 		FString TextTimer = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
 		TimerText->SetText(FText::FromString(TextTimer));
 	}
+	
 }
 
 
@@ -140,6 +176,53 @@ void URobotBattleGameplayUI::SetRoundPlayer(int Team, int Win)
 		else if (Win == 2)
 		{
 			CheckBoxRound4->SetIsChecked(true);
+		}
+	}
+}
+
+void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
+{
+	if (Team == 0)
+	{
+		if (Combo > 1)
+		{
+			FString ComboString = FString::Printf(TEXT("x%d"));
+			Combo1->SetText(FText::FromString(ComboString));
+			Combo1->SetVisibility(ESlateVisibility::Visible);
+			Goal1 = true;
+			if (Combo >= 3)
+			{
+				float ScaleFactor = (Combo - 2) * 0.01f;
+				ScaleGoal1 += ScaleFactor;
+			}
+		}else
+		{
+			ScaleGoal1 = 1.0f;
+			Combo1BaseScale = FVector2D(.5f, .5f);
+			Combo1->SetRenderScale(Combo1BaseScale);
+			Combo1->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+	if (Team == 1)
+	{
+		if (Combo > 1)
+		{
+			FString ComboString = FString::Printf(TEXT("x%d"));
+			
+			Combo2->SetText(FText::FromString(ComboString));
+			Combo2->SetVisibility(ESlateVisibility::Visible);
+			Goal2 = true;
+			if (Combo >= 3)
+			{
+				float ScaleFactor = (Combo - 2) * 0.01f;
+				ScaleGoal2 += ScaleFactor;
+			}
+		}else
+		{
+			ScaleGoal2 = 1.0f;
+			Combo2BaseScale = FVector2D(.5f, .5f);
+			Combo2->SetRenderScale(Combo2BaseScale);
+			Combo2->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }

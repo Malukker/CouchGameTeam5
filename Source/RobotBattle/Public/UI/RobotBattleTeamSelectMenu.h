@@ -7,10 +7,22 @@
 #include "RobotBattlePlayerCardWidget.h"
 #include "RobotBattleTeamSelectMenu.generated.h"
 
+class AMenuGameMode;
+class UCanvasPanel;
 class AMainMenuHUD;
 class UHorizontalBox;
 class UVerticalBox;
 class UPlayerCardWidget;
+class UVerticalBoxSlot;
+
+UENUM(BlueprintType)
+enum class ETeamBox : uint8
+{
+	HomeUp,
+	HomeDown,
+	AwayUp,
+	AwayDown
+};
 
 UCLASS()
 class ROBOTBATTLE_API URobotBattleTeamSelectMenu : public UUserWidget
@@ -18,6 +30,13 @@ class ROBOTBATTLE_API URobotBattleTeamSelectMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, int, ControllerID);
+	UPROPERTY(BlueprintAssignable)
+	FOnSelectionValidation ValidateEvent;
+	
+	
 	UFUNCTION(BlueprintCallable)
 	void CustomConstruct();
 
@@ -27,6 +46,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MovePlayerToZone(int32 PlayerID, const FString& ZoneName);
 
+	UFUNCTION(BlueprintCallable)
+	void SetBoxReady(ETeamBox Box, bool bIsReady);
+
 	UFUNCTION()
 	void OnPlayerMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller);
 
@@ -35,10 +57,12 @@ public:
 
 	UFUNCTION()
 	void OnPlayerCancelInput(APlayerController* Controller);
-
+	
 	UFUNCTION()
 	int32 GetControllerIndexForZone(const FString& ZoneName);
 
+	virtual void NativeConstruct() override;
+	
 protected:
 	
 	UPROPERTY(meta = (BindWidget))
@@ -55,12 +79,83 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* Box_CenterUp;
+	UPROPERTY()
+	UVerticalBoxSlot* Box_CenterUpSlot;
 
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* Box_CenterDown;
+	UPROPERTY()                        
+	UVerticalBoxSlot* Box_CenterDownSlot;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_WaitingPlayer1;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_WaitingPlayer2;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_WaitingPlayer3;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_WaitingPlayer4;
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_ReadyPlayer1;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_ReadyPlayer2;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_ReadyPlayer3;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_ReadyPlayer4;
+
+	
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* CanvasPanel_TeamSelection;
+
+#pragma region ControlsBindWidget
+
+	bool TeamSelectionDone = false;
+
+	TArray<bool> PlayerChangedImg;
+	
+	UPROPERTY(meta = (BindWidget))
+	UCanvasPanel* CanvasPanel_Controls;
+	
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player1;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player2;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player3;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* IMG_Player4;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready1;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready2;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready3;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready4;
+
+#pragma endregion
+	UPROPERTY()
+	TMap<int32, bool> PlayerReadyState;
+	
+	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<URobotBattlePlayerCardWidget> PlayerCardClass;
+
 
 private:
 	
@@ -75,5 +170,13 @@ private:
 
 	bool IsZoneOccupied(const FString& ZoneName) const;
 	
-	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;	
+	UHorizontalBox* GetZoneByName(const FString& ZoneName) const;
+
+	UPROPERTY()
+	AMenuGameMode* GM ;
+	
+	UFUNCTION()
+	void ChangeImageWhenReady(APlayerController* controller);
+
+	void CheckAllBoolAndGoToNextLevel();
 };

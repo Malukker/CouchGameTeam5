@@ -17,9 +17,7 @@ ERobotCharacterStateID URobotCharacterStateDash::GetStateID()
 void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID)
 {
 	Super::StateEnter(PreviousStateID);
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up, true);
 
-	Character->PlayAnimMontage(DashAnim);
 	CurrentDashTime = 0;
 	if (Character->GetRobotCharacterDownChargeID()==ERobotCharacterDownChargeID::Dash)
 	{
@@ -28,8 +26,12 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	if (FMathf::Sign(Character->GetOrientX()) != FMathf::Sign(Character->GetDashDirectionX()))
 	{
 		Character->InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Down);
+		Character->PlayAnimMontage(DashAnimBackward);
 	}
-	Character->LockEvent.AddDynamic(this, &URobotCharacterStateDash::OnLockEvent);
+	else
+	{
+		Character->PlayAnimMontage(DashAnimForward);
+	}
 	
 	OriginalFriction = CharacterMovement->GroundFriction;
 	OriginalGravityScale = CharacterMovement->GravityScale;
@@ -37,7 +39,7 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	CharacterMovement->GroundFriction = 0;
 	CharacterMovement->GravityScale = 0;
 	
-	const FVector Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
+	FVector Dash = FVector::ForwardVector * DashSpeed * Character->GetDashDirectionX();
 	Character->LaunchCharacter(Dash, true, true);
 	Character->UseDash();
 }
@@ -59,9 +61,6 @@ void URobotCharacterStateDash::StateExit(ERobotCharacterStateID NextState)
 
 	CharacterMovement->StopMovementImmediately();
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnStunEvent);
-	Character->LockEvent.RemoveDynamic(this, &URobotCharacterStateDash::OnLockEvent);
-	
-	Character->LockManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up, false);
 }
 
 void URobotCharacterStateDash::StateTick(float DeltaTime)
@@ -94,10 +93,3 @@ void URobotCharacterStateDash::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
 }
-
-
-void URobotCharacterStateDash::OnLockEvent()
-{
-	StateMachine->ChangeState(ERobotCharacterStateID::Lock);
-}
-

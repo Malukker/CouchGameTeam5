@@ -4,7 +4,8 @@
 #include "LocalMultiplayerSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
-void ULocalMultiplayerSubsystem::CreatePlayers() {
+void ULocalMultiplayerSubsystem:: CreatePlayers() {
+	Controllers.Empty();
 	for (int i = 0; i < 4; i++)
 	{
 		if (Controllers.Num() <= i && !UGameplayStatics::GetPlayerController(GetWorld(), i))
