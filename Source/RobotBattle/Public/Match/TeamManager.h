@@ -27,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	uint8 Team = 0;
+
+	UPROPERTY(EditAnywhere)
+	float StunDuration = 1.f;
 	
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ECollisionChannel> TeamCollision;

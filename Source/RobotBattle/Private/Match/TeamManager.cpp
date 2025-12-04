@@ -178,10 +178,9 @@ void ATeamManager::PlayIntro()
 
 void ATeamManager::InversePlayer()
 {
-	PlayersController[ERobotCharacterPositionEnum::Down]->UnPossess();
-	PlayersController[ERobotCharacterPositionEnum::Up]->UnPossess();
-	PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
-	PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
+	APlayerController* PlayerController = PlayersController[ERobotCharacterPositionEnum::Down];
+	PlayersController[ERobotCharacterPositionEnum::Down] = PlayersController[ERobotCharacterPositionEnum::Up];
+	PlayersController[ERobotCharacterPositionEnum::Up] = PlayerController;
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -249,6 +248,13 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		TeamGuard--;
 		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+		if (TeamGuard == 0)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunDuration);
+			RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunDuration);
+			RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+			RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+		}
 		KnockBackMultiplier = .5f;
 	}
 	else if (CanTakeDamage)
