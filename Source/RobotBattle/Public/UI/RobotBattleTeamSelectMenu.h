@@ -137,7 +137,16 @@ protected:
 	UImage* IMG_Player4;
 
 	UPROPERTY(EditAnywhere)
-	UTexture2D* IMG_Pressed;
+	UTexture2D* IMG_Ready1;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready2;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready3;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* IMG_Ready4;
 
 #pragma endregion
 	UPROPERTY()
