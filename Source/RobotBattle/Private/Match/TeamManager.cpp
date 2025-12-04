@@ -250,10 +250,13 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 		if (TeamGuard == 0)
 		{
+			const URobotCharacterSettings* Settings = GetDefault<URobotCharacterSettings>();
+			USoundBase* GuardBreakSound =Settings->GuardBreak.LoadSynchronous();
 			RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunDuration);
 			RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunDuration);
 			RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 			RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(),GuardBreakSound,GetActorLocation());
 		}
 		KnockBackMultiplier = .5f;
 	}
