@@ -192,19 +192,19 @@ void URobotBattleTeamSelectMenu::ChangeImageWhenReady(APlayerController* control
 	switch (controller->GetLocalPlayer()->GetControllerId())
 	{
 		case 0:
-			IMG_Player1->SetBrushFromTexture(IMG_Pressed);
+			IMG_Player1->SetBrushFromTexture(IMG_Ready1);
 			PlayerChangedImg[0] = true;
 			break;
 		case 1:
-			IMG_Player2->SetBrushFromTexture(IMG_Pressed);
+			IMG_Player2->SetBrushFromTexture(IMG_Ready2);
 			PlayerChangedImg[1] = true;
 			break;
 		case 2:
-			IMG_Player3->SetBrushFromTexture(IMG_Pressed);
+			IMG_Player3->SetBrushFromTexture(IMG_Ready3);
 			PlayerChangedImg[2] = true;
 			break;
 		case 3:
-			IMG_Player4->SetBrushFromTexture(IMG_Pressed);
+			IMG_Player4->SetBrushFromTexture(IMG_Ready4);
 			PlayerChangedImg[3] = true;
 			break;
 		default:
