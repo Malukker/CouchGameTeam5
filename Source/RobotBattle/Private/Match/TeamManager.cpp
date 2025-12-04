@@ -247,6 +247,8 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 			Charge(ERobotCharacterPositionEnum::Down);
 		}
 		TeamGuard--;
+		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 		KnockBackMultiplier = .5f;
 	}
 	else if (CanTakeDamage)
