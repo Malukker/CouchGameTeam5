@@ -185,12 +185,21 @@ public:
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
+	void PlayIntro();
+	void PlayEnd(bool Win);
 	
 protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* Intro;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* EndWin;
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* EndDefeat;
+	
+	UPROPERTY(BlueprintReadOnly)
 	int Team;
 
 	UPROPERTY(EditAnywhere)
@@ -217,6 +226,8 @@ protected:
 #pragma region Damage/Stun
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardEvent, int, GuardMax, int, GuardLeft);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
@@ -224,11 +235,11 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardEvent, int, GuardLeft);
-
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBoostEvent);
 
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
@@ -250,6 +261,21 @@ public:
 
 	UPROPERTY()
 	FAttackManagerEvent AttackManagerEvent;
+
+	UPROPERTY()
+	FBoostEvent BoostManagerEvent;
+
+	UPROPERTY()
+	FBoostEvent BoostEvent;
+
+	UFUNCTION()
+	void SetBoost(bool Value);
+	UFUNCTION()
+	bool GetBoost();
+	
+private:
+
+	bool UseBoost = false;
 	
 #pragma endregion
 
@@ -261,9 +287,9 @@ public:
 	virtual void SetCanAttackDuo(bool CanAttack);
 	virtual bool StartAttackDuo();
 	
-	void AddDamageBonus();
-	int GetDamageBonus();
-	void ResetDamageBonus();
+	void AddAttackDuoBonus();
+	int GetAttackDuoBonus();
+	void ResetAttackDuoBonus();
 
 	int GetCharge();
 	
@@ -271,7 +297,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	int Charge = 0;
 	
-	int DamageBonus = 0;
+	int AttackDuoBonus = 0;
 	bool CanAttackDuo = false;
 
 public:

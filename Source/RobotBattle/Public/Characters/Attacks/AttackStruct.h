@@ -41,4 +41,7 @@ struct FAttackStruct
 	
 	UPROPERTY(EditAnywhere)
 	float StunTimer = 0;
+	
+	UPROPERTY(EditAnywhere)
+	float BoostMultiplier = 1.f;
 };
