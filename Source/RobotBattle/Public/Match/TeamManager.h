@@ -59,7 +59,7 @@ public:
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
-	float GetLife();
+	float GetLifePercent();
 	
 private:
 	UPROPERTY()
