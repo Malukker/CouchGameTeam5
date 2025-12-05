@@ -43,7 +43,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoundEvent, int, Round);
 
 	UPROPERTY(BlueprintAssignable, Category="MatchManager")
-	FRoundEvent RoundEvent;
+	FRoundEvent RoundStartEvent;
+
+	UPROPERTY(BlueprintAssignable, Category="MatchManager")
+	FRoundEvent RoundEndEvent;
 
 protected:
 	// Called when the game starts or when spawned
