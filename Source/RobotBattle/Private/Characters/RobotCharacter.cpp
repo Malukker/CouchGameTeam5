@@ -325,6 +325,12 @@ bool ARobotCharacter::GetBoost()
 	return UseBoost;
 }
 
+void ARobotCharacter::SetGuard(bool Value)
+{
+	CanGuard = Value;
+	DoGuardEvent.Broadcast(CanGuard);
+}
+
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
@@ -357,7 +363,14 @@ int ARobotCharacter::GetCharge()
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime);
+	if (CanGuard)
+	{
+		GuardManagerEvent.Broadcast(Damage, StunTime);
+	}
+	else
+	{
+		HurtManagerEvent.Broadcast(Damage, StunTime);
+	}
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }
 

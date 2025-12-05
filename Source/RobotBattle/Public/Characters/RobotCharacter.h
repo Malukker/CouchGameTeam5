@@ -227,19 +227,21 @@ protected:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardManagerEvent, int, Damage, float, StunTimer);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardEvent, int, GuardMax, int, GuardLeft);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDoGuardEvent, bool, Guard);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAirStopManagerEvent);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBoostEvent);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
@@ -251,6 +253,9 @@ public:
 	FGuardEvent GuardEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
+	FDoGuardEvent DoGuardEvent;
+	
+	UPROPERTY()
 	FGuardManagerEvent GuardManagerEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
@@ -272,10 +277,15 @@ public:
 	void SetBoost(bool Value);
 	UFUNCTION()
 	bool GetBoost();
+
+	UFUNCTION()
+	void SetGuard(bool Value);
 	
 private:
 
 	bool UseBoost = false;
+
+	bool CanGuard = false;
 	
 #pragma endregion
 
