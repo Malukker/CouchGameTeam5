@@ -229,6 +229,10 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 {
 	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
 	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (MovementComponent->GravityScale == 0.f && OriginalGravityScale != 0.f)
+	{
+		MovementComponent->GravityScale = OriginalGravityScale;
+	};
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
 		LaunchVelocity.X*=-1;
@@ -306,6 +310,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 void ATeamManager::TeamAirBlock()
 {
 	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	if (MovementComponent->GravityScale == 0.f) return;
 	OriginalGravityScale = MovementComponent->GravityScale;
 	MovementComponent->GravityScale = 0;
 	MovementComponent->StopMovementImmediately();
@@ -314,8 +319,9 @@ void ATeamManager::TeamAirBlock()
 	{
 		if ( RobotParts[ERobotCharacterPositionEnum::Down] != nullptr)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GravityScale = OriginalGravityScale;
+			if (OriginalGravityScale != 0.f) RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GravityScale = OriginalGravityScale;
 		}
+		OriginalGravityScale = 0.f;
 	}, .1f, false);
 			
 }
@@ -323,6 +329,8 @@ void ATeamManager::TeamAirBlock()
 void ATeamManager::GuardReset()
 {
 	TeamGuard = TeamGuardMax;
+	RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+	RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 }
 
 void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)

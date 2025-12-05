@@ -106,7 +106,7 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 	}
 	RoundEndEvent.Broadcast(0);
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, LosingTeam]()
 	{
 		Round++;
 		if (LosingTeam == 0)
@@ -129,8 +129,8 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 				UIGameOver->AddToViewport();
 				UGameplayStatics::SetGamePaused(GetWorld(), true);
 				//UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
-				//URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
-				//GI->TeamWin = index;
+				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
+				GI->TeamWin = index;
 				return;
 			}
 			index++;
