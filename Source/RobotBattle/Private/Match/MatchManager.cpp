@@ -73,11 +73,11 @@ void AMatchManager::ResetFight()
 
 void AMatchManager::EndFightOnTimeOut()
 {
-	if (Teams[0]->GetLife() > Teams[1]->GetLife())
+	if (Teams[0]->GetLifePercent() > Teams[1]->GetLifePercent())
 	{
 		EndFightOnRobotDefeat(1);
 	}
-	else if (Teams[1]->GetLife() > Teams[0]->GetLife())
+	else if (Teams[1]->GetLifePercent() > Teams[0]->GetLifePercent())
 	{
 		EndFightOnRobotDefeat(0);
 	}
