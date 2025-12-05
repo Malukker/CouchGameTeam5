@@ -130,6 +130,14 @@ void ATeamManager::SpawnCharacters()
 		TeamChargeMax += NewCharacter->GetCharge();
 		InvinsibilityFramesOrigin += NewCharacter->GetInvinsibilityFrames();
 	}
+	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
+		FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false),
+		"Bones_Attach");
 }
 
 void ATeamManager::ResetCharacters()

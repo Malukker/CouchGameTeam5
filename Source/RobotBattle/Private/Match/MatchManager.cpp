@@ -124,9 +124,17 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 		{
 			if (TeamWin == 2)
 			{
-				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
 				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
 				GI->TeamWin = index;
+				if (index == 0)
+				{
+					GI->TeamLoose = 1;
+				}else
+				{
+					GI->TeamLoose = 0;
+				}
+				GI->Win=true;
+				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
 				return;
 			}
 			index++;
