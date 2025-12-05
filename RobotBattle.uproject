@@ -11,14 +11,14 @@
 		},
 		{
 			"Name": "LocalMultiplayer",
-			"Type": "Runtime"
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		},
 		{
 			"Name": "ToolBox",
-			"Type": "Editor"
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
-      
-      
 	],
 	"Plugins": [
 		{
@@ -27,6 +27,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "WindowsDualsense_ds5w",
+			"Enabled": true
 		}
 	]
 }
