@@ -20,13 +20,13 @@ void URobotCharacterStateIdle::StateEnter(ERobotCharacterStateID PreviousState) 
 	{
 		WalkForward = true;
 		Character->PlayAnimMontage(IdleAnim);
-		Character->GuardManagerEvent.Broadcast(false);
+		Character->SetGuard(false);
 	}
 	else
 	{
 		WalkForward = false;
 		Character->PlayAnimMontage(GuardAnimMontage);
-		Character->GuardManagerEvent.Broadcast(true);
+		Character->SetGuard(true);
 	}
 
 	Character->InputJumpEvent.AddDynamic(this, &URobotCharacterStateIdle::OnInputJump);
@@ -57,7 +57,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 			if (!WalkForward)
 			{
 				Character->PlayAnimMontage(IdleAnim);
-				Character->GuardManagerEvent.Broadcast(false);
+				Character->SetGuard(false);
 			}
 			WalkForward = true;
 		}
@@ -66,7 +66,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 			if (WalkForward)
 			{
 				Character->PlayAnimMontage(GuardAnimMontage);
-				Character->GuardManagerEvent.Broadcast(true);
+				Character->SetGuard(true);
 			}
 			WalkForward = false;
 		}
@@ -74,7 +74,7 @@ void URobotCharacterStateIdle::StateTick(float DeltaTime) {
 	else if (!WalkForward)
 	{
 		Character->PlayAnimMontage(IdleAnim);
-		Character->GuardManagerEvent.Broadcast(false);
+		Character->SetGuard(false);
 		WalkForward = true;
 	}
 	if (CharacterMovement->Velocity.Z < 0.f) {

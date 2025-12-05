@@ -106,14 +106,14 @@ void ATeamManager::SpawnCharacters()
 		default:
 			return;
 		}
-		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
 		NewCharacter->AirStopManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
 		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->BoostManagerEvent.AddDynamic(this, &ATeamManager::Boost);
 		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
-		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
+		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::TeamDoGuard);
+		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
 		NewCharacter->SetTeam(Team);
@@ -236,10 +236,10 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 	MovementComponent->Launch(LaunchVelocity * KnockBackMultiplier);
 }
 
-void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 {
 	if (GetLifePercent() == 0.f) return;	
-	if (CanGuard && TeamGuard > 0)
+	if (TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::Tank)
 		{
@@ -260,7 +260,16 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		}
 		KnockBackMultiplier = .5f;
 	}
-	else if (CanTakeDamage)
+	else
+	{
+		TeamTakeDamage(Damage, StunTime);
+	}
+}
+
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+{
+	if (GetLifePercent() == 0.f) return;	
+	if (CanTakeDamage)
 	{
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
@@ -314,11 +323,6 @@ void ATeamManager::TeamAirBlock()
 void ATeamManager::GuardReset()
 {
 	TeamGuard = TeamGuardMax;
-}
-
-void ATeamManager::Guard(bool Guard)
-{
-	CanGuard = Guard;
 }
 
 void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)

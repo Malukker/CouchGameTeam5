@@ -124,9 +124,13 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 		{
 			if (TeamWin == 2)
 			{
-				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
-				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
-				GI->TeamWin = index;
+				UIGameplay->RemoveFromParent();
+				UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
+				UIGameOver->AddToViewport();
+				UGameplayStatics::SetGamePaused(GetWorld(), true);
+				//UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
+				//URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
+				//GI->TeamWin = index;
 				return;
 			}
 			index++;

@@ -77,8 +77,6 @@ private:
 	UPROPERTY()
 	int TeamGuard = 0;
 	UPROPERTY()
-	bool CanGuard = false;
-	UPROPERTY()
 	float KnockBackMultiplier = 1;
 	
 	UPROPERTY()
@@ -127,6 +125,9 @@ private:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
+	void TeamDoGuard(int Damage, float StunTime);
+	
+	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
@@ -137,9 +138,6 @@ private:
 	
 	UFUNCTION()
 	void DashInvinsibility(ERobotCharacterPositionEnum Position);
-	
-	UFUNCTION()
-	void Guard(bool Guard);
 	
 	UFUNCTION()
 	void Charge(ERobotCharacterPositionEnum Position);
