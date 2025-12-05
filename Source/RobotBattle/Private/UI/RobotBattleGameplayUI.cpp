@@ -14,7 +14,7 @@
 void URobotBattleGameplayUI::NativeConstruct()
 {
 	Super::NativeConstruct();
-	elapsedTime = 0.0f;
+	Timer = 0.0f;
 	IsActive = false;
 }
 
@@ -25,13 +25,13 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 	if (UGameplayStatics::IsGamePaused(GetWorld()))
 		return;
 	
-	if (IsActive && elapsedTime > 0.0f)
+	if (IsActive && Timer > 0.0f)
 	{
-		elapsedTime -= InDeltaTime;
+		Timer -= InDeltaTime;
 		
-		if (elapsedTime < 0.0f)
+		if (Timer < 0.0f)
 		{
-			elapsedTime = 0.0f;
+			Timer = 0.0f;
 			IsActive = false;
 			OnTimeOver.Broadcast();
 			StopTimer();
@@ -73,8 +73,8 @@ void URobotBattleGameplayUI::UpdateTimer()
 {
 	if (TimerText)
 	{
-		int32 Minutes = FMath::FloorToInt(elapsedTime / 60.0f);
-		int32 Seconds = FMath::FloorToInt(elapsedTime);
+		//int32 Minutes = FMath::FloorToInt(elapsedTime / 60.0f);
+		int32 Seconds = FMath::FloorToInt(Timer);
 
 		FString TextTimer = FString::Printf(TEXT("%02d"),Seconds);
 		TimerText->SetText(FText::FromString(TextTimer));
@@ -83,10 +83,15 @@ void URobotBattleGameplayUI::UpdateTimer()
 }
 
 
-void URobotBattleGameplayUI::StartTimer(float time)
+void URobotBattleGameplayUI::StartTimer()
 {
-	elapsedTime = time;
 	IsActive = true;
+}
+
+
+void URobotBattleGameplayUI::SetTimer(float time)
+{
+	Timer = time;
 }
 
 void URobotBattleGameplayUI::StopTimer()

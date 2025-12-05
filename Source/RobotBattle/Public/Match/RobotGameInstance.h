@@ -28,6 +28,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetChangeCharacter(bool value);
 
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int TeamWin;
+
 	
 
 	ERobotID GetRobotID(int Number);
@@ -35,19 +39,5 @@ public:
 	uint8 GetPlayerPos(int Number);
 	void SetPlayerPos(int Number, uint8 Pos);
 	
-
-//
-// #if WITH_EDITORONLY_DATA
-// 	UPROPERTY(BlueprintReadOnly)
-// 	TArray<int> Controllers;
-//
-//
-// #endif
-//
-// #if WITH_EDITOR
-// 	virtual void Init() override;
-// 	UFUNCTION()
-// 	void AddControllerOnList(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
-//
-// #endif
+	
 };
