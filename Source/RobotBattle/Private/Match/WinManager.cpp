@@ -56,7 +56,7 @@ void AWinManager::BeginPlay()
 			EAttachmentRule::KeepWorld,
 			false),
 		"Bones_Attach");
-
+	RobotPartsWin[ERobotCharacterPositionEnum::Down]->SetActorLocation(WinnerSpawn->GetActorLocation());
 
 	// 0 for Down and 1 for Up for looser
 	for (int PartNb = 0; PartNb < 2; PartNb++)
@@ -89,7 +89,10 @@ void AWinManager::BeginPlay()
 		"Bones_Attach");
 
 
-	//RobotPartsLose[ERobotCharacterPositionEnum::Up]->SetActorRotation(FRotator::ZeroRotator);
+	RobotPartsLose[ERobotCharacterPositionEnum::Down]->SetActorLocation(LoserSpawn->GetActorLocation());
+
+	RobotPartsWin[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	RobotPartsLose[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-90.f, -90.f, 0.f));
 }
 
 
