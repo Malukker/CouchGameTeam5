@@ -204,7 +204,7 @@ FVector ATeamManager::GetOpponentLocation()
 
 float ATeamManager::GetLifePercent()
 {
-	return TeamLife / TeamLifeMax;
+	return static_cast<float>(TeamLife) / TeamLifeMax;
 }
 
 FVector ATeamManager::GetTeamLocation()
@@ -238,7 +238,7 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 
 void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 {
-	if (GetLifePercent() <= 0) return;	
+	if (GetLifePercent() == 0.f) return;	
 	if (CanGuard && TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::Tank)
