@@ -64,7 +64,7 @@ public:
 
 #pragma region VariableWidget
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Timer")
-	float elapsedTime = 0.0f;
+	float Timer = 0.0f;
 
 	UPROPERTY(EditAnywhere, Blueprintable, Category= "Timer")
 	bool IsActive;
@@ -74,7 +74,10 @@ public:
 #pragma region Functions
 
 	UFUNCTION(BlueprintCallable)
-	void StartTimer(float time);
+	void StartTimer();
+
+	UFUNCTION(BlueprintCallable)
+	void SetTimer(float time);
 
 	UFUNCTION(BlueprintCallable)
 	void StopTimer();
