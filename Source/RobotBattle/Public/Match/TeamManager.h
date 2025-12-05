@@ -61,7 +61,10 @@ public:
 	FVector GetOpponentLocation();
 	float GetLifePercent();
 	
-private:
+protected:
+	UPROPERTY(EditAnywhere, Category = "Config")
+	bool bShowAdvancedSettings;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	UPROPERTY()
