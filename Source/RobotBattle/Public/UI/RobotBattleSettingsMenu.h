@@ -12,7 +12,6 @@ class ROBOTBATTLE_API URobotBattleSettingsMenu : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Settings")
@@ -21,7 +20,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Settings")
 	void ApplySettings();
 
-private:
+	UPROPERTY(BlueprintReadOnly, Category = "Settings")
 	float MasterVolume = 1.0f;
-	float MouseSensitivity = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
+	USoundClass* MasterSoundClass;
 };

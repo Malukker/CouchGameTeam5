@@ -2,8 +2,8 @@
 
 
 #include "UI/RobotBattleSettingsMenu.h"
-#include "Kismet/GameplayStatics.h"
 #include "Sound/SoundClass.h"
+#include "Kismet/GameplayStatics.h"
 
 void URobotBattleSettingsMenu::NativeConstruct()
 {
@@ -12,14 +12,18 @@ void URobotBattleSettingsMenu::NativeConstruct()
 
 void URobotBattleSettingsMenu::SetMasterVolume(float NewVolume)
 {
-	MasterVolume = FMath::Clamp(NewVolume, 0.0f, 100.0f);
-	UGameplayStatics::SetSoundMixClassOverride(GetWorld(),nullptr,nullptr, MasterVolume, 100.0f, 0.0f);
+	MasterVolume = FMath::Clamp(NewVolume, 0.0f, 1.0f);
 	UE_LOG(LogTemp, Warning, TEXT("Master Volume changed to: %f"), MasterVolume);
 }
 
 void URobotBattleSettingsMenu::ApplySettings()
 {
-	UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f, Sensitivity: %f"), MasterVolume, MouseSensitivity);
+	if (MasterSoundClass !=nullptr)
+	{
+		MasterSoundClass->Properties.Volume = MasterVolume;
+		
+		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
+	}
+	
 }
-
 

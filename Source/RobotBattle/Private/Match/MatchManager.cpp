@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
-#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 
 
 // Sets default values
@@ -23,8 +23,9 @@ void AMatchManager::BeginPlay()
 	Super::BeginPlay();
 	UIGameplay = CreateWidget<URobotBattleGameplayUI>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
+	UUserWidget* UIRound = CreateWidget<UUserWidget>(GetWorld(), UIRoundClass);
+	UIRound->AddToViewport();
 	
-	UIGameplay->StartTimer(RoundTime);
 	UIGameplay->OnTimeOver.AddDynamic(this, &AMatchManager::EndFightOnTimeOut);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
@@ -33,64 +34,112 @@ void AMatchManager::BeginPlay()
 		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFightOnRobotDefeat);
 	}
 	TeamsWin.Init(0,2);
+	Round = 0;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(false);
+		}
+		ResetFight();
+	}, .1f, false);
 }
 
 void AMatchManager::ResetFight()
 {
+	UIGameplay->SetTimer(RoundTime);
+	RoundStartEvent.Broadcast(Round);
 	for (ATeamManager* Team : Teams)
 	{
 		Team->ResetCharacters();
 	}
-	UIGameplay->StartTimer(RoundTime);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->PlayIntro();
+		}
+	}, 1.5f, false);
+	FTimerHandle TimerHandleSecond;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandleSecond, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(true);
+		}
+		UIGameplay->StartTimer();
+	}, 5.f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()
 {
-	if (Teams[0]->GetLife() > Teams[1]->GetLife())
+	RoundEndEvent.Broadcast(1);
+	for (ATeamManager* Team : Teams)
 	{
-		EndFightOnRobotDefeat(1);
+		Team->SetInput(false);
 	}
-	else if (Teams[1]->GetLife() > Teams[0]->GetLife())
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		EndFightOnRobotDefeat(0);
-	}
-	else
-	{
-		ResetFight();
-	}
+		if (Teams[0]->GetLifePercent() > Teams[1]->GetLifePercent())
+		{
+			EndFightOnRobotDefeat(1);
+		}
+		else if (Teams[1]->GetLifePercent() > Teams[0]->GetLifePercent())
+		{
+			EndFightOnRobotDefeat(0);
+		}
+		else
+		{
+			ResetFight();
+		}
+	}, 1.5f, false);
 }
 
 void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 {
-	if (LosingTeam == 0)
+	for (ATeamManager* Team : Teams)
 	{
-		TeamsWin[1]++;
-		UIGameplay->SetRoundPlayer(1, TeamsWin[1]);
+		Team->SetInput(false);
 	}
-	else if (LosingTeam == 1)
+	RoundEndEvent.Broadcast(0);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		TeamsWin[0]++;
-		UIGameplay->SetRoundPlayer(0, TeamsWin[0]);
-	}
-	for (int TeamWin : TeamsWin)
-	{
-		if (TeamWin == 2)
+		Round++;
+		if (LosingTeam == 0)
 		{
-			UIGameplay->RemoveFromParent();
-			UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
-			UIGameOver->AddToViewport();
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
-			return;
+			TeamsWin[1]++;
+			UIGameplay->SetRoundPlayer(1, TeamsWin[1]);
 		}
-	}
-	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
-	{
-		for (ATeamManager* Team : Teams)
+		else if (LosingTeam == 1)
 		{
-			Team->InversePlayer();
+			TeamsWin[0]++;
+			UIGameplay->SetRoundPlayer(0, TeamsWin[0]);
 		}
-	}
-	ResetFight();
+		int index = 0;
+		for (int TeamWin : TeamsWin)
+		{
+			if (TeamWin == 2)
+			{
+				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
+				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
+				GI->TeamWin = index;
+				return;
+			}
+			index++;
+		}
+		if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
+		{
+			for (ATeamManager* Team : Teams)
+			{
+				Team->InversePlayer();
+			}
+		}
+		ResetFight();
+	}, 1.5f, false);
 }
 
 // Called every frame

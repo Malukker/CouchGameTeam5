@@ -27,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	uint8 Team = 0;
+
+	UPROPERTY(EditAnywhere)
+	float StunDuration = 1.f;
 	
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<ECollisionChannel> TeamCollision;
@@ -41,6 +44,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
 
+	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
 
 	FDeathEvent DeathEvent;
@@ -50,13 +54,18 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void SetInput(bool Value);
+	void PlayIntro();
 	void InversePlayer();
 
 	FVector GetOpponentLocation();
-	float GetLife();
+	float GetLifePercent();
 	
 private:
+	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	UPROPERTY()
+	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
 	UPROPERTY()
 	int TeamLifeMax = 0;
