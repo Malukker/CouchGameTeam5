@@ -91,8 +91,10 @@ void AWinManager::BeginPlay()
 
 	RobotPartsLose[ERobotCharacterPositionEnum::Down]->SetActorLocation(LoserSpawn->GetActorLocation());
 
-	RobotPartsWin[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(0.f, -90.f, 0.f));
-	RobotPartsLose[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-90.f, -90.f, 0.f));
+	//RobotPartsWin[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-20.f, 0, -90.f));
+	//RobotPartsLose[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-90.f, 0, -90.f));
+	RobotPartsWin[ERobotCharacterPositionEnum::Up]->GetMesh()->SetRelativeRotation(FRotator(0, 180.f, 0));
+	RobotPartsLose[ERobotCharacterPositionEnum::Up]->GetMesh()->SetRelativeRotation(FRotator(0, 180.f, 0));
 }
 
 
