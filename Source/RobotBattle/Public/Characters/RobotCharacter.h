@@ -9,6 +9,7 @@
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
+class URobotGameInstance;
 class UBoxComponent;
 class AHUDGameplay;
 enum class ERobotCharacterUpID : uint8;
@@ -167,6 +168,9 @@ protected:
 
 #pragma region Info
 public:
+
+	UPROPERTY()
+	URobotGameInstance* GameInstance;
 	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();

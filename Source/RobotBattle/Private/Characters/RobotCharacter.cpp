@@ -13,6 +13,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 #include "UI/HUDGameplay.h"
 
 // Sets default values
@@ -33,7 +34,7 @@ void ARobotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateStateMachine();
-
+	GameInstance = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	InitStateMachine();
 	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 	if (GetRobotBodyID() == ERobotID::None)
@@ -47,7 +48,10 @@ void ARobotCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickStateMachine(DeltaTime);
-	RotateMeshUsingOrientX();
+	if (!GameInstance->Win)
+	{
+		RotateMeshUsingOrientX();
+	}
 }
 
 // Called to bind functionality to input
