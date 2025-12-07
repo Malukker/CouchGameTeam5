@@ -39,6 +39,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerMenuCancelInput, APlayerController*, Controller);
 	UPROPERTY()
 	FOnPlayerMenuCancelInput InputCancelEvent;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInput);
+	UPROPERTY(BlueprintAssignable)
+	FOnInput OnInput;
 	
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
@@ -59,6 +63,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionCancel;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UInputAction> InputAnyKey;
 
 	UPROPERTY()
 	TObjectPtr<APlayerController> SelfPlayerController;
@@ -81,4 +88,6 @@ private:
 	void OnInputValidate(const FInputActionValue& InputActionValue);
 	
 	void OnInputCancel(const FInputActionValue& InputActionValue);
+	
+	void OnInputAnyKey(const FInputActionValue& InputActionValue);
 };

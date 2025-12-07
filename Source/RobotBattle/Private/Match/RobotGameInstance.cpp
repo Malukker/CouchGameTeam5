@@ -11,6 +11,11 @@ void URobotGameInstance::SetChangeCharacter(bool value)
 	ChangeCharacter = value;
 }
 
+bool URobotGameInstance::GetChangeCharacter()
+{
+	return ChangeCharacter; 
+}
+
 ERobotID URobotGameInstance::GetRobotID(int Number)
 {
 	return RobotID[Number];
