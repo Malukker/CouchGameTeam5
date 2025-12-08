@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RobotGameInstance.h"
 #include "Camera/CameraSettings.h"
 #include "GameFramework/Actor.h"
 #include "WinManager.generated.h"
@@ -29,6 +30,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void SpawnRobot(URobotGameInstance* GameInstance, TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>>* RobotParts,
+	                APlayerStart* SpawnPoint, int index);
 
 	UFUNCTION()
 	TSubclassOf<ARobotCharacter> GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const;

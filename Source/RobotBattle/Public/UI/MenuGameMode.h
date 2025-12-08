@@ -30,9 +30,6 @@ public:
 	TSoftObjectPtr<UWorld> GameplayLevel;
 	
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> MainMenuWidget;
-	
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleTeamSelectMenu> TeamSelectWidget;
 
 	UPROPERTY(EditAnywhere)

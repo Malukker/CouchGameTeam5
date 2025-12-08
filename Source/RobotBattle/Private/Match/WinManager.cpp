@@ -24,81 +24,46 @@ void AWinManager::BeginPlay()
 {
 	URobotGameInstance* GameInstance = GetWorld()->GetGameInstance<URobotGameInstance>();
 	if (GameInstance == nullptr) return;
-
 	
-	
-	// 0 for Down and 1 for Up for Winner
-	for (int PartNb = 0; PartNb < 2; PartNb++)
-	{
-		ERobotCharacterPositionEnum Pos = ERobotCharacterPositionEnum::None;
-		if (PartNb == 0) Pos = ERobotCharacterPositionEnum::Down;
-		else Pos = ERobotCharacterPositionEnum::Up;
-		
-		TSubclassOf<ARobotCharacter> RobotCharacterClass = GetRobotCharacterClassFromID(
-			GameInstance->RobotID[GameInstance->TeamWin * 2 + PartNb], Pos);
-		if (RobotCharacterClass == nullptr) return;
+	SpawnRobot(GameInstance, &RobotPartsWin, WinnerSpawn, GameInstance->TeamWin);
+	SpawnRobot(GameInstance, &RobotPartsLose, LoserSpawn, (GameInstance->TeamWin == 1 ? 0 : 1));
 
-		ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
-			RobotCharacterClass,
-			WinnerSpawn->GetTransform()
-		);
-	
-		if (NewCharacter == nullptr) return;
-		RobotPartsWin.Add(Pos, NewCharacter);
-		UGameplayStatics::FinishSpawningActor(NewCharacter, WinnerSpawn->GetTransform());
-		
-	}
-	RobotPartsWin[ERobotCharacterPositionEnum::Up]->AttachToComponent(
-	RobotPartsWin[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules(
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::KeepWorld,
-			false),
-		"Bones_Attach");
-	RobotPartsWin[ERobotCharacterPositionEnum::Down]->SetActorLocation(WinnerSpawn->GetActorLocation());
-
-	// 0 for Down and 1 for Up for looser
-	for (int PartNb = 0; PartNb < 2; PartNb++)
-	{
-		ERobotCharacterPositionEnum Pos = ERobotCharacterPositionEnum::None;
-		if (PartNb == 0) Pos = ERobotCharacterPositionEnum::Down;
-		else Pos = ERobotCharacterPositionEnum::Up;
-		
-		TSubclassOf<ARobotCharacter> RobotCharacterClass = GetRobotCharacterClassFromID(
-			GameInstance->RobotID[GameInstance->TeamLoose * 2 + PartNb], Pos);
-		if (RobotCharacterClass == nullptr) return;
-
-		ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
-			RobotCharacterClass,
-			LoserSpawn->GetTransform()
-		);
-	
-		if (NewCharacter == nullptr) return;
-		RobotPartsLose.Add(Pos, NewCharacter);
-		UGameplayStatics::FinishSpawningActor(NewCharacter, LoserSpawn->GetTransform());
-		
-	}
-	RobotPartsLose[ERobotCharacterPositionEnum::Up]->AttachToComponent(
-	RobotPartsLose[ERobotCharacterPositionEnum::Down]->GetMesh(),
-		FAttachmentTransformRules(
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::SnapToTarget,
-			EAttachmentRule::KeepWorld,
-			false),
-		"Bones_Attach");
-
-
-	RobotPartsLose[ERobotCharacterPositionEnum::Down]->SetActorLocation(LoserSpawn->GetActorLocation());
-
-	//RobotPartsWin[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-20.f, 0, -90.f));
-	//RobotPartsLose[ERobotCharacterPositionEnum::Up]->SetActorRelativeRotation(FRotator(-90.f, 0, -90.f));
-	RobotPartsWin[ERobotCharacterPositionEnum::Up]->GetMesh()->SetRelativeRotation(FRotator(0, 180.f, 0));
-	RobotPartsLose[ERobotCharacterPositionEnum::Up]->GetMesh()->SetRelativeRotation(FRotator(0, 180.f, 0));
+	RobotPartsWin[ERobotCharacterPositionEnum::Up]->PlayEnd(true);
+	RobotPartsLose[ERobotCharacterPositionEnum::Up]->PlayEnd(false);
 }
 
 
+void AWinManager::SpawnRobot(URobotGameInstance* GameInstance,TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>>* RobotParts, APlayerStart* SpawnPoint, int index)
+{
+	for (int PartNb = 0; PartNb < 2; PartNb++)
+	{
+		ERobotCharacterPositionEnum Pos = ERobotCharacterPositionEnum::None;
+		if (PartNb == 0) Pos = ERobotCharacterPositionEnum::Down;
+		else Pos = ERobotCharacterPositionEnum::Up;
+		
+		TSubclassOf<ARobotCharacter> RobotCharacterClass = GetRobotCharacterClassFromID(
+			GameInstance->RobotID[index * 2 + PartNb], Pos);
+		if (RobotCharacterClass == nullptr) return;
 
+		ARobotCharacter* NewCharacter = GetWorld()->SpawnActorDeferred <ARobotCharacter>(
+			RobotCharacterClass,
+			SpawnPoint->GetTransform()
+		);
+	
+		if (NewCharacter == nullptr) return;
+		RobotParts->Add(Pos, NewCharacter);
+		UGameplayStatics::FinishSpawningActor(NewCharacter, SpawnPoint->GetTransform());
+	}
+	RobotParts->Find(ERobotCharacterPositionEnum::Up)->Get()->AttachToComponent(
+	RobotParts->Find(ERobotCharacterPositionEnum::Down)->Get()->GetMesh(),
+		FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			EAttachmentRule::KeepWorld,
+			false),
+		"Bones_Attach");
+	RobotParts->Find(ERobotCharacterPositionEnum::Down)->Get()->SetActorLocation(SpawnPoint->GetActorLocation());
+}
 
 
 

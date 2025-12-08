@@ -168,10 +168,6 @@ protected:
 
 #pragma region Info
 public:
-
-	UPROPERTY()
-	URobotGameInstance* GameInstance;
-	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
 
@@ -186,6 +182,7 @@ public:
 
 	int GetTeam();
 	void SetTeam(int NewTeam);
+	void SetLookingOpponent(bool Value);
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
@@ -214,6 +211,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
+
+	UPROPERTY(EditAnywhere)
+	bool IsLookingOpponent = false;
 	
 	UPROPERTY(EditAnywhere)
 	bool MeshMirror = false;

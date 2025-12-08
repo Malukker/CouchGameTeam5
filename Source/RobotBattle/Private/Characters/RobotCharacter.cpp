@@ -34,7 +34,6 @@ void ARobotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateStateMachine();
-	GameInstance = Cast<URobotGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	InitStateMachine();
 	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 	if (GetRobotBodyID() == ERobotID::None)
@@ -48,7 +47,7 @@ void ARobotCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickStateMachine(DeltaTime);
-	if (!GameInstance->Win)
+	if (IsLookingOpponent)
 	{
 		RotateMeshUsingOrientX();
 	}
@@ -80,6 +79,11 @@ int ARobotCharacter::GetTeam()
 void ARobotCharacter::SetTeam(int NewTeam)
 {
 	Team = NewTeam;
+}
+
+void ARobotCharacter::SetLookingOpponent(bool Value)
+{
+	IsLookingOpponent = Value;
 }
 
 int ARobotCharacter::GetLife()

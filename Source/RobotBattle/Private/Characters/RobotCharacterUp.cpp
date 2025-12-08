@@ -21,7 +21,10 @@ ARobotCharacterUp::ARobotCharacterUp()
 void ARobotCharacterUp::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	SetActorRotation(FQuat::Identity);
+	if (IsLookingOpponent)
+	{
+		SetActorRotation(FQuat::Identity);
+	}
 }
 
 // Called when the game starts or when spawn
