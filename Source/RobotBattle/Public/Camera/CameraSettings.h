@@ -46,6 +46,14 @@ public:
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettings")
 	float PositionDampingFactor;
 
+	UPROPERTY(Config,EditAnywhere, Category = "CameraSettingsWinScene")
+	FName CameraWinSceneTag;
+
+	UPROPERTY(Config,EditAnywhere, Category = "CameraSettingsWinScene")
+	FName CameraZoomWinSceneTag;
+
+	UPROPERTY(Config,EditAnywhere, Category = "CameraSettingsWinScene")
+	float CameraZoomWinSpeed;
 
 	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
 	FName RobotBoundsTag;
