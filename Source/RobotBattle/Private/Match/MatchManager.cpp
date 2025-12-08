@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Match/MatchManager.h"
@@ -106,7 +106,7 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 	}
 	RoundEndEvent.Broadcast(0);
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, LosingTeam]()
 	{
 		Round++;
 		if (LosingTeam == 0)
@@ -124,9 +124,13 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 		{
 			if (TeamWin == 2)
 			{
-				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
+				//UIGameplay->RemoveFromParent();
+				//UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
+				//UIGameOver->AddToViewport();
+				//UGameplayStatics::SetGamePaused(GetWorld(), true);
 				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
 				GI->TeamWin = index;
+				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
 				return;
 			}
 			index++;

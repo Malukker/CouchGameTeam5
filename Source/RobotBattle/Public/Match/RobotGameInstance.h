@@ -27,12 +27,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetChangeCharacter(bool value);
-
+	
+	UFUNCTION(BlueprintCallable)
+	bool GetChangeCharacter();
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int TeamWin;
-
-	
 
 	ERobotID GetRobotID(int Number);
 	void SetRobotID(int Number, ERobotID ID);

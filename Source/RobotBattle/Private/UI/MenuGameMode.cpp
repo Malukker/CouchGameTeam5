@@ -44,10 +44,6 @@ void AMenuGameMode::BeginPlay()
 	{
 		StartSelectionCharacter();
 	}
-	else
-	{
-		CreateWidget<UUserWidget>(GetWorld(), MainMenuWidget)->AddToViewport();
-	}
 }
 
 void AMenuGameMode::CreatePlayerMenuActors() const
