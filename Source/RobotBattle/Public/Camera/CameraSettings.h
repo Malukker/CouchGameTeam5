@@ -55,6 +55,9 @@ public:
 	UPROPERTY(Config,EditAnywhere, Category = "CameraSettingsWinScene")
 	float CameraZoomWinSpeed;
 
+	UPROPERTY(Config,EditAnywhere, Category = "CameraSettingsWinScene")
+	float DistanceBeforeGameOverUIAppears;
+
 	UPROPERTY(Config,EditAnywhere, Category = "RobotBounds")
 	FName RobotBoundsTag;
 

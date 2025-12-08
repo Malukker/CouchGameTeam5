@@ -7,12 +7,13 @@
 #include "GameFramework/Actor.h"
 #include "WinManager.generated.h"
 
+class URobotBattleGameplayUI;
 class UActorFactoryCameraActor;
 class UCameraComponent;
 class ARobotCharacter;
 class APlayerStart;
 enum class ERobotCharacterPositionEnum : uint8;
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameOverUI);
 UCLASS()
 class ROBOTBATTLE_API AWinManager : public AActor
 {
@@ -22,13 +23,16 @@ public:
 	// Sets default values for this actor's properties
 	AWinManager();
 
+	FOnGameOverUI OnGameOverUI;
+	
 	UPROPERTY(EditAnywhere)
 	APlayerStart* WinnerSpawn;
 
 	UPROPERTY(EditAnywhere)
 	APlayerStart* LoserSpawn;
 
-
+    UFUNCTION()
+	void ActivateGameOverUI();
 	
 
 protected:
@@ -47,4 +51,9 @@ private:
 
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotPartsLose;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> UIGameOverClass;
+
+	virtual void Destroyed() override;
 };

@@ -6,6 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "CameraWorldSubsystem.generated.h"
 
+class AWinManager;
 class ARobotBoundsActor;
 class UCameraSettings;
 class UCameraComponent;
@@ -107,5 +108,10 @@ private:
 
 	UFUNCTION()
 	void StartCameraZoom(float deltatime);
+
+	UPROPERTY()
+	AWinManager* WinManager = nullptr;
+
+	bool GameOverUISetted = false;
 #pragma endregion CameraWinScene
 };
