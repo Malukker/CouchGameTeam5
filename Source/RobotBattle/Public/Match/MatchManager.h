@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIRoundClass;
 
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UWorld> WinLevel;
+
 	UPROPERTY()
 	URobotBattleGameplayUI* UIGameplay;
 	

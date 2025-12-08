@@ -27,10 +27,6 @@
 			"TargetAllowList": [
 				"Editor"
 			]
-		},
-		{
-			"Name": "WindowsDualsense_ds5w",
-			"Enabled": true
 		}
 	]
 }
