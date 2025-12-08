@@ -10,8 +10,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 
-
-class ARobotCharacter;
 // Sets default values
 AWinManager::AWinManager()
 {

@@ -130,10 +130,5 @@ void APlayerMenuActor::OnInputCancel(const FInputActionValue& InputActionValue)
 
 void APlayerMenuActor::OnInputAnyKey(const FInputActionValue& InputActionValue)
 {
-	GEngine->AddOnScreenDebugMessage(
-		0,
-		5.f,
-		FColor::Red,
-		TEXT("HELLO"));
 	OnInput.Broadcast();
 }
