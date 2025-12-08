@@ -130,7 +130,7 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 				//UGameplayStatics::SetGamePaused(GetWorld(), true);
 				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
 				GI->TeamWin = index;
-				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
+				UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WinLevel);
 				return;
 			}
 			index++;

@@ -25,8 +25,9 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	{
 		SetRobotBounds();
 	}
+	StartCameraZoom(DeltaTime);
+
 	
-	//TickUpdateCameraZoom(DeltaTime);
 }
 
 void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
@@ -253,6 +254,12 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const 
 
 }
 
+void UCameraWorldSubsystem::StartCameraZoom(float deltatime)
+{
+	if (!CameraWin || !CameraZoomWin) return;
+	CameraWin->GetOwner()->SetActorLocation(FMath::VInterpTo(CameraWin->GetOwner()->GetActorLocation(),
+	CameraZoomWin->GetOwner()->GetActorLocation(), deltatime,CameraSettings->CameraZoomWinSpeed));
+}
 
 
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
@@ -261,6 +268,8 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InWorld.GetTimerManager().SetTimerForNextTick([this, &InWorld]()
 	{
 		CameraSettings = GetDefault<UCameraSettings>();
+		CameraWin = FindCameraByTag(CameraSettings->CameraWinSceneTag);
+		CameraZoomWin = FindCameraByTag(CameraSettings->CameraZoomWinSceneTag);
 		CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
 		if (CameraMain == nullptr) { return; }
 		AActor* CameraBoundsActor = FindBoundsActor(CameraSettings->CameraBoundsTag);

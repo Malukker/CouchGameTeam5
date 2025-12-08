@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "RobotGameInstance.h"
-#include "Camera/CameraSettings.h"
 #include "GameFramework/Actor.h"
 #include "WinManager.generated.h"
 
+class UActorFactoryCameraActor;
+class UCameraComponent;
 class ARobotCharacter;
+class APlayerStart;
 enum class ERobotCharacterPositionEnum : uint8;
 
 UCLASS()
@@ -25,6 +27,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	APlayerStart* LoserSpawn;
+
+
 	
 
 protected:
