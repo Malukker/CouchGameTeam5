@@ -61,7 +61,10 @@ public:
 	FVector GetOpponentLocation();
 	float GetLifePercent();
 	
-private:
+protected:
+	UPROPERTY(EditAnywhere, Category = "Config")
+	bool bShowAdvancedSettings;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	UPROPERTY()
@@ -76,8 +79,6 @@ private:
 	int TeamGuardMax = 0;
 	UPROPERTY()
 	int TeamGuard = 0;
-	UPROPERTY()
-	bool CanGuard = false;
 	UPROPERTY()
 	float KnockBackMultiplier = 1;
 	
@@ -127,6 +128,9 @@ private:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
+	void TeamDoGuard(int Damage, float StunTime);
+	
+	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime);
 	
 	UFUNCTION()
@@ -137,9 +141,6 @@ private:
 	
 	UFUNCTION()
 	void DashInvinsibility(ERobotCharacterPositionEnum Position);
-	
-	UFUNCTION()
-	void Guard(bool Guard);
 	
 	UFUNCTION()
 	void Charge(ERobotCharacterPositionEnum Position);
