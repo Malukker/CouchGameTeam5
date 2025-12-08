@@ -4,17 +4,25 @@
 #include "Match/WinManager.h"
 
 #include "Arena/ArenaSettings.h"
+#include "Blueprint/UserWidget.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
+#include "UI/RobotBattleGameplayUI.h"
 
 // Sets default values
 AWinManager::AWinManager()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+}
+
+void AWinManager::ActivateGameOverUI() 
+{
+	UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
+	UIGameOver->AddToViewport();
 }
 
 // Called when the game starts or when spawned
@@ -28,6 +36,8 @@ void AWinManager::BeginPlay()
 
 	RobotPartsWin[ERobotCharacterPositionEnum::Up]->PlayEnd(true);
 	RobotPartsLose[ERobotCharacterPositionEnum::Up]->PlayEnd(false);
+
+	OnGameOverUI.AddDynamic(this,&AWinManager::ActivateGameOverUI);
 }
 
 
@@ -77,4 +87,10 @@ TSubclassOf<ARobotCharacter> AWinManager::GetRobotCharacterClassFromID(ERobotID 
 	default: ;
 	}
 	return nullptr;
+}
+
+void AWinManager::Destroyed()
+{
+	Super::Destroyed();
+	OnGameOverUI.RemoveDynamic(this,&AWinManager::ActivateGameOverUI);
 }

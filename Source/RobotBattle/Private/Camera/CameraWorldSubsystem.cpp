@@ -8,7 +8,7 @@
 #include "Characters/Interface/Robot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
-
+#include "Match/WinManager.h"
 
 
 void UCameraWorldSubsystem::PostInitialize()
@@ -259,6 +259,16 @@ void UCameraWorldSubsystem::StartCameraZoom(float deltatime)
 	if (!CameraWin || !CameraZoomWin) return;
 	CameraWin->GetOwner()->SetActorLocation(FMath::VInterpTo(CameraWin->GetOwner()->GetActorLocation(),
 	CameraZoomWin->GetOwner()->GetActorLocation(), deltatime,CameraSettings->CameraZoomWinSpeed));
+	if (FVector::Dist(CameraWin->GetOwner()->GetActorLocation(),CameraZoomWin->GetOwner()->GetActorLocation()) < CameraSettings->DistanceBeforeGameOverUIAppears)
+	{
+		if (WinManager && !GameOverUISetted)
+		{
+			WinManager->OnGameOverUI.Broadcast();
+			GameOverUISetted = true;
+		}
+		
+	}
+	
 }
 
 
@@ -270,6 +280,12 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 		CameraSettings = GetDefault<UCameraSettings>();
 		CameraWin = FindCameraByTag(CameraSettings->CameraWinSceneTag);
 		CameraZoomWin = FindCameraByTag(CameraSettings->CameraZoomWinSceneTag);
+		if (AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(),AWinManager::StaticClass()))
+		{
+			WinManager = Cast<AWinManager>(FoundActor);
+		}
+
+		
 		CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
 		if (CameraMain == nullptr) { return; }
 		AActor* CameraBoundsActor = FindBoundsActor(CameraSettings->CameraBoundsTag);
