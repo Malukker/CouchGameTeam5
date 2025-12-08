@@ -8,6 +8,8 @@
 #include "GameFramework/Actor.h"
 #include "WinManager.generated.h"
 
+class UActorFactoryCameraActor;
+class UCameraComponent;
 class ARobotCharacter;
 enum class ERobotCharacterPositionEnum : uint8;
 
@@ -25,6 +27,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	APlayerStart* LoserSpawn;
+
+
 	
 
 protected:
