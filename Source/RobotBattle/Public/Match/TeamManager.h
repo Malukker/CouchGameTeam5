@@ -67,6 +67,7 @@ protected:
 	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
@@ -96,7 +97,7 @@ protected:
 	bool CanTakeDamage = true;
 	
 	UPROPERTY()
-	float UltimateBuffer = 0;
+	float UltimateBuffer = 0.f;
 	UPROPERTY()
 	bool IsLoadingUltimate = false;
 	UPROPERTY()

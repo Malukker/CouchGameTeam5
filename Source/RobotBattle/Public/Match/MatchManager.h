@@ -61,6 +61,9 @@ protected:
 
 	UFUNCTION()
 	void EndFightOnRobotDefeat(int LosingTeam);
+	
+	UFUNCTION()
+	void EndFight(int LosingTeam);
 
 public:
 	// Called every frame

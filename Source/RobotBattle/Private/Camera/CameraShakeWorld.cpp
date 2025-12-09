@@ -9,7 +9,7 @@
 
 void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale,float& Duration )
 {
-	if (UpID==ERobotID::None)
+	if (UpID==ERobotID::None || bEnableCameraShake == false)
 	{
 		UE_LOG(LogTemp, Log, TEXT("ID UP NONE PAS DE SHAKE"));
 		return;
