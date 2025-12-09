@@ -67,6 +67,7 @@ protected:
 	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
