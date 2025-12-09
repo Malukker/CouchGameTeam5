@@ -214,7 +214,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool IsLookingOpponent = false;
 	
 	UPROPERTY(EditAnywhere)
