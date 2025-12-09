@@ -163,7 +163,7 @@ protected:
 	URobotControllerVibrationData* LoadVibrationDataFromConfig();
 
 	UFUNCTION()
-	void StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController);
+	void StartControllerVibration(ERobotID RobotID, EAttackID AttackID);
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
 
