@@ -17,6 +17,7 @@ struct FVibrationAttackType
 	UPROPERTY(EditAnywhere)
 	TMap<EAttackID,UForceFeedbackEffect*> RobotAttackType;
 
+
 };
 
 
@@ -30,4 +31,8 @@ class ROBOTBATTLE_API URobotControllerVibrationData : public UDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	TMap<ERobotID,FVibrationAttackType> VibrationMap ;
+
+	UPROPERTY(EditAnywhere)
+	UForceFeedbackEffect* GuardBreakVibration;
+
 };
