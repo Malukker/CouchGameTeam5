@@ -9,6 +9,7 @@
 class URobotCharacterInputData;
 class URobotCharacterAttacksData;
 class UInputMappingContext;
+class URobotControllerVibrationData;
 
 /**
  * 
@@ -30,6 +31,9 @@ public:
 	
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	TSoftObjectPtr<UInputMappingContext> InputMappingContextMenu;
+
+	UPROPERTY(Config, EditAnywhere, Category = "Vibration")
+	TSoftObjectPtr<URobotControllerVibrationData> ControllerVibrationData;
 
 	UPROPERTY(Config, EditAnywhere, Category = "Inputs")
 	float InputMoveXThreshold = 0.1f;

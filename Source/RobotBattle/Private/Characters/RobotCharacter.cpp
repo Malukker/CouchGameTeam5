@@ -384,7 +384,12 @@ void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 	{
 		HurtManagerEvent.Broadcast(Damage, StunTime);
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+	
+}
+
+void ARobotCharacter::StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID, APlayerController* PlayerController)
+{
+	VibrationControllerEvent.Broadcast(ERobotID,EAttackID,PlayerController);
 }
 
 void ARobotCharacter::KnockBackFromNotify(FVector2D Velocity)

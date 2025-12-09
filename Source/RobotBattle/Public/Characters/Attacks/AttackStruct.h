@@ -44,4 +44,7 @@ struct FAttackStruct
 	
 	UPROPERTY(EditAnywhere)
 	float BoostMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere)
+	 EAttackID AttackType = EAttackID::None;
 };

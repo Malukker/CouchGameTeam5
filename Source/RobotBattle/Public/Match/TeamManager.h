@@ -8,6 +8,7 @@
 #include <Characters/Attacks/AttackStruct.h>
 #include "TeamManager.generated.h"
 
+class URobotControllerVibrationData;
 class URobotCharacterInputData;
 class IUIGamePlayInterface;
 class ARobotCharacter;
@@ -67,6 +68,7 @@ protected:
 	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
@@ -153,8 +155,15 @@ protected:
 
 	UFUNCTION()
 	void KnockBack(FVector2D KnockBackVelocity);
-	
+
+	UFUNCTION()
 	URobotCharacterInputData* LoadInputDataFromConfig();
+
+	UFUNCTION()
+	URobotControllerVibrationData* LoadVibrationDataFromConfig();
+
+	UFUNCTION()
+	void StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController);
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
 
