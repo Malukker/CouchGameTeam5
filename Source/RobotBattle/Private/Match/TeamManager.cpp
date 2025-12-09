@@ -480,7 +480,7 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 	return CharacterSettings->ControllerVibrationData.LoadSynchronous();
 }
 
-void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController)
+void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID)
 {
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
 	if (VibrationData == nullptr
@@ -489,7 +489,10 @@ void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID
 	
 	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
 	{
-		PlayerController->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+		for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
+		{
+			Pair.Value->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+		}
 	}
 }
 

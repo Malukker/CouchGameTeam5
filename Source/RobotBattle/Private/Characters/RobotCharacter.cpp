@@ -387,9 +387,9 @@ void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 	
 }
 
-void ARobotCharacter::StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID, APlayerController* PlayerController)
+void ARobotCharacter::StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID)
 {
-	VibrationControllerEvent.Broadcast(ERobotID,EAttackID,PlayerController);
+	VibrationControllerEvent.Broadcast(ERobotID,EAttackID);
 }
 
 void ARobotCharacter::KnockBackFromNotify(FVector2D Velocity)

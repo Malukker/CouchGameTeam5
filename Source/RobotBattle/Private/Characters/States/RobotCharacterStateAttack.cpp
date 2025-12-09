@@ -117,7 +117,7 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					TouchedCharacterInterface->TakeDamageFromAttack(
 						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
 						Data.StunTimer);
-					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType,OutHit.GetActor()->GetNetOwningPlayer()->PlayerController);
+					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
 					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetAttackDuoBonus());
