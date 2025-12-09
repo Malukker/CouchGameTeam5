@@ -6,6 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "CameraWorldSubsystem.generated.h"
 
+class AWinManager;
 class ARobotBoundsActor;
 class UCameraSettings;
 class UCameraComponent;
@@ -98,15 +99,19 @@ private:
 	FVector CalculateWorldPositionFromViewportPosition(const FVector2D& ViewportPosition);
 #pragma endregion Bounds
 
-#pragma region Zoom
-private:
-	//UPROPERTY()
-	//float CameraZoomYMin = 0.f;
+#pragma region CameraWinScene
+	UPROPERTY()
+	TObjectPtr<UCameraComponent> CameraWin;
 
-	//UPROPERTY()
-	//float CameraZoomYMax = 0.f;
-	
-	// UFUNCTION()
-	// void InitCameraZoomParameters();
-#pragma endregion Zoom
+	UPROPERTY()
+	TObjectPtr<UCameraComponent> CameraZoomWin;
+
+	UFUNCTION()
+	void StartCameraZoom(float deltatime);
+
+	UPROPERTY()
+	AWinManager* WinManager = nullptr;
+
+	bool GameOverUISetted = false;
+#pragma endregion CameraWinScene
 };

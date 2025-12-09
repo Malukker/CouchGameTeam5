@@ -52,7 +52,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 			{
 				if (!WalkForward)
 				{
-					Character->GuardManagerEvent.Broadcast(false);
+					Character->SetGuard(false);
 					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
 				}
 				WalkForward = true;
@@ -61,7 +61,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 			{
 				if (WalkForward)
 				{
-					Character->GuardManagerEvent.Broadcast(true);
+					Character->SetGuard(true);
 					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
 				}
 				WalkForward = false;

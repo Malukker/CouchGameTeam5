@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Match/MatchManager.h"
@@ -85,11 +85,11 @@ void AMatchManager::EndFightOnTimeOut()
 	{
 		if (Teams[0]->GetLifePercent() > Teams[1]->GetLifePercent())
 		{
-			EndFightOnRobotDefeat(1);
+			EndFight(1);
 		}
 		else if (Teams[1]->GetLifePercent() > Teams[0]->GetLifePercent())
 		{
-			EndFightOnRobotDefeat(0);
+			EndFight(0);
 		}
 		else
 		{
@@ -106,40 +106,49 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 	}
 	RoundEndEvent.Broadcast(0);
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, LosingTeam]()
 	{
-		Round++;
-		if (LosingTeam == 0)
-		{
-			TeamsWin[1]++;
-			UIGameplay->SetRoundPlayer(1, TeamsWin[1]);
-		}
-		else if (LosingTeam == 1)
-		{
-			TeamsWin[0]++;
-			UIGameplay->SetRoundPlayer(0, TeamsWin[0]);
-		}
-		int index = 0;
-		for (int TeamWin : TeamsWin)
-		{
-			if (TeamWin == 2)
-			{
-				UGameplayStatics::OpenLevel(GetWorld(), FName("WinScene"));
-				URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
-				GI->TeamWin = index;
-				return;
-			}
-			index++;
-		}
-		if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
-		{
-			for (ATeamManager* Team : Teams)
-			{
-				Team->InversePlayer();
-			}
-		}
-		ResetFight();
+		EndFight(LosingTeam);
 	}, 1.5f, false);
+}
+
+void AMatchManager::EndFight(int LosingTeam)
+{
+	Round++;
+	if (LosingTeam == 0)
+	{
+		TeamsWin[1]++;
+		UIGameplay->SetRoundPlayer(1, TeamsWin[1]);
+	}
+	else if (LosingTeam == 1)
+	{
+		TeamsWin[0]++;
+		UIGameplay->SetRoundPlayer(0, TeamsWin[0]);
+	}
+	int index = 0;
+	for (int TeamWin : TeamsWin)
+	{
+		if (TeamWin == 2)
+		{
+			//UIGameplay->RemoveFromParent();
+			//UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
+			//UIGameOver->AddToViewport();
+			//UGameplayStatics::SetGamePaused(GetWorld(), true);
+			URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
+			GI->TeamWin = index;
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WinLevel);
+			return;
+		}
+		index++;
+	}
+	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->InversePlayer();
+		}
+	}
+	ResetFight();
 }
 
 // Called every frame

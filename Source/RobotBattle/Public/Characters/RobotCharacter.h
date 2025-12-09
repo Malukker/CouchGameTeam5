@@ -9,6 +9,7 @@
 #include "Interface/Robot.h"
 #include "RobotCharacter.generated.h"
 
+class URobotGameInstance;
 class UBoxComponent;
 class AHUDGameplay;
 enum class ERobotCharacterUpID : uint8;
@@ -123,6 +124,7 @@ public:
 	ERobotID GetRobotBodyID() const;
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	void StartControllerVibration(ERobotID ERobotID, EAttackID EAttackID);
 	void KnockBackFromNotify(FVector2D Velocity);
 
 	UPROPERTY()
@@ -167,7 +169,6 @@ protected:
 
 #pragma region Info
 public:
-	
 	UFUNCTION()
 	virtual	ERobotCharacterPositionEnum GetPositionEnum();
 
@@ -182,10 +183,12 @@ public:
 
 	int GetTeam();
 	void SetTeam(int NewTeam);
+	void SetLookingOpponent(bool Value);
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
 	void PlayIntro();
+	virtual void PlayDash();
 	void PlayEnd(bool Win);
 	
 protected:
@@ -210,6 +213,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool IsLookingOpponent = false;
 	
 	UPROPERTY(EditAnywhere)
 	bool MeshMirror = false;
@@ -227,19 +233,23 @@ protected:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardManagerEvent, int, Damage, float, StunTimer);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardEvent, int, GuardMax, int, GuardLeft);
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttackManagerEvent, bool, HasAttack);
 	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FDoGuardEvent, bool, Guard);
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAirStopManagerEvent);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FGuardManagerEvent, bool, Guard);
-	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHurtEvent);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBoostEvent);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVibrationControllerEvent,ERobotID, RobotID,EAttackID ,AttackID);
 
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
@@ -251,6 +261,9 @@ public:
 	FGuardEvent GuardEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
+	FDoGuardEvent DoGuardEvent;
+	
+	UPROPERTY()
 	FGuardManagerEvent GuardManagerEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
@@ -258,6 +271,9 @@ public:
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
+
+	UPROPERTY()
+	FVibrationControllerEvent VibrationControllerEvent;
 
 	UPROPERTY()
 	FAttackManagerEvent AttackManagerEvent;
@@ -272,10 +288,15 @@ public:
 	void SetBoost(bool Value);
 	UFUNCTION()
 	bool GetBoost();
+
+	UFUNCTION()
+	void SetGuard(bool Value);
 	
 private:
 
 	bool UseBoost = false;
+
+	bool CanGuard = false;
 	
 #pragma endregion
 

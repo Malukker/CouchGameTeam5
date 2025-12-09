@@ -21,7 +21,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 {
 	Super::StateEnter(PreviousState);
 
-	Character->GuardManagerEvent.Broadcast(false);
+	Character->SetGuard(false);
 	HasTouch = false;
 	
 	AnimDuration = Character->PlayAnimMontage(Attacks[Character->GetCurrentTypeAttack()]);
@@ -117,6 +117,7 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					TouchedCharacterInterface->TakeDamageFromAttack(
 						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
 						Data.StunTimer);
+					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
 					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetAttackDuoBonus());

@@ -31,7 +31,8 @@ protected:
 	virtual void OnInputRightDash(const FInputActionValue& InputActionValue) override;
 	virtual void OnInputLeftDash(const FInputActionValue& InputActionValue) override;
 	virtual ERobotCharacterPositionEnum GetPositionEnum() override;
-	virtual  bool StartAttackDuo() override;
+	virtual bool StartAttackDuo() override;
+	virtual void PlayDash() override;
 	
 	UFUNCTION()
 	void OnHitStop(int Damage);

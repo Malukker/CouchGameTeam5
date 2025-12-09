@@ -49,7 +49,7 @@ public:
 	void InitializeAndBindInputs();
 
 private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TMap<APlayerController*, ERobotID> BodyPartByController;
 
 	UPROPERTY()
