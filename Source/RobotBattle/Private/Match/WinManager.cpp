@@ -36,6 +36,7 @@ void AWinManager::BeginPlay()
 
 	RobotPartsWin[ERobotCharacterPositionEnum::Up]->PlayEnd(true);
 	RobotPartsLose[ERobotCharacterPositionEnum::Up]->PlayEnd(false);
+	
 
 	OnGameOverUI.AddDynamic(this,&AWinManager::ActivateGameOverUI);
 }
@@ -60,6 +61,7 @@ void AWinManager::SpawnRobot(URobotGameInstance* GameInstance,TMap<ERobotCharact
 	
 		if (NewCharacter == nullptr) return;
 		RobotParts->Add(Pos, NewCharacter);
+		NewCharacter->SetTeam(index);
 		UGameplayStatics::FinishSpawningActor(NewCharacter, SpawnPoint->GetTransform());
 	}
 	RobotParts->Find(ERobotCharacterPositionEnum::Up)->Get()->AttachToComponent(
