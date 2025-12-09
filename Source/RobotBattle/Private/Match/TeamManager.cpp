@@ -31,13 +31,13 @@ void ATeamManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	if (DashBuffer > 0) DashBuffer -= DeltaTime;
-	if (DashBuffer < 0 && WantInvinsibility) WantInvinsibility = false;
+	if (DashBuffer <= 0 && WantInvinsibility) WantInvinsibility = false;
 	
 	if (InvinsibilityFrames > 0) InvinsibilityFrames --;
 	if (InvinsibilityFrames == 0 && !CanTakeDamage) CanTakeDamage = true;
 	
 	if (UltimateBuffer > 0) UltimateBuffer -= DeltaTime;
-	if (UltimateBuffer < 0 && WantUltimate != -1) WantUltimate = -1;
+	if (UltimateBuffer <= 0 && WantUltimate != -1) WantUltimate = -1;
 
 	if (ComboTimer > 0) ComboTimer -= DeltaTime;
 	if (ComboTimer <= 0 && Combo > 0) {Combo = 0; UIInterface->SetComboHit(Team, Combo);}

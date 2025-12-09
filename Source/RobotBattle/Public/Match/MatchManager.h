@@ -25,9 +25,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleGameplayUI> UIGameplayClass;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> UIGameOverClass;
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIRoundClass;
+
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UWorld> WinLevel;
 
 	UPROPERTY()
 	URobotBattleGameplayUI* UIGameplay;
