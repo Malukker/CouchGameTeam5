@@ -87,6 +87,11 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry & MyGeometry, float InDeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayAnimCharge(int Team);
+	UFUNCTION(BlueprintImplementableEvent)
+	void StopAnimCharge(int Team);
+	
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;

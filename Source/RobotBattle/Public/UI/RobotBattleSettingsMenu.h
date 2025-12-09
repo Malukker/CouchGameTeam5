@@ -23,6 +23,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Settings")
 	float MasterVolume = 1.0f;
 
+	UPROPERTY(BlueprintReadWrite, BlueprintReadWrite, Category="Settings")
+	bool bCameraShakeEnabled = true;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
 	USoundClass* MasterSoundClass;
 };
