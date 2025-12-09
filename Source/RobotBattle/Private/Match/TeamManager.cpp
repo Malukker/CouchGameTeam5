@@ -10,6 +10,7 @@
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
+#include "Characters/RobotControllerVibrationData.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -116,6 +117,7 @@ void ATeamManager::SpawnCharacters()
 		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
+		NewCharacter->VibrationControllerEvent.AddDynamic(this,&ATeamManager::StartControllerVibration);
 		NewCharacter->SetTeam(Team);
 		NewCharacter->SetLookingOpponent(true);
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
@@ -264,6 +266,17 @@ void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 		if (TeamGuard == 0)
 		{
 			const URobotCharacterSettings* Settings = GetDefault<URobotCharacterSettings>();
+
+			//Start Vibration for Guard Break
+			URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+			if (VibrationData && VibrationData->GuardBreakVibration)
+			{
+				for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
+				{
+					Pair.Value->ClientPlayForceFeedback(VibrationData->GuardBreakVibration);
+				}
+			}
+			
 			USoundBase* GuardBreakSound =Settings->GuardBreak.LoadSynchronous();
 			RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunDuration);
 			RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunDuration);
@@ -414,7 +427,11 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
-			if (WantUltimate == 1) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 1)
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 0;
 		}
@@ -426,13 +443,18 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
-			if (WantUltimate == 0) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 0) 
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 1;
 		}
 		break;
 	case ERobotCharacterPositionEnum::None:
 		IsLoadingUltimate = false;
+		CanTakeDamage = true;
 	default: ;
 	}
 }
@@ -449,6 +471,23 @@ URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {
 	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
 	if (CharacterSettings == nullptr) return nullptr;
 	return CharacterSettings->InputDataGameplay.LoadSynchronous();
+}
+
+URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
+{
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return nullptr;
+	return CharacterSettings->ControllerVibrationData.LoadSynchronous();
+}
+
+void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController)
+{
+	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+	if (VibrationData == nullptr && VibrationData->VibrationMap.Contains(RobotID)) return;
+	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
+	{
+		PlayerController->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+	}
 }
 
 UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position) {

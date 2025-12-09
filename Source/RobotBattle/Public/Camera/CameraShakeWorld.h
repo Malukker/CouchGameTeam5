@@ -54,8 +54,8 @@ public:
 	void SetupShakeParametersForTool(float LocationAmplitudeMultiplier,float LocationFrequencyMultiplier,float RotationAmplitudeMultiplier,float RotationFrequencyMultiplier);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
 	
-
-
+	UPROPERTY(BlueprintReadWrite, BlueprintReadWrite, Category="Shake")
+	bool bEnableCameraShake = true; 
 
 private:
 
