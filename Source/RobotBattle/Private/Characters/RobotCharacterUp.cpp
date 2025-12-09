@@ -107,6 +107,11 @@ bool ARobotCharacterUp::StartAttackDuo()
 	return true;
 }
 
+void ARobotCharacterUp::PlayDash()
+{
+	PlayAnimMontage(DashAnimMontage);
+}
+
 ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 {
 	return ERobotCharacterPositionEnum::Up;
@@ -115,23 +120,13 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	PlayAnimMontage(DashAnimMontage);
-	DashDirectionX = 1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	PlayAnimMontage(DashAnimMontage);
-	DashDirectionX = -1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnHitStop(int Damage)
@@ -144,3 +139,4 @@ void ARobotCharacterUp::OnHitStop(int Damage)
 			CustomTimeDilation = 1.f;
 		}, Settings->HitStopTimerModifier*Damage, false);
 }
+

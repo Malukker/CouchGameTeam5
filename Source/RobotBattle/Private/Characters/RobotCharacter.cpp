@@ -106,6 +106,11 @@ void ARobotCharacter::PlayIntro()
 	PlayAnimMontage(Intro);
 }
 
+void ARobotCharacter::PlayDash()
+{
+	
+}
+
 void ARobotCharacter::PlayEnd(bool Win)
 {
 	PlayAnimMontage((Win ? EndWin : EndDefeat));
