@@ -268,16 +268,13 @@ void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 			const URobotCharacterSettings* Settings = GetDefault<URobotCharacterSettings>();
 
 			//Start Vibration for Guard Break
-			if (URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig())
+			URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+			if (VibrationData && VibrationData->GuardBreakVibration)
 			{
-				if (VibrationData->GuardBreakVibration)
+				for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
 				{
-					for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
-					{
-						Pair.Value->ClientPlayForceFeedback(VibrationData->GuardBreakVibration);
-					}
+					Pair.Value->ClientPlayForceFeedback(VibrationData->GuardBreakVibration);
 				}
-			
 			}
 			
 			USoundBase* GuardBreakSound =Settings->GuardBreak.LoadSynchronous();
@@ -486,7 +483,7 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController)
 {
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
-	if (VibrationData == nullptr) return;
+	if (VibrationData == nullptr && VibrationData->VibrationMap.Contains(RobotID)) return;
 	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
 	{
 		PlayerController->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
