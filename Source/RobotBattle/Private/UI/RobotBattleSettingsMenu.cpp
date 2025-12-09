@@ -2,6 +2,8 @@
 
 
 #include "UI/RobotBattleSettingsMenu.h"
+
+#include "Camera/CameraShakeWorld.h"
 #include "Sound/SoundClass.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -25,5 +27,7 @@ void URobotBattleSettingsMenu::ApplySettings()
 		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
 	}
 	
+	UCameraShakeWorld* ShakeCDO = GetMutableDefault<UCameraShakeWorld>();
+	ShakeCDO->bEnableCameraShake = bCameraShakeEnabled;
 }
 
