@@ -357,13 +357,18 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 			IsDashing = true;
 			CanTakeDamage = false;
 			InvinsibilityFrames = InvinsibilityFramesOrigin;
-			if (WantInvinsibility) InvinsibilityFrames += InvinsibilityFramesOrigin;
+			if (WantInvinsibility)
+			{
+				InvinsibilityFrames += InvinsibilityFramesOrigin;
+				RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
+			}
 		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
 		if (IsDashing)
 		{
 			InvinsibilityFrames += InvinsibilityFramesOrigin;
+			RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
 		}
 		else
 		{
