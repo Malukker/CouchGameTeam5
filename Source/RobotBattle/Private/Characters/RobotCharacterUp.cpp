@@ -120,21 +120,13 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	DashDirectionX = 1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	DashDirectionX = -1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnHitStop(int Damage)
