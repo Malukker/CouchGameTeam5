@@ -16,10 +16,7 @@ struct FVibrationAttackType
 	
 	UPROPERTY(EditAnywhere)
 	TMap<EAttackID,UForceFeedbackEffect*> RobotAttackType;
-
-
 };
-
 
 
 

@@ -483,7 +483,10 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController)
 {
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
-	if (VibrationData == nullptr && VibrationData->VibrationMap.Contains(RobotID)) return;
+	if (VibrationData == nullptr
+		|| !VibrationData->VibrationMap.Contains(RobotID)
+		|| !VibrationData->VibrationMap[RobotID].RobotAttackType.Contains(AttackID)) return;
+	
 	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
 	{
 		PlayerController->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
