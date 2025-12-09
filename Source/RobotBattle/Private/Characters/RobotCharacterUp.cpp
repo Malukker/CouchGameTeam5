@@ -101,7 +101,8 @@ bool ARobotCharacterUp::StartAttackDuo()
 {
 	if (!CanAttackDuo) return false;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
-		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return false;
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Stun) return false;
 	CurrentTypeAttack = EAttackID::Ultimate;
 	InputAttackEvent.Broadcast();
 	return true;
