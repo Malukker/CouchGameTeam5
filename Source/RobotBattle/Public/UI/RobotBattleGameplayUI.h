@@ -27,6 +27,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* HealthBarPlayer2;
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer1CD;	
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer2CD;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* ChargeBarPlayer1;
@@ -116,4 +122,6 @@ private:
 	bool Goal1 = false;
 	UPROPERTY()
 	bool Goal2 = false;
+	UPROPERTY(EditAnywhere)
+	float LifeBareDecrease = 5.f;
 };
