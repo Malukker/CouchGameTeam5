@@ -69,6 +69,7 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		Combo2->SetRenderScale(Combo2BaseScale);
 	}
 }
+
 void URobotBattleGameplayUI::UpdateTimer()
 {
 	if (TimerText)
@@ -148,6 +149,8 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer1)
 		{
 			ChargeBarPlayer1->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(0);
+			else if (Charge == 0) StopAnimCharge(0);
 		}
 	}
 	if (Team == 1)
@@ -155,6 +158,8 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer2)
 		{
 			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(1);
+			else if (Charge == 0) StopAnimCharge(1);
 		}
 	}
 }
