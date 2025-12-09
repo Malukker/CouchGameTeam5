@@ -13,6 +13,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 #include "UI/HUDGameplay.h"
 
 // Sets default values
@@ -33,7 +34,6 @@ void ARobotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateStateMachine();
-
 	InitStateMachine();
 	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 	if (GetRobotBodyID() == ERobotID::None)
@@ -47,7 +47,10 @@ void ARobotCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickStateMachine(DeltaTime);
-	RotateMeshUsingOrientX();
+	if (IsLookingOpponent)
+	{
+		RotateMeshUsingOrientX();
+	}
 }
 
 // Called to bind functionality to input
@@ -78,6 +81,11 @@ void ARobotCharacter::SetTeam(int NewTeam)
 	Team = NewTeam;
 }
 
+void ARobotCharacter::SetLookingOpponent(bool Value)
+{
+	IsLookingOpponent = Value;
+}
+
 int ARobotCharacter::GetLife()
 {
 	return  Life;
@@ -96,6 +104,11 @@ int ARobotCharacter::GetInvinsibilityFrames()
 void ARobotCharacter::PlayIntro()
 {
 	PlayAnimMontage(Intro);
+}
+
+void ARobotCharacter::PlayDash()
+{
+	
 }
 
 void ARobotCharacter::PlayEnd(bool Win)
@@ -325,6 +338,12 @@ bool ARobotCharacter::GetBoost()
 	return UseBoost;
 }
 
+void ARobotCharacter::SetGuard(bool Value)
+{
+	CanGuard = Value;
+	DoGuardEvent.Broadcast(CanGuard);
+}
+
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
 {
 	CanAttackDuo = CanAttack;
@@ -357,7 +376,14 @@ int ARobotCharacter::GetCharge()
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime);
+	if (CanGuard)
+	{
+		GuardManagerEvent.Broadcast(Damage, StunTime);
+	}
+	else
+	{
+		HurtManagerEvent.Broadcast(Damage, StunTime);
+	}
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
 }
 

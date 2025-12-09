@@ -21,7 +21,7 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 {
 	Super::StateEnter(PreviousState);
 
-	Character->GuardManagerEvent.Broadcast(false);
+	Character->SetGuard(false);
 	HasTouch = false;
 	
 	AnimDuration = Character->PlayAnimMontage(Attacks[Character->GetCurrentTypeAttack()]);

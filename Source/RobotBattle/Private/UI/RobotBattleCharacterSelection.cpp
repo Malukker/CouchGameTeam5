@@ -30,7 +30,7 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 		}
 	}
 	
-	for (auto Pair : BodyPartByController)
+	for (TPair<APlayerController*, ERobotID> Pair : BodyPartByController)
 	{
 		int Index;
 		GameInstance->PlayersPos.Find(Pair.Key->GetLocalPlayer()->GetLocalPlayerIndex(), Index);
@@ -111,15 +111,10 @@ void URobotBattleCharacterSelection::InitializeAndBindInputs()
 
 	for (int i = 0; i < Players.Num(); i++)
 	{
-		BodyPartByController.Add(UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i), ERobotID::Robot1);
-		ValidationByController.Add(UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i), false);
-	}
-
-	for (auto Pair : BodyPartByController)
-	{
-		if (Pair.Key != nullptr)
-		{
-			ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection::Right, Pair.Key);
-		}
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerControllerFromID(GetWorld(), i);
+		int Index;
+		GameInstance->PlayersPos.Find(PlayerController->GetLocalPlayer()->GetLocalPlayerIndex(), Index);
+		BodyPartByController.Add(PlayerController, GameInstance->RobotID[Index]);
+		ValidationByController.Add(PlayerController, false);
 	}
 }
