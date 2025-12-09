@@ -414,7 +414,11 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
-			if (WantUltimate == 1) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 1)
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 0;
 		}
@@ -426,13 +430,18 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		}
 		else
 		{
-			if (WantUltimate == 0) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 0) 
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 1;
 		}
 		break;
 	case ERobotCharacterPositionEnum::None:
 		IsLoadingUltimate = false;
+		CanTakeDamage = true;
 	default: ;
 	}
 }
