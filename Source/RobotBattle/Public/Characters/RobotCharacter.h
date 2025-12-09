@@ -187,6 +187,7 @@ public:
 	int GetGuard();
 	int GetInvinsibilityFrames();
 	void PlayIntro();
+	virtual void PlayDash();
 	void PlayEnd(bool Win);
 	
 protected:
@@ -212,7 +213,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool IsLookingOpponent = false;
 	
 	UPROPERTY(EditAnywhere)

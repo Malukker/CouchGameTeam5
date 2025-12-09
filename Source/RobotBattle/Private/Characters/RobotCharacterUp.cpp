@@ -101,10 +101,16 @@ bool ARobotCharacterUp::StartAttackDuo()
 {
 	if (!CanAttackDuo) return false;
 	if (StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Attack
-		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack) return false;
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::LoadingAttack
+		|| StateMachine->GetCurrentStateID() == ERobotCharacterStateID::Stun) return false;
 	CurrentTypeAttack = EAttackID::Ultimate;
 	InputAttackEvent.Broadcast();
 	return true;
+}
+
+void ARobotCharacterUp::PlayDash()
+{
+	PlayAnimMontage(DashAnimMontage);
 }
 
 ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
@@ -115,23 +121,13 @@ ERobotCharacterPositionEnum ARobotCharacterUp::GetPositionEnum()
 void ARobotCharacterUp::OnInputRightDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	PlayAnimMontage(DashAnimMontage);
-	DashDirectionX = 1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnInputLeftDash(const FInputActionValue& InputActionValue)
 {
 	if (UGameplayStatics::IsGamePaused(GetWorld())) return;
-	PlayAnimMontage(DashAnimMontage);
-	DashDirectionX = -1;
-	if (FMathf::Sign(OrientX) != FMathf::Sign(DashDirectionX))
-	{
-		InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
-	}
+	InputDashManagerEvent.Broadcast(ERobotCharacterPositionEnum::Up);
 }
 
 void ARobotCharacterUp::OnHitStop(int Damage)
@@ -144,3 +140,4 @@ void ARobotCharacterUp::OnHitStop(int Damage)
 			CustomTimeDilation = 1.f;
 		}, Settings->HitStopTimerModifier*Damage, false);
 }
+
