@@ -155,6 +155,9 @@ void ATeamManager::ResetCharacters()
 			false),
 		"Bones_Attach");
 
+	
+	RobotParts[ERobotCharacterPositionEnum::Up]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
