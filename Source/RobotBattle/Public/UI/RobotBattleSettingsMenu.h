@@ -27,5 +27,11 @@ public:
 	bool bCameraShakeEnabled = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
+	bool bControllerVibrationEnabled = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
 	USoundClass* MasterSoundClass;
+
+	UPROPERTY(BlueprintReadOnly, Category="Settings")
+	URobotGameInstance* GI;
 };
