@@ -155,6 +155,9 @@ void ATeamManager::ResetCharacters()
 			false),
 		"Bones_Attach");
 
+	
+	RobotParts[ERobotCharacterPositionEnum::Up]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
@@ -239,11 +242,7 @@ void ATeamManager::TeamDoAttack(bool HasTouch)
 void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 {
 	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
-	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	if (MovementComponent->GravityScale == 0.f && OriginalGravityScale != 0.f)
-	{
-		MovementComponent->GravityScale = OriginalGravityScale;
-	};
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
 		LaunchVelocity.X*=-1;
@@ -332,19 +331,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 void ATeamManager::TeamAirBlock()
 {
 	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	if (MovementComponent->GravityScale == 0.f) return;
-	OriginalGravityScale = MovementComponent->GravityScale;
-	MovementComponent->GravityScale = 0;
 	MovementComponent->StopMovementImmediately();
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
-	{
-		if ( RobotParts[ERobotCharacterPositionEnum::Down] != nullptr)
-		{
-			if (OriginalGravityScale != 0.f) RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GravityScale = OriginalGravityScale;
-		}
-		OriginalGravityScale = 0.f;
-	}, .1f, false);
 			
 }
 
@@ -398,6 +385,7 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
+		if (IsLoadingUltimate) return;
 		TeamCharge++;
 		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
 		if (TeamCharge == TeamChargeMax)

@@ -61,7 +61,7 @@ void AMatchManager::ResetFight()
 		{
 			Team->PlayIntro();
 		}
-	}, 1.5f, false);
+	}, (Round == 3 ? 4.5f : 1.5f), false);
 	FTimerHandle TimerHandleSecond;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandleSecond, [&]()
 	{

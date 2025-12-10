@@ -19,6 +19,7 @@ public class RobotBattle : ModuleRules
 				"DeveloperSettings", 
 				"LocalMultiplayer",
 				"UMG",
+				"Niagara",
             });
 		
 		PrivateDependencyModuleNames.AddRange(new string[] { "EngineCameras" });

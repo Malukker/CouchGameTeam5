@@ -110,9 +110,6 @@ protected:
 	int TeamCharge = 0;
 
 	UPROPERTY()
-	float OriginalGravityScale = 0;
-
-	UPROPERTY()
 	int Combo = 0;
 	UPROPERTY()
 	float ComboTimer = 0.f;
