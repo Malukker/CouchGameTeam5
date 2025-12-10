@@ -20,6 +20,9 @@ ARobotBoundsActor::ARobotBoundsActor()
 	
 	Box_Left = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxLeft"));
 	Box_Left->SetupAttachment(Root);
+
+	Box_Top = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTop"));
+	Box_Top->SetupAttachment(Root);
 	
 	
 }
@@ -34,5 +37,15 @@ void ARobotBoundsActor::BeginPlay()
 void ARobotBoundsActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ARobotBoundsActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+	Box_Top->SetWorldLocation(FVector(Box_Top->GetComponentLocation().X, Box_Top->GetComponentLocation().Y, BoxTopHeight));
+	Box_Top->SetBoxExtent(BoxTopExtent);
+	Box_Top->SetLineThickness(LineThickness);
+	Box_Left->SetLineThickness(LineThickness);
+	Box_Right->SetLineThickness(LineThickness);
 }
 
