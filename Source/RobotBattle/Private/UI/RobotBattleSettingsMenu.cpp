@@ -3,11 +3,10 @@
 
 #include "UI/RobotBattleSettingsMenu.h"
 
-#include "Sound/SoundClass.h"
-#include "Match/TeamManager.h"
-#include "Kismet/GameplayStatics.h"
-#include "Match/RobotGameInstance.h"
 #include "Camera/CameraShakeWorld.h"
+#include "Match/TeamManager.h"
+#include "Sound/SoundClass.h"
+#include "Kismet/GameplayStatics.h"
 
 void URobotBattleSettingsMenu::NativeConstruct()
 {
@@ -29,13 +28,10 @@ void URobotBattleSettingsMenu::ApplySettings()
 		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
 	}
 	
-	if (UWorld* World = GetWorld())
-	{
-		if (URobotGameInstance* GI = World->GetGameInstance<URobotGameInstance>())
-		{
-			GI->bEnableCameraShake = bCameraShakeEnabled;
-			GI->bEnableControllerVibration = bControllerVibrationEnabled;
-		}
-	}
+	UCameraShakeWorld* ShakeCDO = GetMutableDefault<UCameraShakeWorld>();
+	ShakeCDO->bEnableCameraShake = bCameraShakeEnabled;
+
+	ATeamManager* TeamManagerCDO = GetMutableDefault<ATeamManager>();
+	TeamManagerCDO->bEnableControllerVibration = bControllerVibrationEnabled;
 }
 

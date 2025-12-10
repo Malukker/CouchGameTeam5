@@ -39,9 +39,5 @@ public:
 	uint8 GetPlayerPos(int Number);
 	void SetPlayerPos(int Number, uint8 Pos);
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Settings")
-	bool bEnableCameraShake = true;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category="Settings")
-	bool bEnableControllerVibration = true;
+	
 };
