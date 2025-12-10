@@ -3,9 +3,11 @@
 
 #include "UI/RobotBattleSettingsMenu.h"
 
-#include "Camera/CameraShakeWorld.h"
 #include "Sound/SoundClass.h"
+#include "Match/TeamManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
+#include "Camera/CameraShakeWorld.h"
 
 void URobotBattleSettingsMenu::NativeConstruct()
 {
@@ -27,7 +29,13 @@ void URobotBattleSettingsMenu::ApplySettings()
 		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
 	}
 	
-	UCameraShakeWorld* ShakeCDO = GetMutableDefault<UCameraShakeWorld>();
-	ShakeCDO->bEnableCameraShake = bCameraShakeEnabled;
+	if (UWorld* World = GetWorld())
+	{
+		if (URobotGameInstance* GI = World->GetGameInstance<URobotGameInstance>())
+		{
+			GI->bEnableCameraShake = bCameraShakeEnabled;
+			GI->bEnableControllerVibration = bControllerVibrationEnabled;
+		}
+	}
 }
 
