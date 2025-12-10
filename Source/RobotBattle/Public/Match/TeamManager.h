@@ -61,9 +61,6 @@ public:
 
 	FVector GetOpponentLocation();
 	float GetLifePercent();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
-	bool bEnableControllerVibration = true;
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Config")
