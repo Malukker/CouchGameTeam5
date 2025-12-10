@@ -470,6 +470,11 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 
 void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID)
 {
+	if (bEnableControllerVibration == false)
+	{
+		UE_LOG(LogTemp, Log, TEXT("NO VIBRATION"));
+		return;
+	}
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
 	if (VibrationData == nullptr
 		|| !VibrationData->VibrationMap.Contains(RobotID)

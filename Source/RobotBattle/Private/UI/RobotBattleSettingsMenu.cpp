@@ -4,6 +4,7 @@
 #include "UI/RobotBattleSettingsMenu.h"
 
 #include "Camera/CameraShakeWorld.h"
+#include "Match/TeamManager.h"
 #include "Sound/SoundClass.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -29,5 +30,8 @@ void URobotBattleSettingsMenu::ApplySettings()
 	
 	UCameraShakeWorld* ShakeCDO = GetMutableDefault<UCameraShakeWorld>();
 	ShakeCDO->bEnableCameraShake = bCameraShakeEnabled;
+
+	ATeamManager* TeamManagerCDO = GetMutableDefault<ATeamManager>();
+	TeamManagerCDO->bEnableControllerVibration = bControllerVibrationEnabled;
 }
 
