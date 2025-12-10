@@ -398,6 +398,7 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
+		if (IsLoadingUltimate) return;
 		TeamCharge++;
 		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
 		if (TeamCharge == TeamChargeMax)
