@@ -174,11 +174,13 @@ void ATeamManager::SetInput(bool Value)
 {
 	if (Value)
 	{
+		CanTakeDamage = true;
 		PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
 		PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
 	}
 	else
 	{
+		CanTakeDamage = false;
 		PlayersController[ERobotCharacterPositionEnum::Down]->UnPossess();
 		PlayersController[ERobotCharacterPositionEnum::Up]->UnPossess();
 	}
