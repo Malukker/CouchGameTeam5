@@ -27,6 +27,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* HealthBarPlayer2;
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer1CD;	
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer2CD;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* ChargeBarPlayer1;
@@ -87,6 +93,11 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry & MyGeometry, float InDeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayAnimCharge(int Team);
+	UFUNCTION(BlueprintImplementableEvent)
+	void StopAnimCharge(int Team);
+	
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;
@@ -111,4 +122,6 @@ private:
 	bool Goal1 = false;
 	UPROPERTY()
 	bool Goal2 = false;
+	UPROPERTY(EditAnywhere)
+	float LifeBareDecrease = 5.f;
 };

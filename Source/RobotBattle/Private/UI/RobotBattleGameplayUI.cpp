@@ -68,7 +68,30 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		Combo2BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
 		Combo2->SetRenderScale(Combo2BaseScale);
 	}
+
+	if (HealthBarPlayer2CD ->GetPercent() > HealthBarPlayer2->GetPercent())
+	{
+		float Current = HealthBarPlayer2CD->GetPercent();
+		float Target  = HealthBarPlayer2->GetPercent();
+
+		Current -= LifeBareDecrease/100 * InDeltaTime;
+		Current = FMath::Max(Current, Target);
+ 
+		HealthBarPlayer2CD->SetPercent(Current);
+	}
+
+	if (HealthBarPlayer1CD ->GetPercent() > HealthBarPlayer1->GetPercent())
+	{
+		float Current = HealthBarPlayer1CD->GetPercent();
+		float Target  = HealthBarPlayer1->GetPercent();
+
+		Current -= LifeBareDecrease/100 * InDeltaTime;
+		Current = FMath::Max(Current, Target);
+
+		HealthBarPlayer1CD->SetPercent(Current);
+	}
 }
+
 void URobotBattleGameplayUI::UpdateTimer()
 {
 	if (TimerText)
@@ -148,6 +171,8 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer1)
 		{
 			ChargeBarPlayer1->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(0);
+			else if (Charge == 0) StopAnimCharge(0);
 		}
 	}
 	if (Team == 1)
@@ -155,6 +180,8 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer2)
 		{
 			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(1);
+			else if (Charge == 0) StopAnimCharge(1);
 		}
 	}
 }

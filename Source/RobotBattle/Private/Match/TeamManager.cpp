@@ -268,7 +268,8 @@ void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 			const URobotCharacterSettings* Settings = GetDefault<URobotCharacterSettings>();
 
 			//Start Vibration for Guard Break
-			if (URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig())
+			URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+			if (VibrationData && VibrationData->GuardBreakVibration)
 			{
 				for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
 				{
@@ -479,11 +480,20 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 	return CharacterSettings->ControllerVibrationData.LoadSynchronous();
 }
 
-void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID,APlayerController* PlayerController)
+void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID)
 {
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
-	if (VibrationData == nullptr) return;
-	PlayerController->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+	if (VibrationData == nullptr
+		|| !VibrationData->VibrationMap.Contains(RobotID)
+		|| !VibrationData->VibrationMap[RobotID].RobotAttackType.Contains(AttackID)) return;
+	
+	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
+	{
+		for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
+		{
+			Pair.Value->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+		}
+	}
 }
 
 UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position) {
