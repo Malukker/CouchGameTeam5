@@ -11,6 +11,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 
 ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 {
@@ -125,6 +126,8 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					Character->GuardResetManagerEvent.Broadcast();
 					Character->AirStopManagerEvent.Broadcast();
 
+					if (Data.Niagara) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Data.Niagara, OutHit.ImpactPoint);
+					
 					APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 					float ScaleShake = 1.f;
 					float DurationShake = 0.f;
