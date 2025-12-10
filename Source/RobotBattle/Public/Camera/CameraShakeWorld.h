@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraShakeBase.h"
 #include "CameraShakeWorld.generated.h"
+
 enum class ERobotID : uint8;
 class UCameraSettings;
 enum class EAttackID : uint8;
