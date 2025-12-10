@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "AttackStruct.generated.h"
 
+class UNiagaraSystem;
 
 UENUM(BlueprintType)
 enum class ERobotID	: uint8
@@ -46,5 +47,8 @@ struct FAttackStruct
 	float BoostMultiplier = 1.f;
 
 	UPROPERTY(EditAnywhere)
-	 EAttackID AttackType = EAttackID::None;
+	EAttackID AttackType = EAttackID::None;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* Niagara;
 };

@@ -254,7 +254,7 @@ public:
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable, Category = "HurtEvent")
 	FHurtEvent HurtEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
