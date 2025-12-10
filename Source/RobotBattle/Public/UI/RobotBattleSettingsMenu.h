@@ -31,4 +31,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Settings")
 	USoundClass* MasterSoundClass;
+
+	UPROPERTY(BlueprintReadOnly, Category="Settings")
+	URobotGameInstance* GI;
 };

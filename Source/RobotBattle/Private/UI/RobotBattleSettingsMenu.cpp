@@ -12,6 +12,7 @@
 void URobotBattleSettingsMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
+	GI = GetGameInstance<URobotGameInstance>();
 }
 
 void URobotBattleSettingsMenu::SetMasterVolume(float NewVolume)
@@ -29,13 +30,10 @@ void URobotBattleSettingsMenu::ApplySettings()
 		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
 	}
 	
-	if (UWorld* World = GetWorld())
+	if (GI)
 	{
-		if (URobotGameInstance* GI = World->GetGameInstance<URobotGameInstance>())
-		{
-			GI->bEnableCameraShake = bCameraShakeEnabled;
-			GI->bEnableControllerVibration = bControllerVibrationEnabled;
-		}
+		GI->bEnableCameraShake = bCameraShakeEnabled;
+		GI->bEnableControllerVibration = bControllerVibrationEnabled;
 	}
 }
 
