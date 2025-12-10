@@ -4,15 +4,22 @@
 #include "Camera/CameraShakeWorld.h"
 
 #include "Camera/CameraSettings.h"
+#include "Match/RobotGameInstance.h"
 #include "Characters/Attacks/AttackStruct.h"
 #include "Shakes/WaveOscillatorCameraShakePattern.h"
 
 void UCameraShakeWorld::SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale,float& Duration )
 {
-	if (UpID==ERobotID::None || bEnableCameraShake == false)
+	if (UWorld* World = GetWorld())
 	{
-		UE_LOG(LogTemp, Log, TEXT("ID UP NONE PAS DE SHAKE"));
-		return;
+		if (URobotGameInstance* GI = World->GetGameInstance<URobotGameInstance>())
+		{
+			if (!GI->bEnableCameraShake)
+			{
+				UE_LOG(LogTemp, Log, TEXT("Camera shake disabled - skipping"));
+				return;
+			}
+		}
 	}
 	
 	Duration = CameraSettings->ShakeAttacksSettings[AttackID].ShakeDuration;
