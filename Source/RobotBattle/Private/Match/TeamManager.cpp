@@ -10,6 +10,7 @@
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Characters/RobotControllerVibrationData.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -363,6 +364,10 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 			{
 				InvinsibilityFrames += InvinsibilityFramesOrigin;
 				RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
+				if (TeamBoost)
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, RobotParts[ERobotCharacterPositionEnum::Up]->GetActorLocation());
+				}
 			}
 		}
 		break;
@@ -371,6 +376,10 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 		{
 			InvinsibilityFrames += InvinsibilityFramesOrigin;
 			RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
+			if (TeamBoost)
+			{
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, RobotParts[ERobotCharacterPositionEnum::Up]->GetActorLocation());
+			}
 		}
 		else
 		{
