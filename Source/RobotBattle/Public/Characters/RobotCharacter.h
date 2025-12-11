@@ -124,6 +124,7 @@ public:
 	ERobotID GetRobotBodyID() const;
 	
 	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	void StartControllerVibration(::ERobotID ERobotID, ::EAttackID EAttackID);
 	void KnockBackFromNotify(FVector2D Velocity);
 
 	UPROPERTY()
@@ -187,6 +188,7 @@ public:
 	int GetGuard();
 	int GetInvinsibilityFrames();
 	void PlayIntro();
+	virtual void PlayDash();
 	void PlayEnd(bool Win);
 	
 protected:
@@ -212,7 +214,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool IsFollowable = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool IsLookingOpponent = false;
 	
 	UPROPERTY(EditAnywhere)
@@ -247,10 +249,12 @@ public:
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGuardResetManagerEvent);
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FVibrationControllerEvent,ERobotID, RobotID,EAttackID ,AttackID);
+
 	UPROPERTY()
 	FAirStopManagerEvent AirStopManagerEvent;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintAssignable, Category = "HurtEvent")
 	FHurtEvent HurtEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GuardEvent")
@@ -267,6 +271,9 @@ public:
 	
 	UPROPERTY()
 	FHurtManagerEvent HurtManagerEvent;
+
+	UPROPERTY()
+	FVibrationControllerEvent VibrationControllerEvent;
 
 	UPROPERTY()
 	FAttackManagerEvent AttackManagerEvent;

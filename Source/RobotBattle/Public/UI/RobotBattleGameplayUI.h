@@ -27,6 +27,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* HealthBarPlayer2;
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer1CD;	
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UProgressBar* HealthBarPlayer2CD;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UProgressBar* ChargeBarPlayer1;
@@ -60,6 +66,10 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UEditableTextBox* Combo2;
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* FillImage;
+	
 #pragma endregion
 
 #pragma region VariableWidget
@@ -87,6 +97,11 @@ public:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry & MyGeometry, float InDeltaTime) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayAnimCharge(int Team);
+	UFUNCTION(BlueprintImplementableEvent)
+	void StopAnimCharge(int Team);
+	
 	virtual void SetChargePlayer(int Team, float Charge, float MaxCharge) override;
 	virtual void SetHealthPlayer(int Team, float Health, float MaxHealth) override;
 	virtual void SetRoundPlayer(int Team, int Win) override;
@@ -99,6 +114,7 @@ private:
 	UFUNCTION()
 	void UpdateTimer();
 	void PauseTimer();
+	void SetFillImage();
 
 	FVector2D Combo1BaseScale = FVector2D(.5f, .5f);
 	FVector2D Combo2BaseScale = FVector2D(.5f, .5f);
@@ -111,4 +127,8 @@ private:
 	bool Goal1 = false;
 	UPROPERTY()
 	bool Goal2 = false;
+	UPROPERTY(EditAnywhere)
+	float LifeBareDecrease = 5.f;
+	UPROPERTY(EditAnywhere)
+	float LifeBarCritical = 25.f;
 };

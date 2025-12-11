@@ -7,7 +7,7 @@
 #include "Characters/Attacks/AttackStruct.h"
 #include "RobotCharacterStateAttack.generated.h"
 
-
+class UNiagaraSystem;
 class IRobot;
 
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))

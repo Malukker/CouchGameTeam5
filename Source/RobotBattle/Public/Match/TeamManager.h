@@ -8,6 +8,7 @@
 #include <Characters/Attacks/AttackStruct.h>
 #include "TeamManager.generated.h"
 
+class URobotControllerVibrationData;
 class URobotCharacterInputData;
 class IUIGamePlayInterface;
 class ARobotCharacter;
@@ -67,6 +68,7 @@ protected:
 	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
+	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>> PlayersController;
 	
@@ -96,7 +98,7 @@ protected:
 	bool CanTakeDamage = true;
 	
 	UPROPERTY()
-	float UltimateBuffer = 0;
+	float UltimateBuffer = 0.f;
 	UPROPERTY()
 	bool IsLoadingUltimate = false;
 	UPROPERTY()
@@ -106,9 +108,6 @@ protected:
 	int TeamChargeMax = 0;
 	UPROPERTY()
 	int TeamCharge = 0;
-
-	UPROPERTY()
-	float OriginalGravityScale = 0;
 
 	UPROPERTY()
 	int Combo = 0;
@@ -153,8 +152,15 @@ protected:
 
 	UFUNCTION()
 	void KnockBack(FVector2D KnockBackVelocity);
-	
+
+	UFUNCTION()
 	URobotCharacterInputData* LoadInputDataFromConfig();
+
+	UFUNCTION()
+	URobotControllerVibrationData* LoadVibrationDataFromConfig();
+
+	UFUNCTION()
+	void StartControllerVibration(ERobotID RobotID, EAttackID AttackID);
 
 	UInputMappingContext* LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position);
 

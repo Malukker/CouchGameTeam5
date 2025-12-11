@@ -25,8 +25,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleGameplayUI> UIGameplayClass;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> UIGameOverClass;
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIRoundClass;
 
 	UPROPERTY(EditAnywhere)
@@ -63,6 +61,9 @@ protected:
 
 	UFUNCTION()
 	void EndFightOnRobotDefeat(int LosingTeam);
+	
+	UFUNCTION()
+	void EndFight(int LosingTeam);
 
 public:
 	// Called every frame
