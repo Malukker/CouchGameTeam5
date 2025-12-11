@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Match/MatchManager.h"
@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Match/TeamManager.h"
 #include "UI/RobotBattleGameplayUI.h"
-#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 
 
 // Sets default values
@@ -23,8 +23,9 @@ void AMatchManager::BeginPlay()
 	Super::BeginPlay();
 	UIGameplay = CreateWidget<URobotBattleGameplayUI>(GetWorld(), UIGameplayClass);
 	UIGameplay->AddToViewport();
+	UUserWidget* UIRound = CreateWidget<UUserWidget>(GetWorld(), UIRoundClass);
+	UIRound->AddToViewport();
 	
-	UIGameplay->StartTimer(RoundTime);
 	UIGameplay->OnTimeOver.AddDynamic(this, &AMatchManager::EndFightOnTimeOut);
 	TScriptInterface<IUIGamePlayInterface> UIInterface = TScriptInterface<IUIGamePlayInterface>(UIGameplay);
 	for (ATeamManager* Team : Teams)
@@ -33,35 +34,87 @@ void AMatchManager::BeginPlay()
 		Team->DeathEvent.AddDynamic(this, &AMatchManager::EndFightOnRobotDefeat);
 	}
 	TeamsWin.Init(0,2);
+	Round = 0;
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(false);
+		}
+		ResetFight();
+	}, .1f, false);
 }
 
 void AMatchManager::ResetFight()
 {
+	UIGameplay->SetTimer(RoundTime);
+	RoundStartEvent.Broadcast(Round);
 	for (ATeamManager* Team : Teams)
 	{
 		Team->ResetCharacters();
 	}
-	UIGameplay->StartTimer(RoundTime);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->PlayIntro();
+		}
+	}, (Round == 3 ? 4.5f : 1.5f), false);
+	FTimerHandle TimerHandleSecond;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandleSecond, [&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->SetInput(true);
+		}
+		UIGameplay->StartTimer();
+	}, 5.f, false);
 }
 
 void AMatchManager::EndFightOnTimeOut()
 {
-	if (Teams[0]->GetLife() > Teams[1]->GetLife())
+	RoundEndEvent.Broadcast(1);
+	for (ATeamManager* Team : Teams)
 	{
-		EndFightOnRobotDefeat(1);
+		Team->SetInput(false);
 	}
-	else if (Teams[1]->GetLife() > Teams[0]->GetLife())
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		EndFightOnRobotDefeat(0);
-	}
-	else
-	{
-		ResetFight();
-	}
+		if (Teams[0]->GetLifePercent() > Teams[1]->GetLifePercent())
+		{
+			EndFight(1);
+		}
+		else if (Teams[1]->GetLifePercent() > Teams[0]->GetLifePercent())
+		{
+			EndFight(0);
+		}
+		else
+		{
+			ResetFight();
+		}
+	}, 1.5f, false);
 }
 
 void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 {
+	for (ATeamManager* Team : Teams)
+	{
+		Team->SetInput(false);
+	}
+	RoundEndEvent.Broadcast(0);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, LosingTeam]()
+	{
+		EndFight(LosingTeam);
+	}, 1.5f, false);
+}
+
+void AMatchManager::EndFight(int LosingTeam)
+{
+	Round++;
 	if (LosingTeam == 0)
 	{
 		TeamsWin[1]++;
@@ -72,16 +125,21 @@ void AMatchManager::EndFightOnRobotDefeat(int LosingTeam)
 		TeamsWin[0]++;
 		UIGameplay->SetRoundPlayer(0, TeamsWin[0]);
 	}
+	int index = 0;
 	for (int TeamWin : TeamsWin)
 	{
 		if (TeamWin == 2)
 		{
-			UIGameplay->RemoveFromParent();
-			UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
-			UIGameOver->AddToViewport();
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
+			//UIGameplay->RemoveFromParent();
+			//UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
+			//UIGameOver->AddToViewport();
+			//UGameplayStatics::SetGamePaused(GetWorld(), true);
+			URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
+			GI->TeamWin = index;
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WinLevel);
 			return;
 		}
+		index++;
 	}
 	if (TeamsWin[0] == 1 && TeamsWin[1] == 1)
 	{

@@ -8,7 +8,7 @@
 #include "Characters/Interface/Robot.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
-
+#include "Match/WinManager.h"
 
 
 void UCameraWorldSubsystem::PostInitialize()
@@ -25,8 +25,9 @@ void UCameraWorldSubsystem::Tick(float DeltaTime)
 	{
 		SetRobotBounds();
 	}
+	StartCameraZoom(DeltaTime);
+
 	
-	//TickUpdateCameraZoom(DeltaTime);
 }
 
 void UCameraWorldSubsystem::AddFollowTarget(UObject* FollowTarget)
@@ -170,12 +171,12 @@ void UCameraWorldSubsystem::SetRobotBounds()
 	
 	
 	WorldBoundsMin.X = FMath::Clamp(WorldBoundsMin.X,RobotBoundsMin.X, RobotBoundsMax.X);
-	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X,CameraBoundsYProjectionCenter,WorldZ));
-	BoxLeft->SetBoxExtent(FVector(1.f,1000.f , RobotBoundsMax.Y));
+	BoxLeft->SetWorldLocation(FVector(WorldBoundsMin.X-RobotBoundsActor->BoxSidesExtent.X,CameraBoundsYProjectionCenter,WorldZ));
+	//BoxLeft->SetBoxExtent(FVector(5.f,500.f , RobotBoundsMax.Y));
 
 	WorldBoundsMax.X = FMath::Clamp(WorldBoundsMax.X,RobotBoundsMin.X, RobotBoundsMax.X);
-	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X,CameraBoundsYProjectionCenter,WorldZ));
-	BoxRight->SetBoxExtent(FVector(1.f,1000.f , RobotBoundsMax.Y));
+	BoxRight->SetWorldLocation(FVector(WorldBoundsMax.X+RobotBoundsActor->BoxSidesExtent.X,CameraBoundsYProjectionCenter,WorldZ));
+	//BoxRight->SetBoxExtent(FVector(5.f,500.f , RobotBoundsMax.Y));
 }
 
 float UCameraWorldSubsystem::CalculateGreatestDistanceBetweenTargets()
@@ -213,11 +214,15 @@ void UCameraWorldSubsystem::GetViewportBounds(FVector2D& OutViewportBoundsMin, F
 	FViewport* Viewport = ViewportClient->Viewport;
 	if (Viewport == nullptr) return;
 
+	if (CameraMain == nullptr)
+	{
+		return;
+	}
+
 	//Calculate Viewport Rect according to Camera Aspect Ratio and Viewport ViewRect
 	FIntRect ViewRect(Viewport->GetInitialPositionXY(), Viewport->GetInitialPositionXY() + Viewport->GetSizeXY());
 	FIntRect ViewportRect = Viewport->CalculateViewExtents(CameraMain->AspectRatio, ViewRect);
 	
-
 	//Fill Output parameters with ViewportRect
 	OutViewportBoundsMin.X = ViewportRect.Min.X;
 	OutViewportBoundsMin.Y = ViewportRect.Min.Y;
@@ -249,6 +254,22 @@ FVector UCameraWorldSubsystem::CalculateWorldPositionFromViewportPosition(const 
 
 }
 
+void UCameraWorldSubsystem::StartCameraZoom(float deltatime)
+{
+	if (!CameraWin || !CameraZoomWin) return;
+	CameraWin->GetOwner()->SetActorLocation(FMath::VInterpTo(CameraWin->GetOwner()->GetActorLocation(),
+	CameraZoomWin->GetOwner()->GetActorLocation(), deltatime,CameraSettings->CameraZoomWinSpeed));
+	if (FVector::Dist(CameraWin->GetOwner()->GetActorLocation(),CameraZoomWin->GetOwner()->GetActorLocation()) < CameraSettings->DistanceBeforeGameOverUIAppears)
+	{
+		if (WinManager && !GameOverUISetted)
+		{
+			WinManager->OnGameOverUI.Broadcast();
+			GameOverUISetted = true;
+		}
+		
+	}
+	
+}
 
 
 void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
@@ -257,6 +278,14 @@ void UCameraWorldSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 	InWorld.GetTimerManager().SetTimerForNextTick([this, &InWorld]()
 	{
 		CameraSettings = GetDefault<UCameraSettings>();
+		CameraWin = FindCameraByTag(CameraSettings->CameraWinSceneTag);
+		CameraZoomWin = FindCameraByTag(CameraSettings->CameraZoomWinSceneTag);
+		if (AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(),AWinManager::StaticClass()))
+		{
+			WinManager = Cast<AWinManager>(FoundActor);
+		}
+
+		
 		CameraMain = FindCameraByTag(CameraSettings->CameraMainTag);
 		if (CameraMain == nullptr) { return; }
 		AActor* CameraBoundsActor = FindBoundsActor(CameraSettings->CameraBoundsTag);

@@ -7,7 +7,7 @@
 #include "Characters/Attacks/AttackStruct.h"
 #include "RobotCharacterStateAttack.generated.h"
 
-
+class UNiagaraSystem;
 class IRobot;
 
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
@@ -44,6 +44,9 @@ private:
 	float AnimDuration = 0;
 	UPROPERTY()
 	float CurrentAnimTime = 0;
+	
+	UPROPERTY()
+	bool UseBoost = false;
 
 	UPROPERTY()
 	FVector StartPos;
@@ -70,6 +73,6 @@ private:
 
 	UFUNCTION()
 	void OnStunEvent();
-
-	
+	UFUNCTION()
+	void OnBoostEvent();
 };

@@ -10,6 +10,7 @@
 #include <Characters/RobotCharacterInputData.h>
 #include "LocalMultiplayerSubsystem.h"
 #include "InputMappingContext.h"
+#include "Characters/RobotControllerVibrationData.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -31,16 +32,19 @@ void ATeamManager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	
 	if (DashBuffer > 0) DashBuffer -= DeltaTime;
-	if (DashBuffer < 0 && WantInvinsibility) WantInvinsibility = false;
+	if (DashBuffer <= 0 && WantInvinsibility) WantInvinsibility = false;
 	
 	if (InvinsibilityFrames > 0) InvinsibilityFrames --;
 	if (InvinsibilityFrames == 0 && !CanTakeDamage) CanTakeDamage = true;
 	
 	if (UltimateBuffer > 0) UltimateBuffer -= DeltaTime;
-	if (UltimateBuffer < 0 && WantUltimate != -1) WantUltimate = -1;
+	if (UltimateBuffer <= 0 && WantUltimate != -1) WantUltimate = -1;
 
 	if (ComboTimer > 0) ComboTimer -= DeltaTime;
 	if (ComboTimer <= 0 && Combo > 0) {Combo = 0; UIInterface->SetComboHit(Team, Combo);}
+
+	if (BoostTimer > 0) BoostTimer -= DeltaTime;
+	if (BoostTimer <= 0 && WantBoost) {WantBoost = false; RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(false);}
 		
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
@@ -103,30 +107,45 @@ void ATeamManager::SpawnCharacters()
 		default:
 			return;
 		}
-		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->AttackManagerEvent.AddDynamic(this, &ATeamManager::TeamDoAttack);
-		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
 		NewCharacter->AirStopManagerEvent.AddDynamic(this, &ATeamManager::TeamAirBlock);
+		NewCharacter->AttackDuoManagerEvent.AddDynamic(this, &ATeamManager::AttackDuo);
+		NewCharacter->BoostManagerEvent.AddDynamic(this, &ATeamManager::Boost);
 		NewCharacter->KnockBackEvent.AddDynamic(this, &ATeamManager::KnockBack);
-		NewCharacter->EnergyManagerEvent.AddDynamic(this, &ATeamManager::SwitchEnergy);
-		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::Guard);
 		NewCharacter->GuardResetManagerEvent.AddDynamic(this, &ATeamManager::GuardReset);
+		NewCharacter->GuardManagerEvent.AddDynamic(this, &ATeamManager::TeamDoGuard);
+		NewCharacter->HurtManagerEvent.AddDynamic(this, &ATeamManager::TeamTakeDamage);
 		NewCharacter->ChargeManagerEvent.AddDynamic(this, &ATeamManager::Charge);
 		NewCharacter->InputDashManagerEvent.AddDynamic(this, &ATeamManager::DashInvinsibility);
+		NewCharacter->VibrationControllerEvent.AddDynamic(this,&ATeamManager::StartControllerVibration);
 		NewCharacter->SetTeam(Team);
+		NewCharacter->SetLookingOpponent(true);
 		NewCharacter->AutoPossessPlayer = TEnumAsByte<EAutoReceiveInput::Type>(GameInstance->PlayersPos[Team * 2 + PartNb] + 1);
 		NewCharacter->SetOrientX(SpawnPoint->GetStartOrientX());
 		NewCharacter->GetCapsuleComponent()->SetCollisionObjectType(TeamCollision);
 		NewCharacter->GetCapsuleComponent()->SetCollisionResponseToChannel(OpponentCollision, ECollisionResponse::ECR_Block);
 		NewCharacter->GetCollision()->SetCollisionResponseToChannel(AttackChannel, ECollisionResponse::ECR_Block);
 		NewCharacter->FinishSpawning(SpawnPoint->GetTransform());
+		PlayersController.Add(Pos, Cast<APlayerController>(NewCharacter->GetController()));
 
 		TeamLifeMax += NewCharacter->GetLife();
 		TeamGuardMax += NewCharacter->GetGuard();
 		TeamChargeMax += NewCharacter->GetCharge();
 		InvinsibilityFramesOrigin += NewCharacter->GetInvinsibilityFrames();
 	}
-	
+	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
+		FAttachmentTransformRules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false),
+		"Bones_Attach");
+}
+
+void ATeamManager::ResetCharacters()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
 	RobotParts[ERobotCharacterPositionEnum::Up]->AttachToComponent(
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
 		FAttachmentTransformRules(
@@ -136,12 +155,9 @@ void ATeamManager::SpawnCharacters()
 			false),
 		"Bones_Attach");
 
-	ResetCharacters();
-}
-
-void ATeamManager::ResetCharacters()
-{
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetActorLocation(SpawnPoint->GetTransform().GetLocation());
+	
+	RobotParts[ERobotCharacterPositionEnum::Up]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
 	TeamGuard = TeamGuardMax;
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
@@ -150,21 +166,37 @@ void ATeamManager::ResetCharacters()
 	UIInterface->SetChargePlayer(Team, TeamCharge, TeamChargeMax);
 	UIInterface->SetComboHit(Team, Combo);
 	RobotParts[ERobotCharacterPositionEnum::Up]->CustomTimeDilation = 1.f;
-	if (!UseEnergy) RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(true);
-	else RobotParts[ERobotCharacterPositionEnum::Up]->SetEnergy(false);
-	RobotParts[ERobotCharacterPositionEnum::Down]->SetEnergy(true);
 	RobotParts[ERobotCharacterPositionEnum::Up]->ResetStateMachine();
 	RobotParts[ERobotCharacterPositionEnum::Down]->ResetStateMachine();
 }
 
+void ATeamManager::SetInput(bool Value)
+{
+	if (Value)
+	{
+		CanTakeDamage = true;
+		PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
+		PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
+	}
+	else
+	{
+		CanTakeDamage = false;
+		PlayersController[ERobotCharacterPositionEnum::Down]->UnPossess();
+		PlayersController[ERobotCharacterPositionEnum::Up]->UnPossess();
+	}
+}
+
+void ATeamManager::PlayIntro()
+{
+	RobotParts[ERobotCharacterPositionEnum::Down]->PlayIntro();
+	RobotParts[ERobotCharacterPositionEnum::Up]->PlayIntro();
+}
+
 void ATeamManager::InversePlayer()
 {
-	AController* RobotPartOne = RobotParts[ERobotCharacterPositionEnum::Down]->GetController();
-	AController* RobotPartTwo = RobotParts[ERobotCharacterPositionEnum::Up]->GetController();
-	RobotPartOne->UnPossess();
-	RobotPartTwo->UnPossess();
-	RobotPartOne->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
-	RobotPartTwo->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
+	APlayerController* PlayerController = PlayersController[ERobotCharacterPositionEnum::Down];
+	PlayersController[ERobotCharacterPositionEnum::Down] = PlayersController[ERobotCharacterPositionEnum::Up];
+	PlayersController[ERobotCharacterPositionEnum::Up] = PlayerController;
 }
 
 TSubclassOf<ARobotCharacter> ATeamManager::GetRobotCharacterClassFromID(ERobotID ID, ERobotCharacterPositionEnum Pos) const 
@@ -186,9 +218,9 @@ FVector ATeamManager::GetOpponentLocation()
 	return Opponent->GetTeamLocation();
 }
 
-float ATeamManager::GetLife()
+float ATeamManager::GetLifePercent()
 {
-	return TeamLife;
+	return static_cast<float>(TeamLife) / TeamLifeMax;
 }
 
 FVector ATeamManager::GetTeamLocation()
@@ -212,7 +244,7 @@ void ATeamManager::TeamDoAttack(bool HasTouch)
 void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 {
 	FVector LaunchVelocity(KnockBackVelocity.X,0.f,KnockBackVelocity.Y);
-	UCharacterMovementComponent* MovementComponent =RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
 	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 	{
 		LaunchVelocity.X*=-1;
@@ -220,19 +252,51 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 	MovementComponent->Launch(LaunchVelocity * KnockBackMultiplier);
 }
 
-void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 {
-	if (GetLife() <= 0) return;	
-	if (CanGuard && TeamGuard > 0)
+	if (GetLifePercent() == 0.f) return;	
+	if (TeamGuard > 0)
 	{
 		if (RobotParts[ERobotCharacterPositionEnum::Down]->GetRobotCharacterDownChargeID() == ERobotCharacterDownChargeID::Tank)
 		{
 			Charge(ERobotCharacterPositionEnum::Down);
 		}
 		TeamGuard--;
+		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+		if (TeamGuard == 0)
+		{
+			const URobotCharacterSettings* Settings = GetDefault<URobotCharacterSettings>();
+
+			//Start Vibration for Guard Break
+			URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+			if (VibrationData && VibrationData->GuardBreakVibration)
+			{
+				for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
+				{
+					Pair.Value->ClientPlayForceFeedback(VibrationData->GuardBreakVibration);
+				}
+			}
+			
+			USoundBase* GuardBreakSound =Settings->GuardBreak.LoadSynchronous();
+			RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunDuration);
+			RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunDuration);
+			RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
+			RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(),GuardBreakSound,GetActorLocation());
+		}
 		KnockBackMultiplier = .5f;
 	}
-	else if (CanTakeDamage)
+	else
+	{
+		TeamTakeDamage(Damage, StunTime);
+	}
+}
+
+void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
+{
+	if (GetLifePercent() == 0.f) return;	
+	if (CanTakeDamage)
 	{
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
@@ -266,37 +330,18 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	}
 }
 
-void ATeamManager::TeamAirBlock(bool AirBlock)
+void ATeamManager::TeamAirBlock()
 {
 	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement();
-	if (AirBlock && MovementComponent->GravityScale != 0)
-	{
-		OriginalGravityScale = MovementComponent->GravityScale;
-		MovementComponent->GravityScale = 0;
-		MovementComponent->StopMovementImmediately();
-	}
-	else if(!AirBlock && OriginalGravityScale != 0)
-	{
-		MovementComponent->GravityScale = OriginalGravityScale;
-		OriginalGravityScale = 0;
-	}
-}
-
-void ATeamManager::SwitchEnergy()
-{
-	if (!UseEnergy) return;
-	RobotParts[ERobotCharacterPositionEnum::Down]->SwitchEnergy();
-	RobotParts[ERobotCharacterPositionEnum::Up]->SwitchEnergy();
+	MovementComponent->StopMovementImmediately();
+			
 }
 
 void ATeamManager::GuardReset()
 {
 	TeamGuard = TeamGuardMax;
-}
-
-void ATeamManager::Guard(bool Guard)
-{
-	CanGuard = Guard;
+	RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
+	RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 }
 
 void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
@@ -314,13 +359,18 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 			IsDashing = true;
 			CanTakeDamage = false;
 			InvinsibilityFrames = InvinsibilityFramesOrigin;
-			if (WantInvinsibility) InvinsibilityFrames += InvinsibilityFramesOrigin;
+			if (WantInvinsibility)
+			{
+				InvinsibilityFrames += InvinsibilityFramesOrigin;
+				RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
+			}
 		}
 		break;
 	case ERobotCharacterPositionEnum::Up:
 		if (IsDashing)
 		{
 			InvinsibilityFrames += InvinsibilityFramesOrigin;
+			RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
 		}
 		else
 		{
@@ -337,6 +387,7 @@ void ATeamManager::Charge(ERobotCharacterPositionEnum Position)
 	switch (Position)
 	{
 	case ERobotCharacterPositionEnum::Down:
+		if (IsLoadingUltimate) return;
 		TeamCharge++;
 		if (TeamCharge > TeamChargeMax) TeamCharge = TeamChargeMax;
 		if (TeamCharge == TeamChargeMax)
@@ -362,11 +413,15 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	case ERobotCharacterPositionEnum::Down:
 		if (IsLoadingUltimate)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddAttackDuoBonus();
 		}
 		else
 		{
-			if (WantUltimate == 1) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 1)
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 0;
 		}
@@ -374,19 +429,31 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 	case ERobotCharacterPositionEnum::Up:
 		if (IsLoadingUltimate)
 		{
-			RobotParts[ERobotCharacterPositionEnum::Up]->AddDamageBonus();
+			RobotParts[ERobotCharacterPositionEnum::Up]->AddAttackDuoBonus();
 		}
 		else
 		{
-			if (WantUltimate == 0) IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			if (WantUltimate == 0) 
+			{
+				CanTakeDamage = false;
+				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
+			}
 			UltimateBuffer = 0.33f;
 			WantUltimate = 1;
 		}
 		break;
 	case ERobotCharacterPositionEnum::None:
 		IsLoadingUltimate = false;
+		CanTakeDamage = true;
 	default: ;
 	}
+}
+
+void ATeamManager::Boost()
+{
+	RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(true);
+	BoostTimer = .25f;
+	WantBoost = true;
 }
 
 
@@ -394,6 +461,38 @@ URobotCharacterInputData* ATeamManager::LoadInputDataFromConfig() {
 	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
 	if (CharacterSettings == nullptr) return nullptr;
 	return CharacterSettings->InputDataGameplay.LoadSynchronous();
+}
+
+URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
+{
+	const URobotCharacterSettings* CharacterSettings = GetDefault<URobotCharacterSettings>();
+	if (CharacterSettings == nullptr) return nullptr;
+	return CharacterSettings->ControllerVibrationData.LoadSynchronous();
+}
+
+void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID)
+{
+	if (URobotGameInstance* GI = GetGameInstance<URobotGameInstance>())
+	{
+		if (!GI->bEnableControllerVibration)
+		{
+			UE_LOG(LogTemp, Log, TEXT("NO VIBRATION (disabled in settings)"));
+			return;
+		}
+	}
+	
+	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
+	if (VibrationData == nullptr
+		|| !VibrationData->VibrationMap.Contains(RobotID)
+		|| !VibrationData->VibrationMap[RobotID].RobotAttackType.Contains(AttackID)) return;
+	
+	if (VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID])
+	{
+		for (const TPair<ERobotCharacterPositionEnum, TObjectPtr<APlayerController>>& Pair : PlayersController)
+		{
+			Pair.Value->ClientPlayForceFeedback(VibrationData->VibrationMap[RobotID].RobotAttackType[AttackID]);
+		}
+	}
 }
 
 UInputMappingContext* ATeamManager::LoadInputMappingContextFromConfig(ERobotCharacterPositionEnum Position) {

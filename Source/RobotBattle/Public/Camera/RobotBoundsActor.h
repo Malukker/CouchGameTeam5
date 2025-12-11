@@ -24,19 +24,34 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "BoxParameters")
+	float LineThickness;
+	
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class UBoxComponent> Box_Right;
-
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class UBoxComponent> Box_Left;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<class UBoxComponent> Box_Top;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class USceneComponent> Root;
 
+	UPROPERTY(EditAnywhere, Category = "BoxTopParameters")
+	float BoxTopHeight;
 
+	UPROPERTY(EditAnywhere, Category = "BoxTopParameters")
+	FVector BoxTopExtent;
+
+	UPROPERTY(EditAnywhere, Category = "BoxSidesParameter")
+	FVector BoxSidesExtent;
+
+	
+private:
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 
 };

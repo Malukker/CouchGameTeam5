@@ -25,7 +25,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<URobotBattleGameplayUI> UIGameplayClass;
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> UIGameOverClass;
+	TSubclassOf<UUserWidget> UIRoundClass;
+
+	UPROPERTY(EditAnywhere)
+	TSoftObjectPtr<UWorld> WinLevel;
 
 	UPROPERTY()
 	URobotBattleGameplayUI* UIGameplay;
@@ -34,6 +37,17 @@ public:
 	TArray<TObjectPtr<ATeamManager>> Teams;
 	UPROPERTY()
 	TArray<int> TeamsWin;
+
+	UPROPERTY()
+	int Round = 0;
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoundEvent, int, Round);
+
+	UPROPERTY(BlueprintAssignable, Category="MatchManager")
+	FRoundEvent RoundStartEvent;
+
+	UPROPERTY(BlueprintAssignable, Category="MatchManager")
+	FRoundEvent RoundEndEvent;
 
 protected:
 	// Called when the game starts or when spawned
@@ -47,6 +61,9 @@ protected:
 
 	UFUNCTION()
 	void EndFightOnRobotDefeat(int LosingTeam);
+	
+	UFUNCTION()
+	void EndFight(int LosingTeam);
 
 public:
 	// Called every frame

@@ -81,6 +81,16 @@ void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputCompone
 			&APlayerMenuActor::OnInputCancel
 		);
 	}
+
+	if (InputAnyKey)
+	{
+		EnhancedInputComponent->BindAction(
+			InputAnyKey,
+			ETriggerEvent::Started,
+			this,
+			&APlayerMenuActor::OnInputAnyKey
+		);
+	}
 }
 
 void APlayerMenuActor::OnInputMoveUp(const FInputActionValue& InputActionValue)
@@ -116,4 +126,9 @@ void APlayerMenuActor::OnInputValidate(const FInputActionValue& InputActionValue
 void APlayerMenuActor::OnInputCancel(const FInputActionValue& InputActionValue)
 {
 	InputCancelEvent.Broadcast(SelfPlayerController);
+}
+
+void APlayerMenuActor::OnInputAnyKey(const FInputActionValue& InputActionValue)
+{
+	OnInput.Broadcast();
 }

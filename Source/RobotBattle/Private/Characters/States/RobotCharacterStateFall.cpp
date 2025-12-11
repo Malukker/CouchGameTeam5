@@ -17,27 +17,17 @@ void URobotCharacterStateFall::StateEnter(ERobotCharacterStateID PreviousState) 
 	Character->PlayAnimMontage(FallAnim);
 
 	CharacterMovement->GravityScale = FallGravityScale;
-	if (Character->DoHaveEnergy())
-	{
-		CharacterMovement->AirControl = FallAirControl;
-		CharacterMovement->Velocity.X = FallHorizontalMoveSpeed * Character->GetInputMoveX();
-	}
-	else
-	{
-		CharacterMovement->AirControl = FallAirControl * Character->GetNerfStatsMultiplier();
-		CharacterMovement->Velocity.X = FallHorizontalMoveSpeed * Character->GetNerfStatsMultiplier() * Character->GetInputMoveX();
-	}
+	CharacterMovement->AirControl = FallAirControl;
+	CharacterMovement->Velocity.X = FallHorizontalMoveSpeed * Character->GetInputMoveX();
 
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateFall::OnStunEvent);
-	Character->EnergyEvent.AddDynamic(this, &URobotCharacterStateFall::OnEnergyEvent);
 }
 
 void URobotCharacterStateFall::StateExit(ERobotCharacterStateID NextState) {
 	Super::StateExit(NextState);
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnStunEvent);
-	Character->EnergyEvent.RemoveDynamic(this, &URobotCharacterStateFall::OnEnergyEvent);
 	CharacterMovement->GravityScale = 1;
 	Character->ResetDash();
 	/*GEngine->AddOnScreenDebugMessage(
@@ -53,7 +43,6 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 
 	if (CharacterMovement->IsMovingOnGround()) {
 		StateMachine->ChangeState(ERobotCharacterStateID::Idle);
-		
 	}
 	else {
 		if (FMath::Abs(Character->GetInputMoveX()) > CharacterSettings->InputMoveXThreshold)
@@ -63,7 +52,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 			{
 				if (!WalkForward)
 				{
-					Character->GuardManagerEvent.Broadcast(false);
+					Character->SetGuard(false);
 					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("No Guard"));
 				}
 				WalkForward = true;
@@ -72,7 +61,7 @@ void URobotCharacterStateFall::StateTick(float DeltaTime) {
 			{
 				if (WalkForward)
 				{
-					Character->GuardManagerEvent.Broadcast(true);
+					Character->SetGuard(true);
 					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("Guard"));
 				}
 				WalkForward = false;
@@ -90,17 +79,4 @@ void URobotCharacterStateFall::OnDashEvent()
 void URobotCharacterStateFall::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
-}
-
-
-void URobotCharacterStateFall::OnEnergyEvent()
-{
-	if (Character->DoHaveEnergy())
-	{
-		CharacterMovement->AirControl = FallAirControl;
-	}
-	else
-	{
-		CharacterMovement->AirControl = FallAirControl * Character->GetNerfStatsMultiplier();
-	}
 }

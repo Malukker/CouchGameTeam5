@@ -7,12 +7,15 @@
 #include "UI/RobotBattlePlayerCardWidget.h"
 #include "Components/HorizontalBox.h"
 #include "Components/VerticalBox.h"
+#include "Components/CanvasPanel.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
 #include "UI/MenuGameMode.h"
+
+
 
 void URobotBattleTeamSelectMenu::CustomConstruct()
 {
@@ -29,6 +32,7 @@ void URobotBattleTeamSelectMenu::CustomConstruct()
 		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
 		TempActor->InputMoveEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
 		TempActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputValidateEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::ChangeImageWhenReady);
 		TempActor->InputCancelEvent.AddDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
 	}
 
@@ -40,7 +44,10 @@ void URobotBattleTeamSelectMenu::CustomConstruct()
 void URobotBattleTeamSelectMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	
+	PlayerChangedImg.Init(false,4);
+	GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	
 	for (int32 i = 0; i < 4; i++)
 	{
 		PlayerReadyState.Add(i, false);
@@ -50,6 +57,7 @@ void URobotBattleTeamSelectMenu::NativeConstruct()
 	if (IMG_ReadyPlayer2) IMG_ReadyPlayer2->SetVisibility(ESlateVisibility::Hidden);
 	if (IMG_ReadyPlayer3) IMG_ReadyPlayer3->SetVisibility(ESlateVisibility::Hidden);
 	if (IMG_ReadyPlayer4) IMG_ReadyPlayer4->SetVisibility(ESlateVisibility::Hidden);
+	if (CanvasPanel_Controls) CanvasPanel_Controls->SetVisibility(ESlateVisibility::Hidden);
 
 	if (IMG_WaitingPlayer1) IMG_WaitingPlayer1->SetVisibility(ESlateVisibility::Visible);
 	if (IMG_WaitingPlayer2) IMG_WaitingPlayer2->SetVisibility(ESlateVisibility::Visible);
@@ -178,6 +186,54 @@ UHorizontalBox* URobotBattleTeamSelectMenu::GetZoneByName(const FString& Name) c
 	return nullptr;
 }
 
+void URobotBattleTeamSelectMenu::ChangeImageWhenReady(APlayerController* controller)
+{
+	if (!TeamSelectionDone) return;
+	switch (controller->GetLocalPlayer()->GetControllerId())
+	{
+		case 0:
+			IMG_Player1->SetBrushFromTexture(IMG_Ready1);
+			PlayerChangedImg[0] = true;
+			break;
+		case 1:
+			IMG_Player2->SetBrushFromTexture(IMG_Ready2);
+			PlayerChangedImg[1] = true;
+			break;
+		case 2:
+			IMG_Player3->SetBrushFromTexture(IMG_Ready3);
+			PlayerChangedImg[2] = true;
+			break;
+		case 3:
+			IMG_Player4->SetBrushFromTexture(IMG_Ready4);
+			PlayerChangedImg[3] = true;
+			break;
+		default:
+			break;
+	}
+	CheckAllBoolAndGoToNextLevel();
+}
+
+void URobotBattleTeamSelectMenu::CheckAllBoolAndGoToNextLevel()
+{
+	for (bool Image : PlayerChangedImg )
+	{
+		if (!Image) return;
+	}
+	GM->StartSelectionCharacter();
+	RemoveFromParent();
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
+
+	for (AActor* Actor : Players)
+	{
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::ChangeImageWhenReady);
+		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
+	}
+}
+
 void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller)
 {
 	UE_LOG(LogTemp, Log, TEXT("Move input: %d"), (int32)Direction);
@@ -273,20 +329,33 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 	GI->SetPlayerPos(3, GetControllerIndexForZone("AwayUp"));
 	UE_LOG(LogTemp, Log, TEXT("Selection Team Finish !"))
 	
-	AMenuGameMode* GM = Cast<AMenuGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
-	GM->StartSelectionCharacter();
-	RemoveFromParent();
 	
-	TArray<AActor*> Players;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
 
-	for (AActor* Actor : Players)
-	{
-		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
-		TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
-		TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
-		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
-	}
+
+	
+	if (CanvasPanel_TeamSelection) CanvasPanel_TeamSelection->SetVisibility(ESlateVisibility::Hidden);
+	if (CanvasPanel_Controls) CanvasPanel_Controls->SetVisibility(ESlateVisibility::Visible);
+	FTimerHandle TimerHandle;
+	 GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	 {
+	 	TeamSelectionDone = true;
+	 },0.1f , false);
+	
+	
+	//GM->StartSelectionCharacter();
+	//RemoveFromParent();
+	
+	// TArray<AActor*> Players;
+	// UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), Players);
+	//
+	// for (AActor* Actor : Players)
+	// {
+	// 	APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+	// 	TempActor->InputMoveEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerMoveInput);
+	// 	TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerValidateInput);
+	// 	TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::ChangeImageWhenReady);
+	// 	TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
+	// }
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

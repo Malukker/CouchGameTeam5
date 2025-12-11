@@ -11,6 +11,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 
 ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 {
@@ -21,11 +22,16 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 {
 	Super::StateEnter(PreviousState);
 
+	Character->SetGuard(false);
 	HasTouch = false;
 	
 	AnimDuration = Character->PlayAnimMontage(Attacks[Character->GetCurrentTypeAttack()]);
 	CurrentAnimTime = 0.0f;
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	Character->BoostEvent.AddDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
+
+	if (Character->GetBoost()) UseBoost = true;
+	else UseBoost = false;
 	
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -47,6 +53,8 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 {
 	Super::StateExit(NextState);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
+	Character->BoostEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
+	UseBoost = false;
 
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -62,14 +70,7 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 			KnockBackAnimNotify->OnKnockBackEvent.RemoveDynamic(this,&URobotCharacterStateAttack::KnockBackNotify);
 		}
 	}
-	Character->ResetDamageBonus();
-	if (Character->DoWantSwitch())
-	{
-		Character->EnergyManagerEvent.Broadcast();
-	}
-
-	if (HasTouch) Character->AirStopManagerEvent.Broadcast(false);
-	else Character->AttackManagerEvent.Broadcast(false);
+	Character->ResetAttackDuoBonus();
 }
 
 void URobotCharacterStateAttack::StateTick(float DeltaTime)
@@ -114,25 +115,19 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 				if (OutHit.GetActor()->Implements<URobot>())
 				{
 					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
-					if (Character->DoHaveEnergy())
-					{
-						TouchedCharacterInterface->TakeDamageFromAttack(
-							Data.Damage + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
-							Data.StunTimer);
-					}
-					else
-					{
-						TouchedCharacterInterface->TakeDamageFromAttack(
-							(Data.Damage * Character->GetNerfStatsMultiplier()) + (Character->GetDamageBonus() * AttackDuoBonusMultiplier),
-							Data.StunTimer * Character->GetNerfStatsMultiplier());
-					}
+					TouchedCharacterInterface->TakeDamageFromAttack(
+						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
+						Data.StunTimer);
+					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
-					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetDamageBonus());
+					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetAttackDuoBonus());
 					Character->AttackManagerEvent.Broadcast(true);
 					Character->GuardResetManagerEvent.Broadcast();
-					Character->AirStopManagerEvent.Broadcast(true);
+					Character->AirStopManagerEvent.Broadcast();
 
+					if (Data.Niagara) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Data.Niagara, OutHit.ImpactPoint);
+					
 					APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 					float ScaleShake = 1.f;
 					float DurationShake = 0.f;
@@ -165,4 +160,11 @@ void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor, FVector
 void URobotCharacterStateAttack::OnStunEvent()
 {
 	StateMachine->ChangeState(ERobotCharacterStateID::Stun);
+}
+
+
+void URobotCharacterStateAttack::OnBoostEvent()
+{
+	if (CurrentAnimTime > 0.25f) return;
+	UseBoost = true;
 }

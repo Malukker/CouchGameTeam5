@@ -13,6 +13,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 #include "UI/HUDGameplay.h"
 
 // Sets default values
@@ -33,7 +34,6 @@ void ARobotCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	CreateStateMachine();
-
 	InitStateMachine();
 	GetWorld()->GetSubsystem<UCameraWorldSubsystem>()->AddFollowTarget(this);
 	if (GetRobotBodyID() == ERobotID::None)
@@ -47,7 +47,10 @@ void ARobotCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	TickStateMachine(DeltaTime);
-	RotateMeshUsingOrientX();
+	if (IsLookingOpponent)
+	{
+		RotateMeshUsingOrientX();
+	}
 }
 
 // Called to bind functionality to input
@@ -78,6 +81,11 @@ void ARobotCharacter::SetTeam(int NewTeam)
 	Team = NewTeam;
 }
 
+void ARobotCharacter::SetLookingOpponent(bool Value)
+{
+	IsLookingOpponent = Value;
+}
+
 int ARobotCharacter::GetLife()
 {
 	return  Life;
@@ -93,9 +101,19 @@ int ARobotCharacter::GetInvinsibilityFrames()
 	return InvinsibilityFrames;
 }
 
-float ARobotCharacter::GetNerfStatsMultiplier()
+void ARobotCharacter::PlayIntro()
 {
-	return NerfStatsMultiplier;
+	PlayAnimMontage(Intro);
+}
+
+void ARobotCharacter::PlayDash()
+{
+	
+}
+
+void ARobotCharacter::PlayEnd(bool Win)
+{
+	PlayAnimMontage((Win ? EndWin : EndDefeat));
 }
 
 float ARobotCharacter::GetOrientX() const
@@ -190,31 +208,6 @@ void ARobotCharacter::ResetDash()
 	CanDash = true;
 }
 
-bool ARobotCharacter::DoHaveEnergy()
-{
-	return HaveEnergy;
-}
-
-bool ARobotCharacter::DoWantSwitch()
-{
-	return WantSwitch;
-}
-
-void ARobotCharacter::SwitchEnergy()
-{
-	WantSwitch = false;
-	HaveEnergy = !HaveEnergy;
-	GetMesh()->SetRenderCustomDepth(HaveEnergy);
-	EnergyEvent.Broadcast();
-}
-
-void ARobotCharacter::SetEnergy(bool Value)
-{
-	HaveEnergy = Value;
-	GetMesh()->SetRenderCustomDepth(HaveEnergy);
-	EnergyEvent.Broadcast();
-}
-
 void ARobotCharacter::SetRobotBodyID(ERobotID Robot)
 {
 	RobotID = Robot;
@@ -249,19 +242,6 @@ void ARobotCharacter::OnInputAttackDuo(const FInputActionValue& InputActionValue
 {
 }
 
-void ARobotCharacter::OnInputEnergy(const FInputActionValue& InputActionValue)
-{
-	if (UGameplayStatics::IsGamePaused(GetWorld()) || !DoHaveEnergy()) return;
-	ERobotCharacterStateID State = StateMachine->GetCurrentStateID();
-	if (State == ERobotCharacterStateID::Attack
-		|| State == ERobotCharacterStateID::LoadingAttack
-		|| State == ERobotCharacterStateID::Dash)
-	{
-		WantSwitch = true;
-		return;
-	}
-	EnergyManagerEvent.Broadcast();
-}
 
 void ARobotCharacter::OnInputPause(const FInputActionValue& InputActionValue)
 {
@@ -321,11 +301,6 @@ void ARobotCharacter::BindInputAndActions(UEnhancedInputComponent* EnhancedInput
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionAttackDuo, ETriggerEvent::Started, this, &ARobotCharacter::OnInputAttackDuo);
 	}
 	
-	if (InputDataGameplay->InputActionEnergy)
-	{
-		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionEnergy, ETriggerEvent::Started, this, &ARobotCharacter::OnInputEnergy);
-	}
-	
 	if (InputDataGameplay->InputActionPause)
 	{
 		EnhancedInputComponent->BindAction(InputDataGameplay->InputActionPause, ETriggerEvent::Started, this, &ARobotCharacter::OnInputPause);
@@ -342,8 +317,6 @@ ERobotCharacterDownChargeID ARobotCharacter::GetRobotCharacterDownChargeID()
 	return  ERobotCharacterDownChargeID::None;
 }
 
-
-
 FVector ARobotCharacter::GetRobotLocation()
 {
 	return GetActorLocation();
@@ -352,6 +325,23 @@ FVector ARobotCharacter::GetRobotLocation()
 bool ARobotCharacter::IsTargetFollowable()
 {
 	return IsFollowable;
+}
+
+void ARobotCharacter::SetBoost(bool Value)
+{
+	BoostEvent.Broadcast();
+	UseBoost = Value;
+}
+
+bool ARobotCharacter::GetBoost()
+{
+	return UseBoost;
+}
+
+void ARobotCharacter::SetGuard(bool Value)
+{
+	CanGuard = Value;
+	DoGuardEvent.Broadcast(CanGuard);
 }
 
 void ARobotCharacter::SetCanAttackDuo(bool CanAttack)
@@ -364,19 +354,19 @@ bool ARobotCharacter::StartAttackDuo()
 	return false;
 }
 
-void ARobotCharacter::AddDamageBonus()
+void ARobotCharacter::AddAttackDuoBonus()
 {
-	DamageBonus ++;
+	AttackDuoBonus ++;
 }
 
-int ARobotCharacter::GetDamageBonus()
+int ARobotCharacter::GetAttackDuoBonus()
 {
-	return DamageBonus;
+	return AttackDuoBonus;
 }
 
-void ARobotCharacter::ResetDamageBonus()
+void ARobotCharacter::ResetAttackDuoBonus()
 {
-	DamageBonus = 0;
+	AttackDuoBonus = 0;
 }
 
 int ARobotCharacter::GetCharge()
@@ -386,8 +376,20 @@ int ARobotCharacter::GetCharge()
 
 void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 {
-	HurtManagerEvent.Broadcast(Damage, StunTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+	if (CanGuard)
+	{
+		GuardManagerEvent.Broadcast(Damage, StunTime);
+	}
+	else
+	{
+		HurtManagerEvent.Broadcast(Damage, StunTime);
+	}
+	
+}
+
+void ARobotCharacter::StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID)
+{
+	VibrationControllerEvent.Broadcast(ERobotID,EAttackID);
 }
 
 void ARobotCharacter::KnockBackFromNotify(FVector2D Velocity)
