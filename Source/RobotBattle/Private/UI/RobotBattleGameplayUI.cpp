@@ -206,6 +206,16 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 			if (Charge == MaxCharge) PlayAnimCharge(0);
 			else if (Charge == 0) StopAnimCharge(0);
 		}
+		if (ChargeBarPlayer1->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer1->GetPercent() >= 1.0f)
+			UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer1->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
+		}
 	}
 	if (Team == 1)
 	{
@@ -214,6 +224,17 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
 			if (Charge == MaxCharge) PlayAnimCharge(1);
 			else if (Charge == 0) StopAnimCharge(1);
+		}
+
+		if (ChargeBarPlayer2->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer2->GetPercent() >= 1.0f)
+				UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer2->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
 		}
 	}
 }
