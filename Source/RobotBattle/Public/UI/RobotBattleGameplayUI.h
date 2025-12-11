@@ -69,6 +69,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* FillImage;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* SpecialSound;
 	
 #pragma endregion
 
@@ -131,4 +134,6 @@ private:
 	float LifeBareDecrease = 5.f;
 	UPROPERTY(EditAnywhere)
 	float LifeBarCritical = 25.f;
+	UPROPERTY(EditAnywhere)
+	bool bIsSoundPlay = false;
 };
