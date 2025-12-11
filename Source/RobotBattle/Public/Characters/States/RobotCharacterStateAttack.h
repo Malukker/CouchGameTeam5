@@ -67,7 +67,7 @@ private:
 	void KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack);
 
 	UPROPERTY()
-	TScriptInterface<IRobot> TouchedCharacterInterface;
+	TScriptInterface<IRobot> TouchedCharacterInterface = nullptr;
 	
 #pragma endregion
 
@@ -77,5 +77,5 @@ private:
 	void OnBoostEvent();
 	
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UNiagaraSystem> TeamBoost;
+	TObjectPtr<UNiagaraSystem> TeamBoost = nullptr;
 };
