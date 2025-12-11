@@ -3,7 +3,6 @@
 
 #include "UI/RobotBattleGameplayUI.h"
 
-#include "EditorDirectories.h"
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"

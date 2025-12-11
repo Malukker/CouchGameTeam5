@@ -4,10 +4,7 @@
 #include "UI/RobotBattleSettingsMenu.h"
 
 #include "Sound/SoundClass.h"
-#include "Match/TeamManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
-#include "Camera/CameraShakeWorld.h"
 
 void URobotBattleSettingsMenu::NativeConstruct()
 {
