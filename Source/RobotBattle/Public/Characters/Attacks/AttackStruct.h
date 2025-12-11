@@ -50,5 +50,5 @@ struct FAttackStruct
 	EAttackID AttackType = EAttackID::None;
 
 	UPROPERTY(EditAnywhere)
-	UNiagaraSystem* Niagara;
+	UNiagaraSystem* Niagara = nullptr;
 };
