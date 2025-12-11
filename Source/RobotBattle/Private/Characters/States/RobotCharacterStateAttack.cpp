@@ -172,6 +172,10 @@ void URobotCharacterStateAttack::OnStunEvent()
 
 void URobotCharacterStateAttack::OnBoostEvent()
 {
-	if (CurrentAnimTime > 0.25f) return;
+	if (CurrentAnimTime > 0.15f) return;
 	UseBoost = true;
+	if (TeamBoost)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, Character->GetActorLocation());
+	}
 }
