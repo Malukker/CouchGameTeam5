@@ -66,6 +66,10 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UEditableTextBox* Combo2;
+
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* FillImage;
+	
 #pragma endregion
 
 #pragma region VariableWidget
@@ -110,6 +114,7 @@ private:
 	UFUNCTION()
 	void UpdateTimer();
 	void PauseTimer();
+	void SetFillImage();
 
 	FVector2D Combo1BaseScale = FVector2D(.5f, .5f);
 	FVector2D Combo2BaseScale = FVector2D(.5f, .5f);
@@ -124,4 +129,6 @@ private:
 	bool Goal2 = false;
 	UPROPERTY(EditAnywhere)
 	float LifeBareDecrease = 5.f;
+	UPROPERTY(EditAnywhere)
+	float LifeBarCritical = 25.f;
 };

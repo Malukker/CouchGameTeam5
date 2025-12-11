@@ -174,11 +174,13 @@ void ATeamManager::SetInput(bool Value)
 {
 	if (Value)
 	{
+		CanTakeDamage = true;
 		PlayersController[ERobotCharacterPositionEnum::Down]->Possess(RobotParts[ERobotCharacterPositionEnum::Down]);
 		PlayersController[ERobotCharacterPositionEnum::Up]->Possess(RobotParts[ERobotCharacterPositionEnum::Up]);
 	}
 	else
 	{
+		CanTakeDamage = false;
 		PlayersController[ERobotCharacterPositionEnum::Down]->UnPossess();
 		PlayersController[ERobotCharacterPositionEnum::Up]->UnPossess();
 	}
@@ -470,6 +472,15 @@ URobotControllerVibrationData* ATeamManager::LoadVibrationDataFromConfig()
 
 void ATeamManager::StartControllerVibration(ERobotID RobotID, EAttackID AttackID)
 {
+	if (URobotGameInstance* GI = GetGameInstance<URobotGameInstance>())
+	{
+		if (!GI->bEnableControllerVibration)
+		{
+			UE_LOG(LogTemp, Log, TEXT("NO VIBRATION (disabled in settings)"));
+			return;
+		}
+	}
+	
 	URobotControllerVibrationData* VibrationData = LoadVibrationDataFromConfig();
 	if (VibrationData == nullptr
 		|| !VibrationData->VibrationMap.Contains(RobotID)

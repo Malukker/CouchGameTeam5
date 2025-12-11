@@ -3,6 +3,7 @@
 
 #include "UI/RobotBattleGameplayUI.h"
 
+#include "EditorDirectories.h"
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -143,11 +144,27 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		if (HealthBarPlayer1)
 		{
 			HealthBarPlayer1->SetPercent(Health / MaxHealth);
-		}
-		if (HealthTextPlayer1)
-		{
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer1->SetText(FText::FromString(HealthString));
+			if(Health == MaxHealth) HealthBarPlayer1CD->SetPercent(Health / MaxHealth);
+		}
+		
+		if (LifeBarCritical >= HealthBarPlayer1->GetPercent()*100)
+		{
+			if (HealthBarPlayer1 && FillImage)
+			{
+				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(FillImage);
+				NewFillImage.ImageSize = FVector2D(
+					FillImage->GetSizeX(),
+					FillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer1->SetWidgetStyle(NewStyle);
+			}
 		}
 	}
 	if (Team == 1)
@@ -155,12 +172,28 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		if (HealthBarPlayer2)
 		{
 			HealthBarPlayer2->SetPercent(Health / MaxHealth);
-		}
-		if (HealthTextPlayer2)
-		{
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer2->SetText(FText::FromString(HealthString));
-		} 
+			if(Health == MaxHealth) HealthBarPlayer2CD->SetPercent(Health / MaxHealth);
+		}
+		
+		if (LifeBarCritical >= HealthBarPlayer2->GetPercent()*100)
+		{
+			if (HealthBarPlayer2 && FillImage)
+			{
+				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(FillImage);
+				NewFillImage.ImageSize = FVector2D(
+					FillImage->GetSizeX(),
+					FillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer2->SetWidgetStyle(NewStyle);
+			}
+		}
 	}
 }
 
@@ -258,3 +291,45 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 		}
 	}
 }
+
+void URobotBattleGameplayUI::SetFillImage()
+{
+	
+	if (HealthBarPlayer1 && FillImage)
+	{
+		FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+
+		FSlateBrush NewFillImage;
+		NewFillImage.SetResourceObject(FillImage);
+		NewFillImage.ImageSize = FVector2D(
+			FillImage->GetSizeX(),
+			FillImage->GetSizeY()
+			);
+
+		NewStyle.FillImage = NewFillImage;
+		HealthBarPlayer1->SetWidgetStyle(NewStyle);
+	}
+
+	if (HealthBarPlayer2->GetPercent() <= HealthBarPlayer2->GetPercent()/LifeBarCritical)
+	{
+		if (HealthBarPlayer2 && FillImage)
+		{
+			FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+
+			FSlateBrush NewFillImage;
+			NewFillImage.SetResourceObject(FillImage);
+			NewFillImage.ImageSize = FVector2D(
+				FillImage->GetSizeX(),
+				FillImage->GetSizeY()
+				);
+
+			NewStyle.FillImage = NewFillImage;
+			HealthBarPlayer2->SetWidgetStyle(NewStyle);
+		}
+	}
+
+		
+
+
+}
+

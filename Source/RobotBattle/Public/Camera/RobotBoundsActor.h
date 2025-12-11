@@ -46,8 +46,10 @@ public:
 	UPROPERTY(EditAnywhere, Category = "BoxTopParameters")
 	FVector BoxTopExtent;
 
-	
+	UPROPERTY(EditAnywhere, Category = "BoxSidesParameter")
+	FVector BoxSidesExtent;
 
+	
 private:
 	virtual void OnConstruction(const FTransform& Transform) override;
 

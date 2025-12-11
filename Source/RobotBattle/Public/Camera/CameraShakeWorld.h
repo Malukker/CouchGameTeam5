@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Camera/CameraShakeBase.h"
 #include "CameraShakeWorld.generated.h"
+
 enum class ERobotID : uint8;
 class UCameraSettings;
 enum class EAttackID : uint8;
@@ -53,9 +54,7 @@ public:
 	void SetupShakeParametersOnAttackID(EAttackID AttackID,ERobotID UpID,float& Scale,float& Duration);
 	void SetupShakeParametersForTool(float LocationAmplitudeMultiplier,float LocationFrequencyMultiplier,float RotationAmplitudeMultiplier,float RotationFrequencyMultiplier);
 	UCameraShakeWorld(const FObjectInitializer& ObjectInitializer);
-	
-	UPROPERTY(BlueprintReadWrite, BlueprintReadWrite, Category="Shake")
-	bool bEnableCameraShake = true; 
+
 
 private:
 
