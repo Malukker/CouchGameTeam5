@@ -30,7 +30,14 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 	Character->BoostEvent.AddDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
 
-	if (Character->GetBoost()) UseBoost = true;
+	if (Character->GetBoost())
+	{
+		UseBoost = true;
+		if (TeamBoost)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, Character->GetActorLocation());
+		}
+	}
 	else UseBoost = false;
 	
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;

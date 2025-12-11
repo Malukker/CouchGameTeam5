@@ -44,6 +44,9 @@ public:
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamBoost;
 
 	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;

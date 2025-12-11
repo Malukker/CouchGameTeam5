@@ -75,4 +75,7 @@ private:
 	void OnStunEvent();
 	UFUNCTION()
 	void OnBoostEvent();
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamBoost;
 };
