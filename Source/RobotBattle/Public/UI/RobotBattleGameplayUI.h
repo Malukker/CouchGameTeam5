@@ -136,7 +136,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float LifeBareDecrease = 5.f;
 	UPROPERTY(EditAnywhere)
-	float LifeBarCritical = 25.f;
+	float LifeBarCritical = 35.f;
 	UPROPERTY(EditAnywhere)
 	bool bIsSoundPlay = false;
 };

@@ -57,6 +57,14 @@ void ATeamManager::Tick(float DeltaTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(-1);
 	}
+
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		DeltaTime,
+		FColor::Red,
+		FString::Printf(TEXT("Gravity : %f"),
+		RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GetGravityZ())
+		);
 }
 
 void ATeamManager::SpawnCharacters()
@@ -303,9 +311,9 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetStunTimer(StunTime);
 		RobotParts[ERobotCharacterPositionEnum::Up]->HurtEvent.Broadcast();
 		RobotParts[ERobotCharacterPositionEnum::Down]->HurtEvent.Broadcast();
-		TeamLife -= Damage;
+		TeamLife -= (IsLoadingUltimate ? (Damage * .7f) : Damage);
 		Combo = 0;
-		KnockBackMultiplier = 1;
+		KnockBackMultiplier = (IsLoadingUltimate ? .5f : 1);
 		
 		if (TeamLife <= 0)
 		{
@@ -444,7 +452,6 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		{
 			if (WantUltimate == 1)
 			{
-				CanTakeDamage = false;
 				IsLoadingUltimate = RobotParts[ERobotCharacterPositionEnum::Up]->StartAttackDuo();
 			}
 			UltimateBuffer = 0.33f;
@@ -469,7 +476,6 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 		break;
 	case ERobotCharacterPositionEnum::None:
 		IsLoadingUltimate = false;
-		CanTakeDamage = true;
 	default: ;
 	}
 }

@@ -43,7 +43,7 @@ void AMatchManager::BeginPlay()
 			Team->SetInput(false);
 		}
 		ResetFight();
-	}, .1f, false);
+	}, 1.f, false);
 }
 
 void AMatchManager::ResetFight()

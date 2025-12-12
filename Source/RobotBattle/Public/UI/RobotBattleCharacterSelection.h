@@ -22,6 +22,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<URobotGameInstance> GameInstance;
 	
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AMenuGameMode> GameMode;
+	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSelectionChange,
 		uint8, ControllerID,
     	ERobotID, RobotID);
@@ -31,6 +34,10 @@ public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, uint8, ControllerID);
 	UPROPERTY(BlueprintAssignable)
 	FOnSelectionValidation ValidateEvent;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartGameEvent);
+	UPROPERTY(BlueprintAssignable)
+	FOnStartGameEvent StartGameEvent;
 
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionCancellation, uint8, ControllerID);
 	UPROPERTY(BlueprintAssignable)
@@ -54,7 +61,4 @@ private:
 
 	UPROPERTY()
 	TMap<APlayerController*, bool> ValidationByController;
-
-	UPROPERTY()
-	TObjectPtr<AMenuGameMode> GameMode;
 };

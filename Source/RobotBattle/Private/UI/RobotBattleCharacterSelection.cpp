@@ -49,8 +49,7 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::CancelSelection);
 	}
 
-	RemoveFromParent();
-	GameMode->LoadBattleLevel();
+	StartGameEvent.Broadcast();
 }
 
 void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection InDirection,
