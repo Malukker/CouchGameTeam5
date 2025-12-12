@@ -275,6 +275,11 @@ void URobotBattleTeamSelectMenu::OnPlayerMoveInput(EPlayerMenuInputDirection Dir
 	if (NewZone != CurrentZone)
 	{
 		MovePlayerToZone(PlayerID, NewZone);
+		if (IterationSoundTeamSelection.Num() > 0)
+		{
+			int32 RandomIndex = FMath::RandRange(0, IterationSoundTeamSelection.Num() - 1);
+			UGameplayStatics::PlaySound2D(this, IterationSoundTeamSelection[RandomIndex]);
+		}
 		UE_LOG(LogTemp, Log, TEXT("Player %d moved from %s to %s"), PlayerID, *CurrentZone, *NewZone);
 	}
 }
@@ -287,6 +292,7 @@ int32 URobotBattleTeamSelectMenu::GetControllerIndexForZone(const FString& ZoneN
 
 void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Controller)
 {
+	UGameplayStatics::PlaySound2D(this,ValidateSound);
 	int32 PlayerID = Controller->GetLocalPlayer()->GetLocalPlayerIndex();
 
 	if (CurrentZones[PlayerID] == "CenterUp" || CurrentZones[PlayerID] == "CenterDown")
@@ -356,6 +362,7 @@ void URobotBattleTeamSelectMenu::OnPlayerValidateInput(APlayerController* Contro
 	// 	TempActor->InputValidateEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::ChangeImageWhenReady);
 	// 	TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleTeamSelectMenu::OnPlayerCancelInput);
 	// }
+
 }
 
 void URobotBattleTeamSelectMenu::OnPlayerCancelInput(APlayerController* Controller)

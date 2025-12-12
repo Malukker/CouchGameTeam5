@@ -148,6 +148,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* IMG_Ready4;
 
+	UPROPERTY(EditAnywhere)
+	TArray<USoundBase*> IterationSoundTeamSelection;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* ValidateSound;
+
 #pragma endregion
 	UPROPERTY()
 	TMap<int32, bool> PlayerReadyState;

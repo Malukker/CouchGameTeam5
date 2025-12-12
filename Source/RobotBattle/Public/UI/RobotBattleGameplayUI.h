@@ -69,6 +69,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UTexture2D* FillImage;
+	
+	UPROPERTY(EditAnywhere)
+	class UTexture2D* BaseFillImage;
 
 	UPROPERTY(EditAnywhere)
 	class USoundBase* SpecialSound;
