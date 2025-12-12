@@ -366,7 +366,6 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 				RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
 				if (TeamBoost)
 				{
-
 					UNiagaraFunctionLibrary::SpawnSystemAttached(
 						TeamBoost,
 						RobotParts[ERobotCharacterPositionEnum::Up]->GetMesh(),
@@ -387,7 +386,15 @@ void ATeamManager::DashInvinsibility(ERobotCharacterPositionEnum Position)
 			RobotParts[ERobotCharacterPositionEnum::Up]->PlayDash();
 			if (TeamBoost)
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, RobotParts[ERobotCharacterPositionEnum::Up]->GetActorLocation());
+				UNiagaraFunctionLibrary::SpawnSystemAttached(
+					TeamBoost,
+					RobotParts[ERobotCharacterPositionEnum::Up]->GetMesh(),
+					NAME_None,
+					FVector::ZeroVector,
+					FRotator::ZeroRotator,
+					EAttachLocation::Type::SnapToTarget,
+					true,
+					true);
 			}
 		}
 		else
