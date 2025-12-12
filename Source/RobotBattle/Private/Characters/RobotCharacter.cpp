@@ -106,6 +106,11 @@ void ARobotCharacter::PlayIntro()
 	PlayAnimMontage(Intro);
 }
 
+void ARobotCharacter::PlayDash()
+{
+	
+}
+
 void ARobotCharacter::PlayEnd(bool Win)
 {
 	PlayAnimMontage((Win ? EndWin : EndDefeat));
@@ -379,7 +384,12 @@ void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
 	{
 		HurtManagerEvent.Broadcast(Damage, StunTime);
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue, TEXT("DAMAGE!!"));
+	
+}
+
+void ARobotCharacter::StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID)
+{
+	VibrationControllerEvent.Broadcast(ERobotID,EAttackID);
 }
 
 void ARobotCharacter::KnockBackFromNotify(FVector2D Velocity)

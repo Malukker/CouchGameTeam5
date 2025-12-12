@@ -11,6 +11,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "NiagaraFunctionLibrary.h"
 
 ERobotCharacterStateID URobotCharacterStateAttack::GetStateID()
 {
@@ -29,7 +30,22 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 	Character->BoostEvent.AddDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
 
-	if (Character->GetBoost()) UseBoost = true;
+	if (Character->GetBoost())
+	{
+		UseBoost = true;
+		if (TeamBoost)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAttached(
+				TeamBoost,
+				Character->GetMesh(),
+				NAME_None,
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::Type::SnapToTarget,
+				true,
+				true);
+		}
+	}
 	else UseBoost = false;
 	
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
@@ -86,6 +102,8 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack(AActor* ConcernedAct
 {
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = true;
+
+	TouchedCharacterInterface = nullptr;
 }
 
 void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data)
@@ -117,6 +135,7 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					TouchedCharacterInterface->TakeDamageFromAttack(
 						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
 						Data.StunTimer);
+					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;
 					Character->HitStopEvent.Broadcast(Data.Damage + Character->GetAttackDuoBonus());
@@ -124,6 +143,8 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					Character->GuardResetManagerEvent.Broadcast();
 					Character->AirStopManagerEvent.Broadcast();
 
+					if (Data.Niagara) UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), Data.Niagara, OutHit.ImpactPoint);
+					
 					APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
 					float ScaleShake = 1.f;
 					float DurationShake = 0.f;
@@ -140,16 +161,13 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 			}
 		}
 	}
-	
 }
 
 void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack)
 {
 	if (ConcernedActor != GetOwner()) return;
-	if (!HasTouch && TouchedCharacterInterface == nullptr) return;
+	if (!HasTouch || TouchedCharacterInterface == nullptr) return;
 	TouchedCharacterInterface->KnockBackFromNotify(KnockBack);
-
-	TouchedCharacterInterface = nullptr;
 }
 
 
@@ -161,6 +179,18 @@ void URobotCharacterStateAttack::OnStunEvent()
 
 void URobotCharacterStateAttack::OnBoostEvent()
 {
-	if (CurrentAnimTime > 0.25f) return;
+	if (CurrentAnimTime > 0.15f) return;
 	UseBoost = true;
+	if (TeamBoost)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TeamBoost,
+			Character->GetMesh(),
+			NAME_None,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::Type::SnapToTarget,
+			true,
+			true);
+	}
 }

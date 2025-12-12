@@ -68,7 +68,30 @@ void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDe
 		Combo2BaseScale -= InDeltaTime * FVector2D{5.f,5.f};
 		Combo2->SetRenderScale(Combo2BaseScale);
 	}
+
+	if (HealthBarPlayer2CD ->GetPercent() > HealthBarPlayer2->GetPercent())
+	{
+		float Current = HealthBarPlayer2CD->GetPercent();
+		float Target  = HealthBarPlayer2->GetPercent();
+
+		Current -= LifeBareDecrease/100 * InDeltaTime;
+		Current = FMath::Max(Current, Target);
+ 
+		HealthBarPlayer2CD->SetPercent(Current);
+	}
+
+	if (HealthBarPlayer1CD ->GetPercent() > HealthBarPlayer1->GetPercent())
+	{
+		float Current = HealthBarPlayer1CD->GetPercent();
+		float Target  = HealthBarPlayer1->GetPercent();
+
+		Current -= LifeBareDecrease/100 * InDeltaTime;
+		Current = FMath::Max(Current, Target);
+
+		HealthBarPlayer1CD->SetPercent(Current);
+	}
 }
+
 void URobotBattleGameplayUI::UpdateTimer()
 {
 	if (TimerText)
@@ -120,11 +143,41 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		if (HealthBarPlayer1)
 		{
 			HealthBarPlayer1->SetPercent(Health / MaxHealth);
-		}
-		if (HealthTextPlayer1)
-		{
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer1->SetText(FText::FromString(HealthString));
+			if(Health == MaxHealth)
+			{
+				HealthBarPlayer1CD->SetPercent(Health / MaxHealth);
+				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(BaseFillImage);
+				NewFillImage.ImageSize = FVector2D(
+					BaseFillImage->GetSizeX(),
+					BaseFillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer1->SetWidgetStyle(NewStyle);
+			}
+		}
+		
+		if (LifeBarCritical >= HealthBarPlayer1->GetPercent()*100)
+		{
+			if (HealthBarPlayer1 && FillImage)
+			{
+				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(FillImage);
+				NewFillImage.ImageSize = FVector2D(
+					FillImage->GetSizeX(),
+					FillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer1->SetWidgetStyle(NewStyle);
+			}
 		}
 	}
 	if (Team == 1)
@@ -132,12 +185,42 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		if (HealthBarPlayer2)
 		{
 			HealthBarPlayer2->SetPercent(Health / MaxHealth);
-		}
-		if (HealthTextPlayer2)
-		{
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer2->SetText(FText::FromString(HealthString));
-		} 
+			if(Health == MaxHealth)
+			{
+				HealthBarPlayer2CD->SetPercent(Health / MaxHealth);
+				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(BaseFillImage);
+				NewFillImage.ImageSize = FVector2D(
+					BaseFillImage->GetSizeX(),
+					BaseFillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer2->SetWidgetStyle(NewStyle);
+			}
+		}
+		
+		if (LifeBarCritical >= HealthBarPlayer2->GetPercent()*100)
+		{
+			if (HealthBarPlayer2 && FillImage)
+			{
+				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(FillImage);
+				NewFillImage.ImageSize = FVector2D(
+					FillImage->GetSizeX(),
+					FillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer2->SetWidgetStyle(NewStyle);
+			}
+		}
 	}
 }
 
@@ -148,6 +231,18 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer1)
 		{
 			ChargeBarPlayer1->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(0);
+			else if (Charge == 0) StopAnimCharge(0);
+		}
+		if (ChargeBarPlayer1->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer1->GetPercent() >= 1.0f)
+			UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer1->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
 		}
 	}
 	if (Team == 1)
@@ -155,6 +250,19 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 		if (ChargeBarPlayer2)
 		{
 			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
+			if (Charge == MaxCharge) PlayAnimCharge(1);
+			else if (Charge == 0) StopAnimCharge(1);
+		}
+
+		if (ChargeBarPlayer2->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer2->GetPercent() >= 1.0f)
+				UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer2->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
 		}
 	}
 }
@@ -231,3 +339,45 @@ void URobotBattleGameplayUI::SetComboHit(int Team, int Combo)
 		}
 	}
 }
+
+void URobotBattleGameplayUI::SetFillImage()
+{
+	
+	if (HealthBarPlayer1 && FillImage)
+	{
+		FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+
+		FSlateBrush NewFillImage;
+		NewFillImage.SetResourceObject(FillImage);
+		NewFillImage.ImageSize = FVector2D(
+			FillImage->GetSizeX(),
+			FillImage->GetSizeY()
+			);
+
+		NewStyle.FillImage = NewFillImage;
+		HealthBarPlayer1->SetWidgetStyle(NewStyle);
+	}
+
+	if (HealthBarPlayer2->GetPercent() <= HealthBarPlayer2->GetPercent()/LifeBarCritical)
+	{
+		if (HealthBarPlayer2 && FillImage)
+		{
+			FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+
+			FSlateBrush NewFillImage;
+			NewFillImage.SetResourceObject(FillImage);
+			NewFillImage.ImageSize = FVector2D(
+				FillImage->GetSizeX(),
+				FillImage->GetSizeY()
+				);
+
+			NewStyle.FillImage = NewFillImage;
+			HealthBarPlayer2->SetWidgetStyle(NewStyle);
+		}
+	}
+
+		
+
+
+}
+

@@ -2,12 +2,14 @@
 
 
 #include "UI/RobotBattleSettingsMenu.h"
+
 #include "Sound/SoundClass.h"
-#include "Kismet/GameplayStatics.h"
+#include "Match/RobotGameInstance.h"
 
 void URobotBattleSettingsMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
+	GI = GetGameInstance<URobotGameInstance>();
 }
 
 void URobotBattleSettingsMenu::SetMasterVolume(float NewVolume)
@@ -25,5 +27,10 @@ void URobotBattleSettingsMenu::ApplySettings()
 		UE_LOG(LogTemp, Log, TEXT("Settings applied! Volume: %f"), MasterVolume);
 	}
 	
+	if (GI)
+	{
+		GI->bEnableCameraShake = bCameraShakeEnabled;
+		GI->bEnableControllerVibration = bControllerVibrationEnabled;
+	}
 }
 

@@ -7,7 +7,7 @@
 #include "Characters/Attacks/AttackStruct.h"
 #include "RobotCharacterStateAttack.generated.h"
 
-
+class UNiagaraSystem;
 class IRobot;
 
 UCLASS(ClassGroup = (RobotCharacterState), meta=(BlueprintSpawnableComponent))
@@ -67,7 +67,7 @@ private:
 	void KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack);
 
 	UPROPERTY()
-	TScriptInterface<IRobot> TouchedCharacterInterface;
+	TScriptInterface<IRobot> TouchedCharacterInterface = nullptr;
 	
 #pragma endregion
 
@@ -75,4 +75,7 @@ private:
 	void OnStunEvent();
 	UFUNCTION()
 	void OnBoostEvent();
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamBoost = nullptr;
 };
