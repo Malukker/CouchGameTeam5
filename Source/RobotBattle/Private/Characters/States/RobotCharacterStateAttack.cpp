@@ -94,6 +94,8 @@ void URobotCharacterStateAttack::StartDetectionNotifyAttack(AActor* ConcernedAct
 {
 	if (ConcernedActor != GetOwner()) return;
 	bIsAttackTraceEnabled = true;
+
+	TouchedCharacterInterface = nullptr;
 }
 
 void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data)
@@ -151,16 +153,13 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 			}
 		}
 	}
-	
 }
 
 void URobotCharacterStateAttack::KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack)
 {
 	if (ConcernedActor != GetOwner()) return;
-	if (!HasTouch && TouchedCharacterInterface == nullptr) return;
+	if (!HasTouch || TouchedCharacterInterface == nullptr) return;
 	TouchedCharacterInterface->KnockBackFromNotify(KnockBack);
-
-	TouchedCharacterInterface = nullptr;
 }
 
 
@@ -172,6 +171,10 @@ void URobotCharacterStateAttack::OnStunEvent()
 
 void URobotCharacterStateAttack::OnBoostEvent()
 {
-	if (CurrentAnimTime > 0.25f) return;
+	if (CurrentAnimTime > 0.15f) return;
 	UseBoost = true;
+	if (TeamBoost)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, Character->GetActorLocation());
+	}
 }

@@ -461,7 +461,7 @@ void ATeamManager::AttackDuo(ERobotCharacterPositionEnum Position)
 void ATeamManager::Boost()
 {
 	RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(true);
-	BoostTimer = .25f;
+	BoostTimer = .15f;
 	WantBoost = true;
 }
 
