@@ -35,7 +35,15 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 		UseBoost = true;
 		if (TeamBoost)
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, Character->GetActorLocation());
+			UNiagaraFunctionLibrary::SpawnSystemAttached(
+				TeamBoost,
+				Character->GetMesh(),
+				NAME_None,
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::Type::SnapToTarget,
+				true,
+				true);
 		}
 	}
 	else UseBoost = false;
@@ -175,6 +183,14 @@ void URobotCharacterStateAttack::OnBoostEvent()
 	UseBoost = true;
 	if (TeamBoost)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), TeamBoost, Character->GetActorLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TeamBoost,
+			Character->GetMesh(),
+			NAME_None,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::Type::SnapToTarget,
+			true,
+			true);
 	}
 }
