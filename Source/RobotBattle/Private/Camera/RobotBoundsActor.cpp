@@ -47,5 +47,7 @@ void ARobotBoundsActor::OnConstruction(const FTransform& Transform)
 	Box_Top->SetLineThickness(LineThickness);
 	Box_Left->SetLineThickness(LineThickness);
 	Box_Right->SetLineThickness(LineThickness);
+	Box_Left->SetBoxExtent(BoxSidesExtent);
+	Box_Right->SetBoxExtent(BoxSidesExtent);
 }
 
