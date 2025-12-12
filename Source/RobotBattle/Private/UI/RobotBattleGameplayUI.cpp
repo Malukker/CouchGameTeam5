@@ -16,12 +16,6 @@ void URobotBattleGameplayUI::NativeConstruct()
 	Super::NativeConstruct();
 	Timer = 0.0f;
 	IsActive = false;
-
-	if (HealthBarPlayer1)
-		DefaultProgressBarStyle1 = HealthBarPlayer1->WidgetStyle;
-
-	if (HealthBarPlayer2)
-		DefaultProgressBarStyle2 = HealthBarPlayer2->WidgetStyle;
 }
 
 void URobotBattleGameplayUI::NativeTick(const FGeometry & MyGeometry, float InDeltaTime)
