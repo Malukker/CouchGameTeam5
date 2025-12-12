@@ -53,6 +53,8 @@ void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnStunEvent);
+	
+	CharacterMovement->GravityScale = 1;
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {

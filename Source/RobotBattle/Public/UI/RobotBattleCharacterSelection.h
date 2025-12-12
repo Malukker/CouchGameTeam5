@@ -9,7 +9,6 @@
 class AMenuGameMode;
 class URobotGameInstance;
 enum class ERobotID : uint8;
-enum class EPlayerMenuInputDirection : int;
 /**
  * 
  */
@@ -25,9 +24,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMenuGameMode> GameMode;
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSelectionChange,
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSelectionChange,
 		uint8, ControllerID,
-    	ERobotID, RobotID);
+    	ERobotID, RobotID,
+    	bool, Forward);
 	UPROPERTY(BlueprintAssignable)
 	FOnSelectionChange SelectionChangeEvent;
 
@@ -47,7 +47,7 @@ public:
 	void ValidateSelection(APlayerController* InController);
 
 	UFUNCTION()
-	void ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection InDirection, APlayerController* InController);
+	void ChangeRobotPartSelectionForPlayer(FVector2D InDirection, APlayerController* InController);
 
 	UFUNCTION()
 	void CancelSelection(APlayerController* InController);

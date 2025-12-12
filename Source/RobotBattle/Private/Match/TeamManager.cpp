@@ -57,14 +57,6 @@ void ATeamManager::Tick(float DeltaTime)
 		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
 		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(-1);
 	}
-
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		DeltaTime,
-		FColor::Red,
-		FString::Printf(TEXT("Gravity : %f"),
-		RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->GetGravityZ())
-		);
 }
 
 void ATeamManager::SpawnCharacters()
@@ -167,7 +159,7 @@ void ATeamManager::ResetCharacters()
 	
 	RobotParts[ERobotCharacterPositionEnum::Up]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
 	RobotParts[ERobotCharacterPositionEnum::Down]->GetMovementComponent()->Velocity = FVector(0, 0, 0);
-	TeamGuard = TeamGuardMax;
+	GuardReset();
 	TeamLife = TeamLifeMax;
 	TeamCharge = 0;
 	Combo = 0;
