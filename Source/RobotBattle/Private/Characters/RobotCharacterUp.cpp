@@ -22,8 +22,42 @@ void ARobotCharacterUp::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	if (IsLookingOpponent)
-	{
-		SetActorRotation(FQuat::Identity);
+	{float PosActual = GetActorLocation().X;
+		if (FMathf::Abs(PosActual - PosSpring) > MinAngle)
+		{
+			PosSpring = FMathf::Clamp( PosSpring, PosActual - MinAngle, PosActual + MinAngle);
+		}
+	
+		int Direction = FMathf::SignAsInt(PosActual - PosSpring);
+		VelocitySpring += Direction * DeltaSeconds * Acceleration;
+		if (VelocitySpring > MaxSpeed)
+		{
+			VelocitySpring = FMathf::SignAsInt(VelocitySpring) * MaxSpeed;
+		}
+		VelocitySpring = FMath::Lerp(
+			VelocitySpring,
+			0,
+			 FMathf::Clamp(DeltaSeconds * Damping, 0.0f, 1.0f)
+			);
+		PosSpring += VelocitySpring * DeltaSeconds;
+
+		FVector NewLocation = GetActorLocation();
+		NewLocation.X = PosSpring;
+		NewLocation.Z += 50;
+		FVector Dir = GetActorLocation() - NewLocation;
+		if (FMathf::Abs(Dir.X ) < 5.f)
+		{
+			SetActorRotation( FQuat::Identity);
+			return;
+		}
+		Dir.Normalize();
+
+		// Convert the angle to degrees
+		float AngleInDegrees = FMath::RadiansToDegrees(FMathf::Atan2(Dir.Z, Dir.X));
+		
+		FRotator NewRotation = FRotator(AngleInDegrees + 90, 0, 0);
+	
+		SetActorRotation( FQuat(NewRotation));
 	}
 }
 

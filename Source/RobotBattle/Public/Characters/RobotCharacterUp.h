@@ -37,4 +37,19 @@ protected:
 	UFUNCTION()
 	void OnHitStop(int Damage);
 	
+private:
+	UPROPERTY(EditAnywhere)
+	float Acceleration = 750.f;
+	UPROPERTY(EditAnywhere)
+	float Damping = 1.f;
+	UPROPERTY(EditAnywhere)
+	float MaxSpeed = 1500.f;
+	
+	UPROPERTY(EditAnywhere)
+	float MinAngle = 50.f;
+	
+	UPROPERTY()
+	float VelocitySpring;
+	UPROPERTY()
+	float PosSpring;
 };
