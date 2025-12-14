@@ -58,6 +58,7 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void ResetCharactersLocation();
 	void SetInput(bool Value);
 	void PlayIntro();
 	void InversePlayer();
@@ -66,9 +67,6 @@ public:
 	float GetLifePercent();
 	
 protected:
-	UPROPERTY(EditAnywhere, Category = "Config")
-	bool bShowAdvancedSettings;
-	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	

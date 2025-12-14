@@ -17,9 +17,14 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual UCapsuleComponent* GetMyCapsuleComponent() override;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DashAnimMontage;
+
+	UPROPERTY(EditAnywhere)
+	UCapsuleComponent* MyCapsuleComponent;
 
 	
 	virtual void BindInputAndActions(UEnhancedInputComponent* EnhancedInputComponent) override;
@@ -39,14 +44,14 @@ protected:
 	
 private:
 	UPROPERTY(EditAnywhere)
-	float Acceleration = 750.f;
+	float Acceleration = 400.f;
 	UPROPERTY(EditAnywhere)
-	float Damping = 1.f;
+	float Damping = 4.f;
 	UPROPERTY(EditAnywhere)
-	float MaxSpeed = 1500.f;
+	float MaxSpeed = 800.f;
 	
 	UPROPERTY(EditAnywhere)
-	float MinAngle = 50.f;
+	float MinAngle = 30.f;
 	
 	UPROPERTY()
 	float VelocitySpring;
