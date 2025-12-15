@@ -150,8 +150,6 @@ protected:
 	UPROPERTY()
 	bool CanDash = true;
 	UPROPERTY()
-	bool WantSwitch = false;
-	UPROPERTY()
 	ERobotID RobotID = ERobotID::None;
 
 	UPROPERTY()
@@ -180,6 +178,8 @@ public:
 	virtual bool IsTargetFollowable() override;
 
 	UBoxComponent* GetCollision() const;
+	
+	virtual UCapsuleComponent* GetMyCapsuleComponent();
 
 	int GetTeam();
 	void SetTeam(int NewTeam);
@@ -222,9 +222,6 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	int InvinsibilityFrames = 12;
-	
-	UPROPERTY(EditAnywhere)
-	float NerfStatsMultiplier = 0.5f;
 	
 
 #pragma endregion

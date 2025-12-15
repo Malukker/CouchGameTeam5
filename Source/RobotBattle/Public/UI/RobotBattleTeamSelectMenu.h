@@ -50,7 +50,7 @@ public:
 	void SetBoxReady(ETeamBox Box, bool bIsReady);
 
 	UFUNCTION()
-	void OnPlayerMoveInput(EPlayerMenuInputDirection Direction, APlayerController* Controller);
+	void OnPlayerMoveInput(FVector2D Direction, APlayerController* Controller);
 
 	UFUNCTION()
 	void OnPlayerValidateInput(APlayerController* Controller);
@@ -78,14 +78,7 @@ protected:
 	UHorizontalBox* Box_AwayDown;
 
 	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* Box_CenterUp;
-	UPROPERTY()
-	UVerticalBoxSlot* Box_CenterUpSlot;
-
-	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* Box_CenterDown;
-	UPROPERTY()                        
-	UVerticalBoxSlot* Box_CenterDownSlot;
+	UVerticalBox* Box_Center;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* IMG_WaitingPlayer1;

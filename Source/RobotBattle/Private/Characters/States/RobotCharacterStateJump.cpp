@@ -39,10 +39,7 @@ void URobotCharacterStateJump::StateEnter(ERobotCharacterStateID PreviousState) 
 	
 	Character->InputDashEvent.AddDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.AddDynamic(this, &URobotCharacterStateJump::OnStunEvent);
-	if (CharacterMovement->GravityScale == 0) {
-		StateMachine->ChangeState(ERobotCharacterStateID::Fall);
-	}
-	else InitJumpAccordingToParameters();
+	InitJumpAccordingToParameters();
 	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		3.f,
@@ -56,6 +53,8 @@ void URobotCharacterStateJump::StateExit(ERobotCharacterStateID NextState) {
 
 	Character->InputDashEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnDashEvent);
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateJump::OnStunEvent);
+	
+	CharacterMovement->GravityScale = 1;
 }
 
 void URobotCharacterStateJump::StateTick(float DeltaTime) {

@@ -1,6 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/RobotBattleCharacterSelection.h"
+
+#include "Arena/ArenaSettings.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/MainMenu/PlayerMenuActor.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,7 +14,7 @@
 void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InController)
 {
 	ValidationByController[InController] = true;
-	ValidateEvent.Broadcast(InController->GetLocalPlayer()->GetLocalPlayerIndex());
+	ValidateEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex());
 	
 	for (const auto Pair : ValidationByController)
 	{
@@ -49,46 +51,28 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::CancelSelection);
 	}
 
-	RemoveFromParent();
-	GameMode->LoadBattleLevel();
+	StartGameEvent();
 }
 
-void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(EPlayerMenuInputDirection InDirection,
-                                                                       APlayerController* InController)
+void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(FVector2D InDirection,  APlayerController* InController)
 {
-	if (!InController  || ValidationByController[InController]) { return; }
+	if (!InController  || ValidationByController[InController] || InDirection.X == 0) { return; }
 
-	if (InDirection != EPlayerMenuInputDirection::Right && InDirection != EPlayerMenuInputDirection::Left) { return; }
+	uint8 IdAsUint = static_cast<uint8>(BodyPartByController[InController]);
+	uint8 newId = IdAsUint + (InDirection.X > 0 ? 1 : -1);
 	
-	TArray<APlayerController*> PlayerControllers;
-	BodyPartByController.GetKeys(PlayerControllers);
-	for (auto PlayerController : PlayerControllers)
-	{
-		if (PlayerController == InController)
-		{
-			switch (BodyPartByController[InController])
-			{
-			case ERobotID::Robot1:
-				BodyPartByController[InController] = ERobotID::Robot2;
-				break;
-			case ERobotID::Robot2:
-				BodyPartByController[InController] = ERobotID::Robot1;
-				break;
-			default:
-				break;
-			}
-
-			SelectionChangeEvent.Broadcast(
-				InController->GetLocalPlayer()->GetLocalPlayerIndex(),
-				BodyPartByController[InController]);
-		}
-	}
+	const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
+	if (newId == 0) BodyPartByController[InController] = static_cast<ERobotID>(ArenaSettings->RobotCharacterDownClass.Num());
+	else if (newId > ArenaSettings->RobotCharacterDownClass.Num()) BodyPartByController[InController] = ERobotID::Robot1;
+	else BodyPartByController[InController] = static_cast<ERobotID>(newId);
+	
+	SelectionChangeEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex(),BodyPartByController[InController]);
 }
 
 void URobotBattleCharacterSelection::CancelSelection(APlayerController* InController)
 {
 	ValidationByController[InController] = false;
-	CancellationEvent.Broadcast(InController->GetLocalPlayer()->GetLocalPlayerIndex());
+	CancellationEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex());
 }
 
 void URobotBattleCharacterSelection::InitializeAndBindInputs()

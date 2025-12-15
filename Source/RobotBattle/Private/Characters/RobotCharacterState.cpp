@@ -27,13 +27,6 @@ void URobotCharacterState::StateInit(URobotCharacterStateMachine* InStateMachine
 	Character = InStateMachine->GetCharacter();
 	CharacterSettings = GetDefault<URobotCharacterSettings>();
 	CharacterMovement = Character->GetCharacterMovement();
-
-	GEngine->AddOnScreenDebugMessage(
-		-1,
-		3.f,
-		FColor::Magenta,
-		FString::Printf(TEXT("Init State %d"), GetStateID())
-	);
 }
 
 void URobotCharacterState::StateEnter(ERobotCharacterStateID PreviousState) {

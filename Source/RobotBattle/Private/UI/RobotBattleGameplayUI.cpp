@@ -148,7 +148,7 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 			if(Health == MaxHealth)
 			{
 				HealthBarPlayer1CD->SetPercent(Health / MaxHealth);
-				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(BaseFillImage);
@@ -166,7 +166,7 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		{
 			if (HealthBarPlayer1 && FillImage)
 			{
-				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(FillImage);
@@ -190,7 +190,7 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 			if(Health == MaxHealth)
 			{
 				HealthBarPlayer2CD->SetPercent(Health / MaxHealth);
-				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(BaseFillImage);
@@ -208,7 +208,7 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 		{
 			if (HealthBarPlayer2 && FillImage)
 			{
-				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(FillImage);
@@ -345,7 +345,7 @@ void URobotBattleGameplayUI::SetFillImage()
 	
 	if (HealthBarPlayer1 && FillImage)
 	{
-		FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+		FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
 
 		FSlateBrush NewFillImage;
 		NewFillImage.SetResourceObject(FillImage);
@@ -362,7 +362,7 @@ void URobotBattleGameplayUI::SetFillImage()
 	{
 		if (HealthBarPlayer2 && FillImage)
 		{
-			FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+			FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
 
 			FSlateBrush NewFillImage;
 			NewFillImage.SetResourceObject(FillImage);

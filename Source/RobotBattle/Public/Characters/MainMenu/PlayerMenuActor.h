@@ -10,16 +10,6 @@ class UInputAction;
 struct FInputActionValue;
 class APlayerController;
 
-UENUM()
-enum class EPlayerMenuInputDirection
-{
-	None = 0,
-	Up,
-	Down,
-	Left,
-	Right,
-};
-
 UCLASS()
 class ROBOTBATTLE_API APlayerMenuActor : public APawn
 {
@@ -27,7 +17,7 @@ class ROBOTBATTLE_API APlayerMenuActor : public APawn
 
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPlayerMenuMoveInput,
-		EPlayerMenuInputDirection, Direction,
+		FVector2D, Direction,
 		APlayerController*, Controller);
 	UPROPERTY()
 	FOnPlayerMenuMoveInput InputMoveEvent;
@@ -47,16 +37,7 @@ public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveUp;
-	
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveDown;
-	
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveLeft;
-	
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UInputAction> InputActionMoveRight;
+	TObjectPtr<UInputAction> InputActionMove;
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> InputActionValidate;
@@ -75,15 +56,7 @@ private:
 	
 	void BindActions(UEnhancedInputComponent* Enhanced);
 	
-	void OnInputMoveUp(const FInputActionValue& InputActionValue);
-
-	void OnInputMoveDown(const FInputActionValue& InputActionValue);
-
-	void OnInputMoveLeft(const FInputActionValue& InputActionValue);
-
-	void OnInputMoveRight(const FInputActionValue& InputActionValue);
-	
-	void OnInputMoveMenu(EPlayerMenuInputDirection Direction);
+	void OnInputMove(const FInputActionValue& InputActionValue);
 	
 	void OnInputValidate(const FInputActionValue& InputActionValue);
 	
