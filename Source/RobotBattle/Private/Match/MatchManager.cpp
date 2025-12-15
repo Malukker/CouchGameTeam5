@@ -35,6 +35,13 @@ void AMatchManager::BeginPlay()
 	}
 	TeamsWin.Init(0,2);
 	Round = 0;
+	GetWorld()->GetTimerManager().SetTimerForNextTick(([&]()
+	{
+		for (ATeamManager* Team : Teams)
+		{
+			Team->ResetCharacters();
+		}
+	}));
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
@@ -43,7 +50,7 @@ void AMatchManager::BeginPlay()
 			Team->SetInput(false);
 		}
 		ResetFight();
-	}, .1f, false);
+	}, 1.f, false);
 }
 
 void AMatchManager::ResetFight()

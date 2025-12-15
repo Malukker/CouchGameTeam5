@@ -41,6 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartSelectionTeam();
 
+	UFUNCTION(BlueprintCallable)
 	void LoadBattleLevel();
 	
 protected:

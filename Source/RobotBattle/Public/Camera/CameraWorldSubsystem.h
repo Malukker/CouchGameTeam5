@@ -99,19 +99,4 @@ private:
 	FVector CalculateWorldPositionFromViewportPosition(const FVector2D& ViewportPosition);
 #pragma endregion Bounds
 
-#pragma region CameraWinScene
-	UPROPERTY()
-	TObjectPtr<UCameraComponent> CameraWin;
-
-	UPROPERTY()
-	TObjectPtr<UCameraComponent> CameraZoomWin;
-
-	UFUNCTION()
-	void StartCameraZoom(float deltatime);
-
-	UPROPERTY()
-	AWinManager* WinManager = nullptr;
-
-	bool GameOverUISetted = false;
-#pragma endregion CameraWinScene
 };

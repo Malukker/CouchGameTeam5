@@ -22,43 +22,13 @@ void APlayerMenuActor::BeginPlay()
 
 void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputComponent)
 {
-	if (InputActionMoveUp)
+	if (InputActionMove)
 	{		
 		EnhancedInputComponent->BindAction(
-			InputActionMoveUp,
-			ETriggerEvent::Started,
+			InputActionMove,
+			ETriggerEvent::Triggered,
 			this,
-			&APlayerMenuActor::OnInputMoveUp
-		);
-	}
-
-	if (InputActionMoveDown)
-	{		
-		EnhancedInputComponent->BindAction(
-			InputActionMoveDown,
-			ETriggerEvent::Started,
-			this,
-			&APlayerMenuActor::OnInputMoveDown
-		);
-	}
-
-	if (InputActionMoveLeft)
-	{		
-		EnhancedInputComponent->BindAction(
-			InputActionMoveLeft,
-			ETriggerEvent::Started,
-			this,
-			&APlayerMenuActor::OnInputMoveLeft
-		);
-	}
-
-	if (InputActionMoveRight)
-	{		
-		EnhancedInputComponent->BindAction(
-			InputActionMoveRight,
-			ETriggerEvent::Started,
-			this,
-			&APlayerMenuActor::OnInputMoveRight
+			&APlayerMenuActor::OnInputMove
 		);
 	}
 
@@ -93,29 +63,9 @@ void APlayerMenuActor::BindActions(UEnhancedInputComponent* EnhancedInputCompone
 	}
 }
 
-void APlayerMenuActor::OnInputMoveUp(const FInputActionValue& InputActionValue)
+void APlayerMenuActor::OnInputMove(const FInputActionValue& InputActionValue)
 {
-	OnInputMoveMenu(EPlayerMenuInputDirection::Up);
-}
-
-void APlayerMenuActor::OnInputMoveDown(const FInputActionValue& InputActionValue)
-{
-	OnInputMoveMenu(EPlayerMenuInputDirection::Down);
-}
-
-void APlayerMenuActor::OnInputMoveLeft(const FInputActionValue& InputActionValue)
-{
-	OnInputMoveMenu(EPlayerMenuInputDirection::Left);
-}
-
-void APlayerMenuActor::OnInputMoveRight(const FInputActionValue& InputActionValue)
-{
-	OnInputMoveMenu(EPlayerMenuInputDirection::Right);
-}
-
-void APlayerMenuActor::OnInputMoveMenu(EPlayerMenuInputDirection Direction)
-{
-	InputMoveEvent.Broadcast(Direction, SelfPlayerController);
+	InputMoveEvent.Broadcast(InputActionValue.Get<FVector2D>(), SelfPlayerController);
 }
 
 void APlayerMenuActor::OnInputValidate(const FInputActionValue& InputActionValue)

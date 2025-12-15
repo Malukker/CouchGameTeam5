@@ -32,6 +32,7 @@ void URobotCharacterStateDash::StateEnter(ERobotCharacterStateID PreviousStateID
 	{
 		Character->PlayAnimMontage(DashAnimForward);
 	}
+	Character->SetGuard(false);
 	
 	OriginalFriction = CharacterMovement->GroundFriction;
 	OriginalGravityScale = CharacterMovement->GravityScale;

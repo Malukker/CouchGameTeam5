@@ -71,6 +71,11 @@ UBoxComponent* ARobotCharacter::GetCollision() const
 	return BoxComponent;
 }
 
+UCapsuleComponent* ARobotCharacter::GetMyCapsuleComponent()
+{
+	return GetCapsuleComponent();
+}
+
 int ARobotCharacter::GetTeam()
 {
 	return Team;

@@ -44,6 +44,9 @@ public:
 	TObjectPtr<AArenaPlayerStart> SpawnPoint;
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<ATeamManager> Opponent;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamBoost;
 
 	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
@@ -55,6 +58,7 @@ public:
 	
 	void SpawnCharacters();
 	void ResetCharacters();
+	void ResetCharactersLocation();
 	void SetInput(bool Value);
 	void PlayIntro();
 	void InversePlayer();
@@ -63,9 +67,6 @@ public:
 	float GetLifePercent();
 	
 protected:
-	UPROPERTY(EditAnywhere, Category = "Config")
-	bool bShowAdvancedSettings;
-	
 	UPROPERTY()
 	TMap<ERobotCharacterPositionEnum, TObjectPtr<ARobotCharacter>> RobotParts;
 	

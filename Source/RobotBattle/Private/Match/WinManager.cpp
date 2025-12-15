@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Characters/RobotCharacter.h"
 #include "Characters/RobotCharacterPositionEnum.h"
+#include "Characters/MainMenu/PlayerMenuActor.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Match/RobotGameInstance.h"
@@ -21,8 +22,17 @@ AWinManager::AWinManager()
 
 void AWinManager::ActivateGameOverUI() 
 {
+	UIPressA->RemoveFromParent();
 	UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
 	UIGameOver->AddToViewport();
+	
+	TArray<AActor*> OutActor;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), OutActor);
+	for (AActor* Actor : OutActor)
+	{
+		APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+		TempActor->OnInput.RemoveDynamic(this, &AWinManager::ActivateGameOverUI);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -36,9 +46,21 @@ void AWinManager::BeginPlay()
 
 	RobotPartsWin[ERobotCharacterPositionEnum::Up]->PlayEnd(true);
 	RobotPartsLose[ERobotCharacterPositionEnum::Up]->PlayEnd(false);
-	
 
-	OnGameOverUI.AddDynamic(this,&AWinManager::ActivateGameOverUI);
+	
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		UIPressA = CreateWidget<UUserWidget>(GetWorld(), UIPressAClass);
+		UIPressA->AddToViewport();
+		TArray<AActor*> OutActor;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), OutActor);
+		for (AActor* Actor : OutActor)
+		{
+			APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
+			TempActor->OnInput.AddDynamic(this, &AWinManager::ActivateGameOverUI);
+		}
+	}, 1.5f, false);
 }
 
 
@@ -89,10 +111,4 @@ TSubclassOf<ARobotCharacter> AWinManager::GetRobotCharacterClassFromID(ERobotID 
 	default: ;
 	}
 	return nullptr;
-}
-
-void AWinManager::Destroyed()
-{
-	Super::Destroyed();
-	OnGameOverUI.RemoveDynamic(this,&AWinManager::ActivateGameOverUI);
 }

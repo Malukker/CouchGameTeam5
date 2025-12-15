@@ -3,7 +3,6 @@
 
 #include "UI/RobotBattleGameplayUI.h"
 
-#include "EditorDirectories.h"
 #include "Components/CheckBox.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -146,14 +145,28 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 			HealthBarPlayer1->SetPercent(Health / MaxHealth);
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer1->SetText(FText::FromString(HealthString));
-			if(Health == MaxHealth) HealthBarPlayer1CD->SetPercent(Health / MaxHealth);
+			if(Health == MaxHealth)
+			{
+				HealthBarPlayer1CD->SetPercent(Health / MaxHealth);
+				FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(BaseFillImage);
+				NewFillImage.ImageSize = FVector2D(
+					BaseFillImage->GetSizeX(),
+					BaseFillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer1->SetWidgetStyle(NewStyle);
+			}
 		}
 		
 		if (LifeBarCritical >= HealthBarPlayer1->GetPercent()*100)
 		{
 			if (HealthBarPlayer1 && FillImage)
 			{
-				FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(FillImage);
@@ -174,14 +187,28 @@ void URobotBattleGameplayUI::SetHealthPlayer(int Team, float Health, float MaxHe
 			HealthBarPlayer2->SetPercent(Health / MaxHealth);
 			FString HealthString = FString::Printf(TEXT("%d"), FMath::RoundToInt(Health));
 			HealthTextPlayer2->SetText(FText::FromString(HealthString));
-			if(Health == MaxHealth) HealthBarPlayer2CD->SetPercent(Health / MaxHealth);
+			if(Health == MaxHealth)
+			{
+				HealthBarPlayer2CD->SetPercent(Health / MaxHealth);
+				FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
+
+				FSlateBrush NewFillImage;
+				NewFillImage.SetResourceObject(BaseFillImage);
+				NewFillImage.ImageSize = FVector2D(
+					BaseFillImage->GetSizeX(),
+					BaseFillImage->GetSizeY()
+					);
+
+				NewStyle.FillImage = NewFillImage;
+				HealthBarPlayer2->SetWidgetStyle(NewStyle);
+			}
 		}
 		
 		if (LifeBarCritical >= HealthBarPlayer2->GetPercent()*100)
 		{
 			if (HealthBarPlayer2 && FillImage)
 			{
-				FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+				FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
 
 				FSlateBrush NewFillImage;
 				NewFillImage.SetResourceObject(FillImage);
@@ -207,6 +234,16 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 			if (Charge == MaxCharge) PlayAnimCharge(0);
 			else if (Charge == 0) StopAnimCharge(0);
 		}
+		if (ChargeBarPlayer1->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer1->GetPercent() >= 1.0f)
+			UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer1->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
+		}
 	}
 	if (Team == 1)
 	{
@@ -215,6 +252,17 @@ void URobotBattleGameplayUI::SetChargePlayer(int Team, float Charge, float MaxCh
 			ChargeBarPlayer2->SetPercent(Charge / MaxCharge);
 			if (Charge == MaxCharge) PlayAnimCharge(1);
 			else if (Charge == 0) StopAnimCharge(1);
+		}
+
+		if (ChargeBarPlayer2->GetPercent()*100 == 100)
+		{
+			if (!bIsSoundPlay && ChargeBarPlayer2->GetPercent() >= 1.0f)
+				UGameplayStatics::PlaySound2D(this, SpecialSound);
+			bIsSoundPlay = true;
+		}
+		if (ChargeBarPlayer2->GetPercent()*100 < 1.0f)
+		{
+			bIsSoundPlay = false;
 		}
 	}
 }
@@ -297,7 +345,7 @@ void URobotBattleGameplayUI::SetFillImage()
 	
 	if (HealthBarPlayer1 && FillImage)
 	{
-		FProgressBarStyle NewStyle = HealthBarPlayer1->WidgetStyle;
+		FProgressBarStyle NewStyle = HealthBarPlayer1->GetWidgetStyle();
 
 		FSlateBrush NewFillImage;
 		NewFillImage.SetResourceObject(FillImage);
@@ -314,7 +362,7 @@ void URobotBattleGameplayUI::SetFillImage()
 	{
 		if (HealthBarPlayer2 && FillImage)
 		{
-			FProgressBarStyle NewStyle = HealthBarPlayer2->WidgetStyle;
+			FProgressBarStyle NewStyle = HealthBarPlayer2->GetWidgetStyle();
 
 			FSlateBrush NewFillImage;
 			NewFillImage.SetResourceObject(FillImage);
