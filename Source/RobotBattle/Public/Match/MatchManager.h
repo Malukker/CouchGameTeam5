@@ -42,12 +42,17 @@ public:
 	int Round = 0;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoundEvent, int, Round);
+	
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FFightEvent);
 
 	UPROPERTY(BlueprintAssignable, Category="MatchManager")
 	FRoundEvent RoundStartEvent;
 
 	UPROPERTY(BlueprintAssignable, Category="MatchManager")
 	FRoundEvent RoundEndEvent;
+
+	UPROPERTY(BlueprintAssignable, Category="MatchManager")
+	FFightEvent FightEndEvent;
 
 protected:
 	// Called when the game starts or when spawned

@@ -320,7 +320,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 
 			UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Up]->GetCharacterMovement();
 			MovementComponent->Activate();
-			FVector LaunchVelocity(500,0.f,500);
+			FVector LaunchVelocity(750,0.f,750);
 			if (GetOpponentLocation().X - GetTeamLocation().X > 0)
 			{
 				LaunchVelocity.X*=-1;
@@ -328,6 +328,26 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 			MovementComponent->Launch(LaunchVelocity);
 			LaunchVelocity.Z = 200;
 			RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->Launch(LaunchVelocity);
+
+			UNiagaraFunctionLibrary::SpawnSystemAttached(
+				TeamDownDestroy,
+				RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
+				FName("Bones_Attach"),
+				FVector::ZeroVector,
+				FRotator(90,0,0),
+				EAttachLocation::Type::SnapToTarget,
+				true,
+				true);
+			
+			UNiagaraFunctionLibrary::SpawnSystemAttached(
+				TeamUpDestroy,
+				RobotParts[ERobotCharacterPositionEnum::Up]->GetMesh(),
+				FName("Bones_Attach"),
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::Type::SnapToTarget,
+				true,
+				true);
 
 			//Make a slowmotion during a certain delay
 			const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();

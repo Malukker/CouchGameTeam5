@@ -47,6 +47,12 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> TeamBoost;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamDownDestroy;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamUpDestroy;
 
 	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;

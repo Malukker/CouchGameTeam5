@@ -137,13 +137,14 @@ void AMatchManager::EndFight(int LosingTeam)
 	{
 		if (TeamWin == 2)
 		{
-			//UIGameplay->RemoveFromParent();
-			//UUserWidget* UIGameOver = CreateWidget<UUserWidget>(GetWorld(), UIGameOverClass);
-			//UIGameOver->AddToViewport();
-			//UGameplayStatics::SetGamePaused(GetWorld(), true);
+			FightEndEvent.Broadcast();
 			URobotGameInstance* GI = GetGameInstance<URobotGameInstance>();
 			GI->TeamWin = index;
-			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WinLevel);
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, LosingTeam]()
+			{
+				UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), WinLevel);
+			}, 1.f, false);
 			return;
 		}
 		index++;
