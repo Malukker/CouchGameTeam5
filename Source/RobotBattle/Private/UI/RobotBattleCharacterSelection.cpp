@@ -14,7 +14,7 @@
 void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InController)
 {
 	ValidationByController[InController] = true;
-	ValidateEvent.Broadcast(InController->GetLocalPlayer()->GetLocalPlayerIndex());
+	ValidateEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex());
 	
 	for (const auto Pair : ValidationByController)
 	{
@@ -51,7 +51,7 @@ void URobotBattleCharacterSelection::ValidateSelection(APlayerController* InCont
 		TempActor->InputCancelEvent.RemoveDynamic(this, &URobotBattleCharacterSelection::CancelSelection);
 	}
 
-	StartGameEvent.Broadcast();
+	StartGameEvent();
 }
 
 void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(FVector2D InDirection,  APlayerController* InController)
@@ -66,16 +66,13 @@ void URobotBattleCharacterSelection::ChangeRobotPartSelectionForPlayer(FVector2D
 	else if (newId > ArenaSettings->RobotCharacterDownClass.Num()) BodyPartByController[InController] = ERobotID::Robot1;
 	else BodyPartByController[InController] = static_cast<ERobotID>(newId);
 	
-	SelectionChangeEvent.Broadcast(
-		InController->GetLocalPlayer()->GetLocalPlayerIndex(),
-		BodyPartByController[InController],
-		(InDirection.X > 0));
+	SelectionChangeEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex(),BodyPartByController[InController]);
 }
 
 void URobotBattleCharacterSelection::CancelSelection(APlayerController* InController)
 {
 	ValidationByController[InController] = false;
-	CancellationEvent.Broadcast(InController->GetLocalPlayer()->GetLocalPlayerIndex());
+	CancellationEvent(InController->GetLocalPlayer()->GetLocalPlayerIndex());
 }
 
 void URobotBattleCharacterSelection::InitializeAndBindInputs()
