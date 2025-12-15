@@ -24,24 +24,17 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<AMenuGameMode> GameMode;
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnSelectionChange,
-		uint8, ControllerID,
-    	ERobotID, RobotID,
-    	bool, Forward);
-	UPROPERTY(BlueprintAssignable)
-	FOnSelectionChange SelectionChangeEvent;
+	UFUNCTION(BlueprintImplementableEvent)
+	void SelectionChangeEvent(uint8 ControllerID, ERobotID RobotID);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void ValidateEvent(uint8 ControllerID);
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionValidation, uint8, ControllerID);
-	UPROPERTY(BlueprintAssignable)
-	FOnSelectionValidation ValidateEvent;
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartGameEvent();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartGameEvent);
-	UPROPERTY(BlueprintAssignable)
-	FOnStartGameEvent StartGameEvent;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSelectionCancellation, uint8, ControllerID);
-	UPROPERTY(BlueprintAssignable)
-	FOnSelectionCancellation CancellationEvent;
+	UFUNCTION(BlueprintImplementableEvent)
+	void CancellationEvent(uint8 ControllerID);
 
 	UFUNCTION()
 	void ValidateSelection(APlayerController* InController);
