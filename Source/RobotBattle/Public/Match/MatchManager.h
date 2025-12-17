@@ -40,6 +40,9 @@ public:
 
 	UPROPERTY()
 	int Round = 0;
+
+	UPROPERTY()
+	bool RoundOnGoing = false;
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoundEvent, int, Round);
 	
