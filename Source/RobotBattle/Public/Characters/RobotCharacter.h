@@ -123,7 +123,7 @@ public:
 	void SetRobotBodyID(ERobotID Robot);
 	ERobotID GetRobotBodyID() const;
 	
-	virtual void TakeDamageFromAttack(int Damage, float StunTime);
+	virtual void TakeDamageFromAttack(int Damage, float StunTime, float ChipDamage);
 	void StartControllerVibration(::ERobotID ERobotID, ::EAttackID EAttackID);
 	void KnockBackFromNotify(FVector2D Velocity);
 
@@ -184,6 +184,7 @@ public:
 	int GetTeam();
 	void SetTeam(int NewTeam);
 	void SetLookingOpponent(bool Value);
+	bool GetLookingOpponent();
 	int GetLife();
 	int GetGuard();
 	int GetInvinsibilityFrames();
@@ -230,7 +231,7 @@ protected:
 public:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FHurtManagerEvent, int, Damage, float, StunTimer);
 	
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardManagerEvent, int, Damage, float, StunTimer);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FGuardManagerEvent, int, Damage, float, StunTimer, float, ChipDamage);
 	
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FGuardEvent, int, GuardMax, int, GuardLeft);
 

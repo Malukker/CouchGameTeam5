@@ -50,5 +50,11 @@ struct FAttackStruct
 	EAttackID AttackType = EAttackID::None;
 
 	UPROPERTY(EditAnywhere)
+	float ChipDamage = 0;
+
+	UPROPERTY(EditAnywhere)
+	bool TouchItSelf = false;
+
+	UPROPERTY(EditAnywhere)
 	UNiagaraSystem* Niagara = nullptr;
 };

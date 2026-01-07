@@ -47,6 +47,8 @@ void URobotCharacterStateAttack::StateEnter(ERobotCharacterStateID PreviousState
 		}
 	}
 	else UseBoost = false;
+
+	Character->SetLookingOpponent(false);
 	
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -70,6 +72,8 @@ void URobotCharacterStateAttack::StateExit(ERobotCharacterStateID NextState)
 	Character->HurtEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnStunEvent);
 	Character->BoostEvent.RemoveDynamic(this, &URobotCharacterStateAttack::OnBoostEvent);
 	UseBoost = false;
+
+	Character->SetLookingOpponent(true);
 
 	TArray<FAnimNotifyEvent> NotifyEvents = Attacks[Character->GetCurrentTypeAttack()]->Notifies;
 	for (FAnimNotifyEvent NotifyEvent : NotifyEvents)
@@ -116,8 +120,16 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 		EndPos = Character->GetMesh()->GetSocketByName(Data.EndSocket)->GetSocketLocation(Character->GetMesh());
 		FHitResult OutHit;
 		ETraceTypeQuery TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_Pawn);
-		if (Character->GetTeam() == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
-		else if (Character->GetTeam() == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
+		if (Data.TouchItSelf)
+		{
+			if (Character->GetTeam() == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+			else if (Character->GetTeam() == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
+		}
+		else
+		{
+			if (Character->GetTeam() == 0) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceOne);
+			else if (Character->GetTeam() == 1) TraceTypeQuery = UEngineTypes::ConvertToTraceType(ECC_AttackTraceTwo);
+		}
 		if (UKismetSystemLibrary::SphereTraceSingle
 			(
 				GetWorld(),
@@ -134,7 +146,8 @@ void URobotCharacterStateAttack::DetectionNotifyAttack(AActor* ConcernedActor, F
 					TouchedCharacterInterface = TScriptInterface<IRobot>(OutHit.GetActor());
 					TouchedCharacterInterface->TakeDamageFromAttack(
 						Data.Damage * (UseBoost ? Data.BoostMultiplier : 1) + (Character->GetAttackDuoBonus() * AttackDuoBonusMultiplier),
-						Data.StunTimer);
+						Data.StunTimer,
+						Data.ChipDamage);
 					TouchedCharacterInterface->StartControllerVibration(Character->GetRobotBodyID(),Data.AttackType);
 					bIsAttackTraceEnabled = false;
 					HasTouch = true;

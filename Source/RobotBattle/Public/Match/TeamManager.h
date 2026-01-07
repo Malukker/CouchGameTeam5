@@ -134,11 +134,14 @@ protected:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
-	void TeamDoGuard(int Damage, float StunTime);
+	void TeamDoGuard(int Damage, float StunTime, float ChipDamage);
 	
 	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime);
 	
+	UFUNCTION()
+	void Death();
+
 	UFUNCTION()
 	void TeamAirBlock();
 	
