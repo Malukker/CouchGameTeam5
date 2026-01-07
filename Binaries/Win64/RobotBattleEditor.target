@@ -6506,6 +6506,18 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Controlle67c8d9e3e2fV10/Binaries/Win64/UnrealEditor-WindowsDualsense_ds5w.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Controlle67c8d9e3e2fV10/Binaries/Win64/UnrealEditor-WindowsDualsense_ds5w.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Controlle67c8d9e3e2fV10/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/Binaries/Win64/UnrealEditor-RD.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -33468,6 +33480,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Marketplace/Controlle67c8d9e3e2fV10/WindowsDualsense_ds5w.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Marketplace/Developer/RiderLink/RiderLink.uplugin",
 			"Type": "UFS"
 		},
@@ -33966,6 +33982,7 @@
 		"WebMMedia",
 		"WebMMoviePlayer",
 		"WindowsDeviceProfileSelector",
+		"WindowsDualsense_ds5w",
 		"WindowsMoviePlayer",
 		"WmfMedia",
 		"WorldMetrics",

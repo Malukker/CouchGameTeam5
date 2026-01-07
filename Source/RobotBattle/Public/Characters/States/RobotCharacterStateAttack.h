@@ -58,10 +58,10 @@ private:
 	TArray<AActor*> ActorsToIgnore;
 	
 	UFUNCTION()
-	void DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data);
+	void StartDetectionNotifyAttack(AActor* ConcernedActor);
 	
 	UFUNCTION()
-	void StartDetectionNotifyAttack(AActor* ConcernedActor);
+	void DetectionNotifyAttack(AActor* ConcernedActor, FAttackStruct Data);
 
 	UFUNCTION()
 	void KnockBackNotify(AActor* ConcernedActor, FVector2D KnockBack);
