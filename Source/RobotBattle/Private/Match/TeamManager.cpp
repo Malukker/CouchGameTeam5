@@ -46,16 +46,20 @@ void ATeamManager::Tick(float DeltaTime)
 
 	if (BoostTimer > 0) BoostTimer -= DeltaTime;
 	if (BoostTimer <= 0 && WantBoost) {WantBoost = false; RobotParts[ERobotCharacterPositionEnum::Up]->SetBoost(false);}
-		
-	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+
+	if(RobotParts[ERobotCharacterPositionEnum::Up]->GetLookingOpponent() &&
+		RobotParts[ERobotCharacterPositionEnum::Down]->GetLookingOpponent())
 	{
-		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
-		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(1);
-	}
-	else 
-	{
-		RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
-		RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(-1);
+		if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(1);
+			RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(1);
+		}
+		else 
+		{
+			RobotParts[ERobotCharacterPositionEnum::Down]->SetOrientX(-1);
+			RobotParts[ERobotCharacterPositionEnum::Up]->SetOrientX(-1);
+		}
 	}
 }
 
@@ -259,7 +263,7 @@ void ATeamManager::KnockBack(FVector2D KnockBackVelocity)
 	MovementComponent->Launch(LaunchVelocity * KnockBackMultiplier);
 }
 
-void ATeamManager::TeamDoGuard(int Damage, float StunTime)
+void ATeamManager::TeamDoGuard(int Damage, float StunTime, float ChipDamage)
 {
 	if (GetLifePercent() == 0.f) return;	
 	if (TeamGuard > 0)
@@ -268,6 +272,15 @@ void ATeamManager::TeamDoGuard(int Damage, float StunTime)
 		{
 			Charge(ERobotCharacterPositionEnum::Down);
 		}
+		
+		TeamLife -= Damage * ChipDamage;
+		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
+		if (TeamLife <= 0)
+		{
+			Death();
+			return;
+		}
+		
 		TeamGuard--;
 		RobotParts[ERobotCharacterPositionEnum::Up]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
 		RobotParts[ERobotCharacterPositionEnum::Down]->GuardEvent.Broadcast(TeamGuardMax, TeamGuard);
@@ -315,31 +328,7 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 		
 		if (TeamLife <= 0)
 		{
-			TeamLife = 0;
-			RobotParts[ERobotCharacterPositionEnum::Up]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-			UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Up]->GetCharacterMovement();
-			MovementComponent->Activate();
-			FVector LaunchVelocity(500,0.f,500);
-			if (GetOpponentLocation().X - GetTeamLocation().X > 0)
-			{
-				LaunchVelocity.X*=-1;
-			}
-			MovementComponent->Launch(LaunchVelocity);
-			LaunchVelocity.Z = 200;
-			RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->Launch(LaunchVelocity);
-
-			//Make a slowmotion during a certain delay
-			const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
-			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ArenaSettings->SlowMotionScale);
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
-			{
-				RobotParts[ERobotCharacterPositionEnum::Up]->SetLookingOpponent(false);
-				UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
-				DeathEvent.Broadcast(Team);
-			}, ArenaSettings->SlowMotionDuration * ArenaSettings->SlowMotionScale, false);
-			
+			Death();
 		}
 		UIInterface->SetHealthPlayer(Team, TeamLife, TeamLifeMax);
 		UIInterface->SetComboHit(Team, Combo);
@@ -348,6 +337,54 @@ void ATeamManager::TeamTakeDamage(int Damage, float StunTime)
 	{
 		KnockBackMultiplier = 0;
 	}
+}
+
+void ATeamManager::Death()
+{
+	TeamLife = 0;
+	RobotParts[ERobotCharacterPositionEnum::Up]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	UCharacterMovementComponent* MovementComponent = RobotParts[ERobotCharacterPositionEnum::Up]->GetCharacterMovement();
+	MovementComponent->Activate();
+	FVector LaunchVelocity(750,0.f,750);
+	if (GetOpponentLocation().X - GetTeamLocation().X > 0)
+	{
+		LaunchVelocity.X*=-1;
+	}
+	MovementComponent->Launch(LaunchVelocity);
+	LaunchVelocity.Z = 200;
+	RobotParts[ERobotCharacterPositionEnum::Down]->GetCharacterMovement()->Launch(LaunchVelocity);
+
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+		TeamDownDestroy,
+		RobotParts[ERobotCharacterPositionEnum::Down]->GetMesh(),
+		FName("Bones_Attach"),
+		FVector::ZeroVector,
+		FRotator(90,0,0),
+		EAttachLocation::Type::SnapToTarget,
+		true,
+		true);
+			
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+		TeamUpDestroy,
+		RobotParts[ERobotCharacterPositionEnum::Up]->GetMesh(),
+		FName("Bones_Attach"),
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		EAttachLocation::Type::SnapToTarget,
+		true,
+		true);
+
+	//Make a slowmotion during a certain delay
+	const UArenaSettings* ArenaSettings = GetDefault<UArenaSettings>();
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ArenaSettings->SlowMotionScale);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+	{
+		RobotParts[ERobotCharacterPositionEnum::Up]->SetLookingOpponent(false);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
+		DeathEvent.Broadcast(Team);
+	}, ArenaSettings->SlowMotionDuration * ArenaSettings->SlowMotionScale, false);
 }
 
 void ATeamManager::TeamAirBlock()

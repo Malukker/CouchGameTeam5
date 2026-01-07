@@ -23,7 +23,7 @@ class ROBOTBATTLE_API IRobot
 	GENERATED_BODY()
 
 public:
-	virtual void TakeDamageFromAttack(int Damage, float StunTime) = 0;
+	virtual void TakeDamageFromAttack(int Damage, float StunTime, float ChipDamage) = 0;
 	virtual void StartControllerVibration(::ERobotID ERobotID, EAttackID EAttackID) = 0;
 
 	virtual void KnockBackFromNotify(FVector2D Velocity) = 0;

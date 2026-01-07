@@ -19,8 +19,8 @@ void UShakeCameraTestRuntime::StartCameraShake()
 {
 	
 	APlayerCameraManager* Camera = UGameplayStatics::GetPlayerCameraManager(GetWorld(),0);
-
-	UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),Scale);
+          
+    UCameraShakeBase* TempShake =Camera->StartCameraShake(UCameraShakeWorld::StaticClass(),Scale);
 	if (Duration==0 || Scale==0)
 	{
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("ShakeTestFailed"),false,FText::FromString("Check Duration or Scale"));
@@ -45,7 +45,6 @@ void UShakeCameraTestRuntime::SaveShakeValue()
 		UToolBoxFunctionLibrary::SlateNotification(FText::FromString("SaveShakeFailed"),false,FText::FromString("AttackID not valid"));
 		return;
 	} 
-	
 	
 	UCameraShakeSave* SaveGameInstance = nullptr;
 	if (UGameplayStatics::DoesSaveGameExist(TEXT("CameraSettingsSlot"), 0))

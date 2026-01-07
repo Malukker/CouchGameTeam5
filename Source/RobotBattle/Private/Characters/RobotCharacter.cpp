@@ -91,6 +91,11 @@ void ARobotCharacter::SetLookingOpponent(bool Value)
 	IsLookingOpponent = Value;
 }
 
+bool ARobotCharacter::GetLookingOpponent()
+{
+	return IsLookingOpponent;
+}
+
 int ARobotCharacter::GetLife()
 {
 	return  Life;
@@ -379,11 +384,11 @@ int ARobotCharacter::GetCharge()
 	return Charge;
 }
 
-void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime)
+void ARobotCharacter::TakeDamageFromAttack(int Damage, float StunTime, float ChipDamage)
 {
 	if (CanGuard)
 	{
-		GuardManagerEvent.Broadcast(Damage, StunTime);
+		GuardManagerEvent.Broadcast(Damage, StunTime, ChipDamage);
 	}
 	else
 	{

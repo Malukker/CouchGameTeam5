@@ -48,11 +48,11 @@ void AWinManager::BeginPlay()
 	RobotPartsLose[ERobotCharacterPositionEnum::Up]->PlayEnd(false);
 
 	
+	UIPressA = CreateWidget<UUserWidget>(GetWorld(), UIPressAClass);
+	UIPressA->AddToViewport();
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		UIPressA = CreateWidget<UUserWidget>(GetWorld(), UIPressAClass);
-		UIPressA->AddToViewport();
 		TArray<AActor*> OutActor;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerMenuActor::StaticClass(), OutActor);
 		for (AActor* Actor : OutActor)
@@ -60,7 +60,7 @@ void AWinManager::BeginPlay()
 			APlayerMenuActor* TempActor = Cast<APlayerMenuActor>(Actor);
 			TempActor->OnInput.AddDynamic(this, &AWinManager::ActivateGameOverUI);
 		}
-	}, 1.5f, false);
+	}, 3.5f, false);
 }
 
 

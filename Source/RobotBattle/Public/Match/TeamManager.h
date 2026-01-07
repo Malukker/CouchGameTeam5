@@ -47,6 +47,12 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> TeamBoost;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamDownDestroy;
+	
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> TeamUpDestroy;
 
 	UPROPERTY()
 	TScriptInterface<IUIGamePlayInterface> UIInterface;
@@ -128,11 +134,14 @@ protected:
 	void TeamDoAttack(bool HasTouch);
 	
 	UFUNCTION()
-	void TeamDoGuard(int Damage, float StunTime);
+	void TeamDoGuard(int Damage, float StunTime, float ChipDamage);
 	
 	UFUNCTION()
 	void TeamTakeDamage(int Damage, float StunTime);
 	
+	UFUNCTION()
+	void Death();
+
 	UFUNCTION()
 	void TeamAirBlock();
 	
